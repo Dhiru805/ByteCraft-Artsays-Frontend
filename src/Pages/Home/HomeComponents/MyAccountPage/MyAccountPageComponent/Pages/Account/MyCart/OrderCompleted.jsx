@@ -290,10 +290,18 @@
 
 import React, { useEffect, useState } from "react";
 import { GoCheck } from "react-icons/go";
+<<<<<<< HEAD
 import { useLocation } from "react-router-dom";
 import getAPI from "../../../../../../../../api/getAPI";
 
 const OrderCompleted = () => {
+=======
+import { useLocation, useParams } from "react-router-dom";
+import getAPI from "../../../../../../../../api/getAPI";
+
+const OrderCompleted = () => {
+  const { userId } = useParams();
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
   const { state } = useLocation();
 
   const order = state?.order;

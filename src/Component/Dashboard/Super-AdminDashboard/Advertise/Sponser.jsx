@@ -179,7 +179,6 @@ function Sponser() {
       toast.error(errMsg)
     }
   }
-
   const handleSaveDraft = async () => {
     if (!campaignData.campaignName || campaignData.campaignName.trim() === "") {
       toast.error("Campaign title is required to save as draft.");

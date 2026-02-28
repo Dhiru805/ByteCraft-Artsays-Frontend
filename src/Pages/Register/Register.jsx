@@ -65,7 +65,6 @@ const Register = () => {
   const normalizePhone = (phone) => {
     return `+91${phone.replace(/^\+91/, "")}`;
   };
-
   const handleSendOTP = async () => {
     const input = formData.emailOrPhone.trim();
     const isEmail = isValidEmail(input);

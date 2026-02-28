@@ -8,7 +8,6 @@ import ImagesMedia from "./Sections/ImagesMedia";
 import ArtworkDetails from "./Sections/ArtworkDetails";
 import PricingOffers from "./Sections/PricingOffers";
 import ShippingDelivery from "./Sections/ShippingDelivery";
-
 import LegalCompliance from "./Sections/LegalCompliance";
 import NFTDetails from "./Sections/NFTDetails";
 import AntiqueVintageDetails from "./Sections/AntiqueVintageDetails";

@@ -593,7 +593,6 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
   const [roomBg, setRoomBg] = useState("/artimages/viewintheroom.jpg");
   const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center', transform: 'scale(1)' });
   const [isZoomed, setIsZoomed] = useState(false);
-
   const roomBgs = ["/artimages/viewintheroom.jpg", "/artimages/wall3.jpg", "/artimages/wall4.webp"];
 
   useEffect(() => {
@@ -837,7 +836,6 @@ const BiddingCard = ({ product, currentHighest, timeLeft, isLastDay, isBidEnded,
           )}
         </div>
       </div>
-
       {confirmPopup && (
         <div className="fixed inset-0 z-[10000] backdrop-blur-sm flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
           <div className="bg-white rounded-[32px] p-8 w-full max-w-sm text-center shadow-2xl animate-in zoom-in duration-200">

@@ -325,7 +325,6 @@ const Customization = () => {
     } catch (error) {
       console.error("Permission error:", error);
       setPermissionStatus('denied');
-
       let errorMessage = "Failed to access camera/microphone";
       if (error.name === "NotAllowedError") {
         errorMessage = "Camera/microphone access denied. Please allow permissions in your browser settings.";

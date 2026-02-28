@@ -431,7 +431,6 @@ const ProductDetails = () => {
                 <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap">
                   {product.description || "No description available."}
                 </div>
-
                 {(product.inspirationSource || product.targetedAudience) && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-gray-50">
                     {product.inspirationSource && (
@@ -536,7 +535,6 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
   const [roomBg, setRoomBg] = useState("/artimages/viewintheroom.jpg");
   const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center', transform: 'scale(1)' });
   const [isZoomed, setIsZoomed] = useState(false);
-
   const roomBgs = ["/artimages/viewintheroom.jpg", "/artimages/wall3.jpg", "/artimages/wall4.webp"];
 
   useEffect(() => {
@@ -715,7 +713,6 @@ const ProductInfo = ({ product, discountPercent, ratingValue, reviewCount, artis
 
       <div className="p-8 bg-white rounded-[40px] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#6F4D34]/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-[#6F4D34]/10 transition-colors" />
-
         <div className="relative space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
@@ -861,7 +858,6 @@ const PurchaseCard = ({ product, quantity, setQuantity, protection, setProtectio
           </button>
         </div>
       </div>
-
       {!product.quantity && (
         <div className="bg-red-500 text-white text-center py-2 text-[10px] font-black uppercase tracking-[0.2em]">Currently Sold Out</div>
       )}
@@ -941,7 +937,6 @@ const DetailsGrid = ({ product, categoryInfo, imageBaseURL, resolveMediaUrl }) =
 
   const Item = ({ label, value, isLink, isFile }) => {
     if (value === undefined || value === null || value === "" || value === "N/A" || (Array.isArray(value) && value.length === 0)) return null;
-
     let displayValue = value;
     if (typeof value === 'boolean') {
       displayValue = value ? "Yes" : "No";

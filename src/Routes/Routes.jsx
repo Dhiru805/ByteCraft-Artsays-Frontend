@@ -12,6 +12,7 @@ import PostLive from "../Pages/socialMedia/PostLive";
 import LiveHistory from "../Pages/socialMedia/LiveHistory";
 import { useAuth } from "../AuthContext";
 import PreloaderAnimation from "../Pages/Animation/PreloaderAnimation";
+import DeliveryRoutes from "./DeliveryRoutes"
 
 //----------------------------------------Auth Pages------------------------------------------//
 import Login from "../Pages/Login/Login";
@@ -330,23 +331,6 @@ import ChallengesEntries from "../Component/Dashboard/Super-AdminDashboard/Chall
 import ViewChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/ViewChallengeApplication";
 import UpdateChallengeApplication from "../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/UpdateChallengeApplication";
 
-// import ViewCareer from "../Component/Dashboard/Super-AdminDashboard/Career/CarrerView";
-// import Exhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibition";
-// import CreateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/create";
-// import UpdateExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/editExhibition";
-// import ViewExhibition from "../Component/Dashboard/Super-AdminDashboard/Exhibition/exhibitionView";
-// import ExhibitionRequest from '../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequest';
-// import UpdateExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/editExhibitionRequest";
-// import ViewExhibitionRequest from "../Component/Dashboard/Super-AdminDashboard/Exhibition/ExhibitionRequest/exhibitionRequestView";
-// import AutoTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/DefaultAutoTargeting/DefaultAutoTargeting';
-// import GroupTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/AutoTargetingGroup/GroupTargetingSetting';
-// import KeywordTargetingSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/KeywordTargeting/KeywordTargetingSetting';
-
-// import Challenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challenges";
-// import CreateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/create";
-// import UpdateChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/update";
-// import ViewChallenges from "../Component/Dashboard/Super-AdminDashboard/Challenges/CreateChallenges/challengeview";
-// import ChallengesEntries from '../Component/Dashboard/Super-AdminDashboard/Challenges/ChallengesEntries/challengesEntries';
 import GSTSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/GST/GST';
 import InsuranceSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/Insurance/InsuranceSetting'
 import ExhibitionSetting from '../Component/Dashboard/Super-AdminDashboard/Settings/Exhibition/ExhibitionSetting'
@@ -403,7 +387,6 @@ import ArtistPDet from "../Component/Dashboard/Super-AdminDashboard/ArtistDetail
 import BuyerManagement from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerManageTable";
 import BuyerProductPurchase from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchased";
 import BuyerProductPurchaseView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductPurchased/ProductPurchasedDetails";
-// import BuyerProductRequest from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/ProductRequest/ProductRequestTable";
 import BuyerTransaction from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/Transaction/BuyerTransaction";
 import BuyerPackagingMaterial from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/PackagingMaterial/ProductPurchasedBuyer";
 import BuyermanageProductView from "../Component/Dashboard/Super-AdminDashboard/BuyerManagement/BuyerUserProdileView/UserProf";
@@ -426,7 +409,6 @@ import SellerPackaging from "../Component/Dashboard/Super-AdminDashboard/Seller/
 import SellerManageProductView from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProdileView/UserProf";
 import SellerManageProductEdit from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerUserProfile/UserProf";
 import SellerProductBidding from "../Component/Dashboard/Super-AdminDashboard/Seller/SellerProducts/BiddingPass";
-// import SellerProductFetchView from "../Component/SellerProductFetchView/ProductFetchView";
 
 //-----------------------------Product--------------------------//
 import ProductTableView from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Product";
@@ -462,21 +444,6 @@ import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Produc
 import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
 import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
 import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
-
-
-
-//-----------------------------ProductSetting--------------------------//
-// import ProductType from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductType/ProductType";
-// import ProductMedium from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMedium/ProductMedium";
-// import ProductMaterial from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductMaterial/ProductMaterial";
-// import ProductEditionTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductEditionType/ProductEditionType";
-// import ProductSurfaceTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductSurfaceType/ProductSurfaceType";
-// import ProductCouponCodes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductCouponCode/ProductCouponCode";
-// import ProductPackagingTypes from "../Component/Dashboard/Super-AdminDashboard/Product Setting/ProductPackagingType/ProductPackagingType";
-// import CopyrightsRights from "../Component/Dashboard/Super-AdminDashboard/Product Setting/CopyrightsRights/CopyrightsRights";
-// import BlockchainNetworks from "../Component/Dashboard/Super-AdminDashboard/Product Setting/BlockchainNetwork/BlockchainNetwork";
-// import TokenStandards from "../Component/Dashboard/Super-AdminDashboard/Product Setting/TokenStandard/TokenStandard";
-// import PeriodEras from "../Component/Dashboard/Super-AdminDashboard/Product Setting/PeriodEra/PeriodEra";
 
 
 //-----------------------------Settings--------------------------//
@@ -578,15 +545,6 @@ import WhyArtsays from "../Pages/WhyArtsays/WhyArtsays";
 import Challenge from "../Pages/Challenges/Challenges";
 import AboutUs from "../Pages/AboutUs/AboutUs";
 import CelebrityContent from "../Pages/Celebrity/celebrityContent/celebrityContent";
-//import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
-//import Commission from "../Pages/CommissionWork/CommissionWork";
-//import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner"
-//import AffiliateProgram from "../Pages/AffiliateProgram/AffiliateProgram"
-//import ContactUs from "../Pages/ContactUs/ContactUs"
-// import HowToBuy from "../Pages/HowToBuy/HowToBuy"
-// import HowToSell from "../Pages/HowToSell/HowToSell"
-// import Collections from "../Pages/Collections/Collections"
-// import Career from "../Pages/Career/Career"
 import JobRoles from "../Pages/Career/JobRoles";
 import Blogs from "../Pages/blogs/Blogs";
 import BlogCardDetails from "../Pages/blogDetails/BlogCardDetails";
@@ -756,20 +714,6 @@ const WebsiteWrapper = () => {
     </WebsiteLayout>
   );
 };
-
-//without animation funtion
-// const WebsiteWrapper = () => {
-//   const location = useLocation();
-
-//   useEffect(() => {
-//   }, [location.pathname]);
-
-//   return (
-//     <WebsiteLayout>
-//       <Outlet />
-//     </WebsiteLayout>
-//   );
-// };
 
 const AppRoutes = () => {
   const { isAuthenticated, userType, status: userStatus } = useAuth();
@@ -1148,7 +1092,6 @@ const AppRoutes = () => {
         <Route path="settings/product-category" element={<ProductCategory />} />
         <Route path="settings/marketing" element={<SuperAdminMarketing />} />
         <Route path="settings/payment-getway" element={< PaymentGetwaySetting />} />
-
         <Route
           path="settings/certification"
           element={<CertificationSetting />}
@@ -1476,6 +1419,9 @@ const AppRoutes = () => {
         <Route path="wallet-management" element={<AdminWalletManagement />} />
       </Route>
 
+
+{/* ─── Delivery – only Super-Admin can enter ─── */}
+<Route path="/delivery/*" element={<DeliveryRoutes />} />
       {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}
       <Route
         path="/artist"

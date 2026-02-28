@@ -119,7 +119,6 @@ const Product = () => {
           </div>
         </div>
       </div>
-
       <div className="row clearfix">
         <div className="col-lg-12">
           <div className="card">

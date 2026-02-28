@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* ═══════════════════════════════
    NAVBAR SKELETON — matches NavBar exactly
    ═══════════════════════════════ */
@@ -202,4 +203,127 @@
   .desktopHeader { display: none !important; }
   .mobileBar     { display: flex; }
   .mobileBottom  { display: flex; }
+=======
+.wrapper {
+  width: 100%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ---------- Skeleton Base ---------- */
+.skeleton {
+  background-color: #d1d5db;
+  border-radius: 4px;
+}
+
+/* ---------- Desktop Header ---------- */
+.desktopHeader {
+  display: none;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+}
+
+/* Sections */
+.leftSection,
+.centerSection,
+.rightSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.leftSection {
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.centerSection {
+  justify-content: center;
+}
+
+.rightSection {
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+/* Sizes */
+.linkSmall {
+  height: 16px;
+  width: 40px;
+}
+
+.linkMedium {
+  height: 16px;
+  width: 64px;
+}
+
+.circleSmall {
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+}
+
+.logo {
+  height: 40px;
+  width: 112px;
+}
+
+.search {
+  height: 36px;
+  width: 160px;
+  border-radius: 999px;
+}
+
+.button {
+  height: 32px;
+  width: 80px;
+  border-radius: 999px;
+}
+
+/* ---------- Mobile Header ---------- */
+.mobileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mobileLogo {
+  height: 32px;
+  width: 96px;
+}
+
+.mobileIcons {
+  display: flex;
+  gap: 16px;
+}
+
+/* ---------- Responsive ---------- */
+@media (min-width: 768px) {
+  .desktopHeader {
+    display: block;
+  }
+
+  .mobileHeader {
+    display: none;
+  }
+}
+
+/* ---------- Pulse Animation ---------- */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 }

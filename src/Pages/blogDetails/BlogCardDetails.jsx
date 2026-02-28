@@ -320,7 +320,6 @@ function BlogCardDetails() {
                             {mobileOpen ? <IoIosArrowUp className="text-[#6F4D34]" size={20} /> : <IoIosArrowDown className="text-[#6F4D34]" size={20} />}
                         </div>
                     </div>
-
                     {mobileOpen && (
                         <div className="mt-4 max-h-[60vh] overflow-y-auto pb-2 animate-fade-in">
                             <nav className="space-y-1">
@@ -349,7 +348,6 @@ function BlogCardDetails() {
             {/* Main Content Area */}
             <div className="max-w-[1440px] mx-auto p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-
                     {/* Blog Content */}
                     <article className="lg:col-span-8">
                         {blogDetails && (
@@ -377,7 +375,6 @@ function BlogCardDetails() {
 
                     {/* Sidebar */}
                     <aside className="lg:col-span-4 space-y-10">
-
                         {/* Author Profile */}
                         <div className="sidebar-card-dark p-8 text-center relative group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />

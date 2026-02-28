@@ -228,7 +228,11 @@ const SoldProduct = ({ userId }) => {
 
     const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
     const navigate = useNavigate();
+<<<<<<< HEAD
     // const userType = useUserType();
+=======
+    const userType = useUserType();
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -300,7 +304,11 @@ const SoldProduct = ({ userId }) => {
                     product.mainImage ||
                     product.referenceImage ||
                     "",
+<<<<<<< HEAD
                 productPrice: product.finalPrice || 0,
+=======
+                productPrice: product.sellingPrice || 0,
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                 totalQuantity: item.quantity,
                 artistName: artistFullName.trim()
             };

@@ -106,7 +106,6 @@ function Blogs() {
         fetchCategories();
     }, []);
 
-
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentBlogs = blogs.slice(startIndex, endIndex);

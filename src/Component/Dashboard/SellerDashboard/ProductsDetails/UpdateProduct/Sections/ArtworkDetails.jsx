@@ -102,7 +102,11 @@ const ArtworkDetails = ({
         </div>
 
         <div className="form-group">
+<<<<<<< HEAD
             <label>Weight (g) <span style={{ color: 'red' }}>*</span></label>
+=======
+            <label>Weight (g)</label>
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
             <input
                 type="number"
                 id="weight"
@@ -113,7 +117,10 @@ const ArtworkDetails = ({
                 value={formData.weight}
                 onChange={handleInputChange}
                 disabled={isSubmitting}
+<<<<<<< HEAD
                 required
+=======
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
             />
         </div>
         {(

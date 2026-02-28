@@ -331,6 +331,7 @@
 // export default ProductRequest;
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
+<<<<<<< HEAD
 import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
@@ -368,6 +369,11 @@ const STATUS_COLORS = {
   "Refund Approved": "#ffc107",
 };
 
+=======
+import { useNavigate } from 'react-router-dom';
+import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 const SoldProduct = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -391,6 +397,7 @@ const SoldProduct = () => {
         
         const data = result?.data?.data || [];
 
+<<<<<<< HEAD
           const formatted = data.flatMap(order => {
             return order.items
               .filter(item => item.productId)
@@ -408,6 +415,27 @@ const SoldProduct = () => {
                 purchaseDate: order.purchaseDate || order.createdAt,
               }));
           });
+=======
+        const formatted = data.flatMap(order => {
+          return order.items
+            .filter(item => item.productId)
+            .map(item => ({
+              orderId: order.orderId,
+              productId: item.productId._id,
+              productName: item.productId.productName || '',
+              mainImage: item.productId.mainImage || '',
+              productPrice: item.productId.sellingPrice || 0,
+
+              // ✅ FIXED BUYER STRUCTURE
+              buyerName: `${order?.Buyer?.id?.name || ''} ${order?.Buyer?.id?.lastName || ''}`.trim(),
+
+              // ✅ FIXED ARTIST STRUCTURE
+              artistName: `${order?.Artist?.id?.name || ''} ${order?.Artist?.id?.lastName || ''}`.trim(),
+
+              totalQuantity: item.quantity || 0
+            }));
+        });
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
 
         setProducts(formatted);
       } catch (error) {
@@ -541,6 +569,7 @@ const filteredProducts = products.filter(product => {
           <div className="body">
             <div className="table-responsive">
               <table className="table table-hover">
+<<<<<<< HEAD
                   <thead className="thead-dark">
                     <tr>
                       <th>#</th>
@@ -554,6 +583,18 @@ const filteredProducts = products.filter(product => {
                       <th>Action</th>
                     </tr>
                   </thead>
+=======
+                <thead className="thead-dark">
+                  <tr>
+                    <th>#</th>
+                    <th>Buyer Name</th>
+                    <th>Product Name</th>
+                    <th>Product Price</th>
+                    <th>Ordered Quantity</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                 <tbody>
                   {displayedProducts.map((product, index) => (
                     <tr key={`${product.orderId}-${product.productId}-${index}`}>
@@ -578,6 +619,7 @@ const filteredProducts = products.filter(product => {
                       </td>
                       <td>{product.productPrice}</td>
                       <td>{product.totalQuantity}</td>
+<<<<<<< HEAD
                       <td>{product.paymentMethod}</td>
                       <td>
                         <span
@@ -594,6 +636,8 @@ const filteredProducts = products.filter(product => {
                         </span>
                       </td>
                       <td>{product.purchaseDate ? new Date(product.purchaseDate).toLocaleDateString("en-IN") : "N/A"}</td>
+=======
+>>>>>>> 19f2e96d4d8e2d03c71436e644200f6cb02386e1
                       <td>
                         <button
                           className="btn btn-sm btn-outline-info"
