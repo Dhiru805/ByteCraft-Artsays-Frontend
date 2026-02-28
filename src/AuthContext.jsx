@@ -1,9 +1,12 @@
 // src/AuthContext.js
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
+import Axios from "axios";
 
 const AuthContext = createContext();
+
+const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001/api";
 
 export const AuthProvider = ({ children }) => {
   const [userType, setUserType] = useState(
@@ -22,6 +25,22 @@ export const AuthProvider = ({ children }) => {
     () => localStorage.getItem("userId") || null
   );
 
+  const refreshToken = useCallback(async () => {
+    try {
+      const refreshRes = await Axios.get(`${baseURL}/user/refresh`, {
+        withCredentials: true,
+      });
+      const { accessToken } = refreshRes.data;
+      localStorage.setItem("token", accessToken);
+      setIsAuthenticated(true);
+      return accessToken;
+    } catch (error) {
+      console.error("Failed to refresh token", error);
+      logout();
+      return null;
+    }
+  }, []);
+
   const login = (token, type, userStatus, username, firstName, lastName, userId, userrole) => {
     localStorage.setItem("token", token);
     localStorage.setItem("userType", type);
@@ -39,7 +58,20 @@ export const AuthProvider = ({ children }) => {
     setUserId(userId);
   };
 
-  const logout = (isExpired = false) => {
+  const logout = useCallback(async () => {
+    try {
+      // Call backend logout
+      const token = localStorage.getItem("token");
+      if (token) {
+        await Axios.post(`${baseURL}/user/logout`, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true
+        });
+      }
+    } catch (e) {
+      console.warn("Backend logout failed", e);
+    }
+
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     localStorage.removeItem("email");
@@ -56,12 +88,9 @@ export const AuthProvider = ({ children }) => {
     setUserType(null);
     setStatus(null);
     setUserrole(null);
+    setUserId(null);
     setIsAuthenticated(false);
-
-    if (isExpired) {
-      toast.info("Session expired after 48 hours. Please log in again.");
-    }
-  };
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -72,25 +101,30 @@ export const AuthProvider = ({ children }) => {
         const expiresIn = decoded.exp - currentTime;
 
         if (expiresIn <= 0) {
-          logout();
+          refreshToken(); // Try to refresh instead of logout
           return;
         }
 
+        // Set timer to refresh 1 minute before expiration
         const timer = setTimeout(() => {
-          logout();
-        }, expiresIn * 1000);
+          refreshToken();
+        }, (expiresIn - 60) * 1000);
 
         return () => clearTimeout(timer);
       } catch (error) {
         console.error("Error decoding token:", error);
         logout();
       }
+    } else {
+      // If no token but we might have a refresh cookie
+      // We could try to refresh once here
+      refreshToken();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, refreshToken]);
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, userType, status, userrole, userId, login, logout }}
+      value={{ isAuthenticated, userType, status, userrole, userId, login, logout, refreshToken }}
     >
       {children}
     </AuthContext.Provider>
