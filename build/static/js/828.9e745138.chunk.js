@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkartsays=self.webpackChunkartsays||[]).push([[828],{2828:(s,a,e)=>{e.r(a),e.d(a,{default:()=>t});const t={}}}]);
