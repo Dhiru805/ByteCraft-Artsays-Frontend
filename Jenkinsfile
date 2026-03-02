@@ -52,6 +52,21 @@ pipeline {
                   --network artsays-network \
                   -p 80:80 \
                   artsays-frontend
+
+                echo "⏳ Waiting for frontend to start..."
+                sleep 5
+                '''
+            }
+        }
+
+        stage('Clear Backend Prerender Cache') {
+            steps {
+                echo '🔄 Clearing backend prerender cache so new index.html is used...'
+                sh '''
+                # Tell the backend to drop its cached index.html so it re-fetches from the new container
+                curl -s -X POST http://artsays-backend-container:3001/__prerender-cache-clear || \
+                  curl -s -X POST http://localhost:3001/__prerender-cache-clear || \
+                  echo "⚠️  Cache-clear request failed (backend may not be running yet) — it will auto-refresh on next request"
                 '''
             }
         }
