@@ -6,7 +6,8 @@ import Axios from "axios";
 
 const AuthContext = createContext();
 
-const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001/api";
+const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001";
+const apiBase = baseURL.endsWith("/api") ? baseURL : `${baseURL}/api`;
 
 export const AuthProvider = ({ children }) => {
   const [userType, setUserType] = useState(
@@ -27,9 +28,10 @@ export const AuthProvider = ({ children }) => {
 
   const refreshToken = useCallback(async () => {
     try {
-      const refreshRes = await Axios.get(`${baseURL}/user/refresh`, {
-        withCredentials: true,
-      });
+        const refreshRes = await Axios.get(`${apiBase}/user/refresh`, {
+          withCredentials: true,
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        });
       const { accessToken } = refreshRes.data;
       localStorage.setItem("token", accessToken);
       setIsAuthenticated(true);
@@ -63,10 +65,10 @@ export const AuthProvider = ({ children }) => {
       // Call backend logout
       const token = localStorage.getItem("token");
       if (token) {
-        await Axios.post(`${baseURL}/user/logout`, {}, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true
-        });
+          await Axios.post(`${apiBase}/user/logout`, {}, {
+            headers: { Authorization: `Bearer ${token}`, "X-Requested-With": "XMLHttpRequest" },
+            withCredentials: true
+          });
       }
     } catch (e) {
       console.warn("Backend logout failed", e);

@@ -4,18 +4,42 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 
-export default function ChatBox({ closeBox }) {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [userName, setUserName] = useState(undefined);
-  const [isSending, setIsSending] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(true);
-  const messagesEndRef = useRef(null);
-  const greeted = useRef(false);
+  export default function ChatBox({ closeBox }) {
+    const navigate = useNavigate();
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState("");
+    const [userName, setUserName] = useState(undefined);
+    const [isSending, setIsSending] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(true);
+    const [sessionId, setSessionId] = useState(null);
+    const messagesEndRef = useRef(null);
+    const greeted = useRef(false);
 
-  const userId = typeof window !== 'undefined' ? localStorage.getItem("userId") : null;
+    const userId = typeof window !== 'undefined' ? localStorage.getItem("userId") : null;
+    const userRole = typeof window !== 'undefined' ? localStorage.getItem("userrole") : null;
+
+    useEffect(() => {
+      let id = localStorage.getItem("arty_session_id");
+      const lastActivity = localStorage.getItem("arty_last_activity");
+      
+      // If 15 minutes passed since last activity, clear session
+      if (lastActivity && Date.now() - parseInt(lastActivity) > 15 * 60 * 1000) {
+        id = null;
+        localStorage.removeItem("arty_session_id");
+        localStorage.removeItem("arty_last_activity");
+      }
+
+      if (!id) {
+        id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        localStorage.setItem("arty_session_id", id);
+      }
+      setSessionId(id);
+      localStorage.setItem("arty_last_activity", Date.now().toString());
+    }, []);
+
 
   useEffect(() => {
     let mounted = true;
@@ -37,8 +61,33 @@ export default function ChatBox({ closeBox }) {
   }, [userId]);
 
     useEffect(() => {
+      if (!sessionId) return;
+      
+      const fetchHistory = async () => {
+        try {
+          const { data } = await axios.get(`http://localhost:3001/api/gemini/session/${sessionId}`);
+          if (data?.messages?.length > 0) {
+            const formatted = data.messages.map(m => ({
+              sender: m.role === 'arty' ? 'bot' : 'user',
+              text: m.text,
+              link: m.link,
+              time: m.timestamp
+            }));
+            setMessages(formatted);
+            greeted.current = true; // Skip greeting if history exists
+            setShowSuggestions(false);
+          }
+        } catch (err) {
+          console.error("Failed to fetch chat history:", err);
+        }
+      };
+      
+      fetchHistory();
+    }, [sessionId]);
+
+    useEffect(() => {
       if (userName === undefined) return;
-      if (greeted.current) return;
+      if (greeted.current || messages.length > 0) return;
       greeted.current = true;
   
       const greeting = userName 
@@ -46,7 +95,7 @@ export default function ChatBox({ closeBox }) {
         : "Hello! I'm Arty, your intelligent assistant for Artsays. How can I help you with our art collection or products today?";
       
       setMessages([{ sender: 'bot', text: greeting, time: new Date() }]);
-    }, [userName]);
+    }, [userName, messages.length]);
 
     useEffect(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -60,21 +109,44 @@ export default function ChatBox({ closeBox }) {
       setMessages((m) => [...m, { sender: 'user', text, time: new Date() }]);
       setIsSending(true);
       setShowSuggestions(false);
+      localStorage.setItem("arty_last_activity", Date.now().toString());
   
       try {
         const res = await axios.post("http://localhost:3001/api/gemini/ask", {
-          question: text
-        });
-        const reply = res.data?.answer || "still i'm in learning stage, i'm improving my self";
-        // tiny delay
-        await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
-        setMessages((m) => [...m, { sender: 'bot', text: reply, time: new Date() }]);
-      } catch (e) {
-        setMessages((m) => [...m, { sender: 'bot', text: "still i'm in learning stage, i'm improving my self", time: new Date() }]);
+            question: text,
+            sessionId: sessionId || localStorage.getItem("arty_session_id"),
+            userId: userId || null,
+            userRole: userRole || "guest"
+          }, {
+            headers: { "x-requested-with": "XMLHttpRequest" }
+          });
+          const reply = res.data?.answer || "I'm still learning and couldn't find the right information for this yet. You can raise a support ticket or talk to our team for accurate help.";
+          const link = res.data?.link || null;
+          // tiny delay
+          await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
+          setMessages((m) => [...m, { sender: 'bot', text: reply, link, time: new Date() }]);
+        } catch (e) {
+          setMessages((m) => [...m, { sender: 'bot', text: "I'm having trouble connecting right now. Please try again in a moment, or contact our support team directly.", time: new Date() }]);
       } finally {
         setIsSending(false);
       }
     };
+
+  const handleCloseChat = async () => {
+    try {
+      const sid = sessionId || localStorage.getItem("arty_session_id");
+      if (sid) {
+        await axios.post("http://localhost:3001/api/gemini/close-session", { sessionId: sid });
+      }
+    } catch (e) {
+      console.error("Failed to close Arty session:", e);
+    }
+    localStorage.removeItem("arty_session_id");
+    localStorage.removeItem("arty_last_activity");
+    setMessages([]);
+    greeted.current = false;
+    closeBox();
+  };
 
   const formatTime = (d) => d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
 
@@ -103,13 +175,23 @@ export default function ChatBox({ closeBox }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/30">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />
-              <span className="text-xs text-white">Online</span>
-            </div>
-            <button onClick={closeBox} className="text-white hover:text-white p-1">✕</button>
-          </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/30 mr-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />
+                  <span className="text-xs text-white">Online</span>
+                </div>
+                {messages.length > 1 && (
+                  <button 
+                    onClick={handleCloseChat} 
+                    className="text-[10px] bg-red-500/80 hover:bg-red-600 text-white px-2 py-1 rounded transition-colors"
+                    title="End session and clear chat"
+                  >
+                    End Chat
+                  </button>
+                )}
+                <button onClick={closeBox} className="text-white hover:text-white p-1 ml-1" title="Minimize">✕</button>
+              </div>
+
         </div>
 
         {/* Body */}
@@ -155,7 +237,17 @@ export default function ChatBox({ closeBox }) {
                             <div className="text-sm">{m.text}</div>
                           )}
 
-                          <div className="mt-1 text-[11px] text-dark opacity-80">{formatTime(m.time)}</div>
+                            <div className="mt-1 text-[11px] text-dark opacity-80">{formatTime(m.time)}</div>
+
+                            {/* Redirect button */}
+                            {m.sender === "bot" && m.link && (
+                              <button
+                                onClick={() => { navigate(m.link.url); closeBox(); }}
+                                className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#48372D] text-white hover:opacity-90 transition-opacity"
+                              >
+                                {m.link.label} →
+                              </button>
+                            )}
                         </div>
 
                         {/* User avatar */}

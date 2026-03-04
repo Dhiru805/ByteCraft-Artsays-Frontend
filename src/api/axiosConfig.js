@@ -2,7 +2,8 @@
 import Axios from "axios";
 import { toast } from "react-toastify";
 
-const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001/api";
+const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001";
+const apiBase = baseURL.endsWith("/api") ? baseURL : `${baseURL}/api`;
 
 const axiosInstance = Axios.create({
   baseURL,
@@ -37,9 +38,10 @@ axiosInstance.interceptors.response.use(
     if (status === 403 && res?.message === "Token expired" && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshRes = await Axios.get(`${baseURL}/user/refresh`, {
-          withCredentials: true,
-        });
+          const refreshRes = await Axios.get(`${apiBase}/user/refresh`, {
+            withCredentials: true,
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+          });
         const { accessToken } = refreshRes.data;
         localStorage.setItem("token", accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
