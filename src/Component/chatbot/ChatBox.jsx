@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -7,37 +6,52 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 
-  export default function ChatBox({ closeBox }) {
+  export default function ChatBox({ closeBox, parentMessages, parentSetMessages, parentSessionId, endSession }) {
     const navigate = useNavigate();
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(parentMessages || []);
     const [input, setInput] = useState("");
     const [userName, setUserName] = useState(undefined);
     const [isSending, setIsSending] = useState(false);
-    const [showSuggestions, setShowSuggestions] = useState(true);
-    const [sessionId, setSessionId] = useState(null);
+    const [showSuggestions, setShowSuggestions] = useState(parentMessages?.length === 0);
+    const [sessionId, setSessionId] = useState(parentSessionId || null);
     const messagesEndRef = useRef(null);
-    const greeted = useRef(false);
+    const inputRef = useRef(null);
+    const greeted = useRef(parentMessages?.length > 0);
 
     const userId = typeof window !== 'undefined' ? localStorage.getItem("userId") : null;
     const userRole = typeof window !== 'undefined' ? localStorage.getItem("userrole") : null;
 
     useEffect(() => {
-      let id = localStorage.getItem("arty_session_id");
-      const lastActivity = localStorage.getItem("arty_last_activity");
-      
-      // If 15 minutes passed since last activity, clear session
-      if (lastActivity && Date.now() - parseInt(lastActivity) > 15 * 60 * 1000) {
-        id = null;
-        localStorage.removeItem("arty_session_id");
-        localStorage.removeItem("arty_last_activity");
+      if (parentMessages) {
+        setMessages(parentMessages);
+        if (parentMessages.length > 0) {
+          setShowSuggestions(false);
+          greeted.current = true;
+        } else {
+          greeted.current = false;
+        }
       }
+    }, [parentMessages]);
 
-      if (!id) {
-        id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        localStorage.setItem("arty_session_id", id);
+    useEffect(() => {
+      if (parentSessionId) setSessionId(parentSessionId);
+    }, [parentSessionId]);
+
+    // Update parent state whenever messages change locally
+    useEffect(() => {
+      // Only sync if messages were updated locally (e.g. sent a message or received response)
+      // and they are actually different from what the parent has.
+      if (messages.length > (parentMessages?.length || 0)) {
+        parentSetMessages(messages);
       }
-      setSessionId(id);
-      localStorage.setItem("arty_last_activity", Date.now().toString());
+    }, [messages, parentSetMessages, parentMessages?.length]);
+
+    useEffect(() => {
+      // Small delay to ensure any mount animations don't steal focus
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+      return () => clearTimeout(timer);
     }, []);
 
 
@@ -91,11 +105,22 @@ import { useNavigate } from "react-router-dom";
       greeted.current = true;
   
       const greeting = userName 
-        ? `Hey ${userName}! I'm Arty, your intelligent assistant for Artsays. How can I help you with our art collection or products today?`
-        : "Hello! I'm Arty, your intelligent assistant for Artsays. How can I help you with our art collection or products today?";
+        ? `Hey ${userName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}! Arty Here. Ready To Discover Your Next Art Crush?`
+        : "Hi! I'm Arty. What Kind Of Art Speaks To You Today?";
       
-      setMessages([{ sender: 'bot', text: greeting, time: new Date() }]);
-    }, [userName, messages.length]);
+      const newMsg = { sender: 'bot', text: greeting, time: new Date() };
+      setMessages([newMsg]);
+
+      // Save greeting to DB if logged in
+      if (userId && sessionId) {
+        axios.post("http://localhost:3001/api/gemini/save-message", {
+          sessionId,
+          role: "arty",
+          text: greeting,
+          userId: userId
+        }).catch(err => console.warn("Failed to save greeting:", err));
+      }
+    }, [userName, messages.length, userId, sessionId]);
 
     useEffect(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -132,20 +157,8 @@ import { useNavigate } from "react-router-dom";
       }
     };
 
-  const handleCloseChat = async () => {
-    try {
-      const sid = sessionId || localStorage.getItem("arty_session_id");
-      if (sid) {
-        await axios.post("http://localhost:3001/api/gemini/close-session", { sessionId: sid });
-      }
-    } catch (e) {
-      console.error("Failed to close Arty session:", e);
-    }
-    localStorage.removeItem("arty_session_id");
-    localStorage.removeItem("arty_last_activity");
-    setMessages([]);
-    greeted.current = false;
-    closeBox();
+  const handleCloseChat = () => {
+    endSession();
   };
 
   const formatTime = (d) => d ? new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
@@ -307,7 +320,13 @@ import { useNavigate } from "react-router-dom";
         {/* Footer / Input */}
         <div className="px-2 md:px-4 py-2 md:py-3 bg-[#48372D] to-transparent">
           <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex items-center gap-2 md:gap-3">
-            <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Arty About Artworks, COA, Authentication..." className="flex-1 px-4 py-2 rounded-full bg-white/6 placeholder:text-white/50 text-dark text-sm outline-none" />
+            <input 
+              ref={inputRef}
+              value={input} 
+              onChange={(e) => setInput(e.target.value)} 
+              placeholder="Ask Arty About Artworks, COA ..." 
+              className="flex-1 px-4 py-2 rounded-full bg-white/6 placeholder:text-white/50 text-dark text-sm outline-none" 
+            />
             <button type="submit" disabled={!input.trim() || isSending} className={`px-4 py-2 rounded-full text-sm font-semibold ${!input.trim() || isSending ? 'bg-[#ffffff] text-dark cursor-not-allowed' : 'bg-rose-500 text-white shadow-md'}`}>
               {isSending ? 'Working…' : 'Send'}
             </button>
@@ -324,5 +343,4 @@ import { useNavigate } from "react-router-dom";
     </div>
   );
 }
-
 
