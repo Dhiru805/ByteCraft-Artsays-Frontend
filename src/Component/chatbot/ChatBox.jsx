@@ -12,7 +12,13 @@ import { useNavigate } from "react-router-dom";
     const [input, setInput] = useState("");
     const [userName, setUserName] = useState(undefined);
     const [isSending, setIsSending] = useState(false);
-    const [showSuggestions, setShowSuggestions] = useState(parentMessages?.length === 0);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
+    useEffect(() => {
+      // Show suggestions only if there are no messages from the user yet
+      const hasUserMessages = messages.some(m => m.sender === 'user');
+      setShowSuggestions(!hasUserMessages);
+    }, [messages]);
     const [sessionId, setSessionId] = useState(parentSessionId || null);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
@@ -25,7 +31,6 @@ import { useNavigate } from "react-router-dom";
       if (parentMessages) {
         setMessages(parentMessages);
         if (parentMessages.length > 0) {
-          setShowSuggestions(false);
           greeted.current = true;
         } else {
           greeted.current = false;
@@ -80,16 +85,15 @@ import { useNavigate } from "react-router-dom";
       const fetchHistory = async () => {
         try {
           const { data } = await axios.get(`http://localhost:3001/api/gemini/session/${sessionId}`);
-          if (data?.messages?.length > 0) {
-            const formatted = data.messages.map(m => ({
-              sender: m.role === 'arty' ? 'bot' : 'user',
-              text: m.text,
-              link: m.link,
-              time: m.timestamp
-            }));
-            setMessages(formatted);
+            if (data?.messages?.length > 0) {
+              const formatted = data.messages.map(m => ({
+                sender: m.role === 'arty' ? 'bot' : 'user',
+                text: m.text,
+                links: m.links || (m.link ? [m.link] : []),
+                time: m.timestamp
+              }));
+              setMessages(formatted);
             greeted.current = true; // Skip greeting if history exists
-            setShowSuggestions(false);
           }
         } catch (err) {
           console.error("Failed to fetch chat history:", err);
@@ -112,14 +116,15 @@ import { useNavigate } from "react-router-dom";
       setMessages([newMsg]);
 
       // Save greeting to DB if logged in
-      if (userId && sessionId) {
-        axios.post("http://localhost:3001/api/gemini/save-message", {
-          sessionId,
-          role: "arty",
-          text: greeting,
-          userId: userId
-        }).catch(err => console.warn("Failed to save greeting:", err));
-      }
+        if (userId && sessionId) {
+          axios.post("http://localhost:3001/api/gemini/save-message", {
+            sessionId,
+            role: "arty",
+            text: greeting,
+            userId: userId,
+            links: []
+          }).catch(err => console.warn("Failed to save greeting:", err));
+        }
     }, [userName, messages.length, userId, sessionId]);
 
     useEffect(() => {
@@ -133,7 +138,6 @@ import { useNavigate } from "react-router-dom";
   
       setMessages((m) => [...m, { sender: 'user', text, time: new Date() }]);
       setIsSending(true);
-      setShowSuggestions(false);
       localStorage.setItem("arty_last_activity", Date.now().toString());
   
       try {
@@ -145,11 +149,11 @@ import { useNavigate } from "react-router-dom";
           }, {
             headers: { "x-requested-with": "XMLHttpRequest" }
           });
-          const reply = res.data?.answer || "I'm still learning and couldn't find the right information for this yet. You can raise a support ticket or talk to our team for accurate help.";
-          const link = res.data?.link || null;
-          // tiny delay
-          await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
-          setMessages((m) => [...m, { sender: 'bot', text: reply, link, time: new Date() }]);
+            const reply = res.data?.answer || "I'm still learning and couldn't find the right information for this yet. You can raise a support ticket or talk to our team for accurate help.";
+            const links = res.data?.links || [];
+            // tiny delay
+            await new Promise((r) => setTimeout(r, 350 + Math.random() * 350));
+            setMessages((m) => [...m, { sender: 'bot', text: reply, links, time: new Date() }]);
         } catch (e) {
           setMessages((m) => [...m, { sender: 'bot', text: "I'm having trouble connecting right now. Please try again in a moment, or contact our support team directly.", time: new Date() }]);
       } finally {
@@ -188,22 +192,22 @@ import { useNavigate } from "react-router-dom";
             </div>
           </div>
 
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/30 mr-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />
-                  <span className="text-xs text-white">Online</span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-black/30 mr-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm" />
+                    <span className="text-xs text-white">Online</span>
+                  </div>
+                  {messages.length > 1 && (
+                    <button 
+                      onClick={handleCloseChat}
+                      className="text-[10px] bg-red-500/80 hover:bg-red-600 text-white px-2 py-1 rounded transition-colors"
+                      title="End session and clear chat"
+                    >
+                      End Chat
+                    </button>
+                  )}
+                  <button onClick={closeBox} className="text-white hover:text-white p-1 ml-1" title="Minimize">✕</button>
                 </div>
-                {messages.length > 1 && (
-                  <button 
-                    onClick={handleCloseChat} 
-                    className="text-[10px] bg-red-500/80 hover:bg-red-600 text-white px-2 py-1 rounded transition-colors"
-                    title="End session and clear chat"
-                  >
-                    End Chat
-                  </button>
-                )}
-                <button onClick={closeBox} className="text-white hover:text-white p-1 ml-1" title="Minimize">✕</button>
-              </div>
 
         </div>
 
@@ -217,14 +221,14 @@ import { useNavigate } from "react-router-dom";
                   <motion.div key={idx} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`flex ${user ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[78%] ${user ? 'text-right' : 'text-left'}`}>
                       <div
-                        className={`inline-flex items-start gap-3 p-2 md:p-3 rounded-2xl ${user
-                          ? "bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shadow-lg"
-                          : "bg-white/6 backdrop-blur-sm border border-dark text-dark"
-                          }`}
+                          className={`inline-flex items-start gap-3 p-2 md:p-3 rounded-2xl ${user
+                            ? "bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shadow-lg"
+                            : "bg-white/6 backdrop-blur-sm border border-slate-200 text-slate-900"
+                            }`}
                       >
                         {/* Bot avatar (Arty) */}
                         {!user && (
-                          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-rose-500 flex items-center justify-center border border-dark">
+                          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-rose-500 flex items-center justify-center border border-slate-200">
                             <img
                               src="/assets/profile/Arty.png"
                               alt="Arty"
@@ -250,17 +254,22 @@ import { useNavigate } from "react-router-dom";
                             <div className="text-sm">{m.text}</div>
                           )}
 
-                            <div className="mt-1 text-[11px] text-dark opacity-80">{formatTime(m.time)}</div>
+                            <div className="mt-1 text-[11px] text-slate-900 opacity-80">{formatTime(m.time)}</div>
 
-                            {/* Redirect button */}
-                            {m.sender === "bot" && m.link && (
-                              <button
-                                onClick={() => { navigate(m.link.url); closeBox(); }}
-                                className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#48372D] text-white hover:opacity-90 transition-opacity"
-                              >
-                                {m.link.label} →
-                              </button>
-                            )}
+                              {/* Redirect buttons */}
+                              {m.sender === "bot" && m.links && m.links.length > 0 && (
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                  {m.links.map((lnk, lIdx) => (
+                                    <button
+                                      key={lIdx}
+                                      onClick={() => { navigate(lnk.url); closeBox(); }}
+                                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#48372D] text-white hover:opacity-90 transition-opacity"
+                                    >
+                                      {lnk.label} →
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
                         </div>
 
                         {/* User avatar */}
@@ -289,7 +298,7 @@ import { useNavigate } from "react-router-dom";
                   <div className="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white font-semibold"><img
                     src="/assets/profile/Arty.png"
                     alt="Arty"
-                    className="w-[32px] h-[32px] object-cover block border border-dark rounded-full"
+                    className="w-[32px] h-[32px] object-cover block border border-slate-200 rounded-full"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
                       e.currentTarget.src = "/assets/profile/default-arty.png";
@@ -310,7 +319,7 @@ import { useNavigate } from "react-router-dom";
 
         {/* Suggestions */}
         {showSuggestions && (
-          <div className="px-2 py-2 border-t border-dark bg-[#ffffff] flex gap-2 flex-wrap">
+          <div className="px-2 py-2 border-t border-slate-200 bg-[#ffffff] flex gap-2 flex-wrap">
             {suggestions.map((s) => (
               <button key={s} onClick={() => sendMessage(s)} className="text-xs px-2 py-1 rounded-full border border-gray-300 hover:!border-gray-600 text-gray-700">{s}</button>
             ))}
@@ -325,21 +334,21 @@ import { useNavigate } from "react-router-dom";
               value={input} 
               onChange={(e) => setInput(e.target.value)} 
               placeholder="Ask Arty About Artworks, COA ..." 
-              className="flex-1 px-4 py-2 rounded-full bg-white/6 placeholder:text-white/50 text-dark text-sm outline-none" 
+              className="flex-1 px-4 py-2 rounded-full bg-white/6 placeholder:text-white/50 text-white text-sm outline-none" 
             />
-            <button type="submit" disabled={!input.trim() || isSending} className={`px-4 py-2 rounded-full text-sm font-semibold ${!input.trim() || isSending ? 'bg-[#ffffff] text-dark cursor-not-allowed' : 'bg-rose-500 text-white shadow-md'}`}>
+            <button type="submit" disabled={!input.trim() || isSending} className={`px-4 py-2 rounded-full text-sm font-semibold ${!input.trim() || isSending ? 'bg-[#ffffff] text-slate-900 cursor-not-allowed' : 'bg-rose-500 text-white shadow-md'}`}>
               {isSending ? 'Working…' : 'Send'}
             </button>
           </form>
         </div>
       </motion.div>
 
-      <style jsx>{`
-        .animate-bounce { animation: chat-bounce 1s infinite; }
-        .delay-150 { animation-delay: 0.15s; }
-        .delay-300 { animation-delay: 0.3s; }
-        @keyframes chat-bounce { 0%,80%,100%{ transform: translateY(0); opacity: .6 } 40%{ transform: translateY(-6px); opacity: 1 } }
-      `}</style>
+        <style>{`
+          .animate-bounce { animation: chat-bounce 1s infinite; }
+          .delay-150 { animation-delay: 0.15s; }
+          .delay-300 { animation-delay: 0.3s; }
+          @keyframes chat-bounce { 0%,80%,100%{ transform: translateY(0); opacity: .6 } 40%{ transform: translateY(-6px); opacity: 1 } }
+        `}</style>
     </div>
   );
 }
