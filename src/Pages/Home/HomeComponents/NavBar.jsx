@@ -25,6 +25,7 @@ import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
 import NotificationDropdown from "../../../Component/Notifications/NotificationDropdown";
 import SellerNotificationDropdown from "../../../Component/Notifications/SellerNotificationDropdown";
+import SuperAdminNotificationDropdown from "../../../Component/Notifications/SuperAdminNotificationDropdown";
 import { useAuth } from "../../../AuthContext";
 import axiosInstance from "../../../api/axiosConfig";
 
@@ -702,10 +703,13 @@ const NavBar = () => {
                 </>
               )}
 
-            {/* ── Super-Admin: blog */}
-            {isLoggedIn && Usertype === "Super-Admin" && (
-              <a href="/blogs" className="nav-blog-link">Blog</a>
-            )}
+              {/* ── Super-Admin: bell + blog */}
+              {isLoggedIn && Usertype === "Super-Admin" && (
+                <>
+                  <SuperAdminNotificationDropdown />
+                  <a href="/blogs" className="nav-blog-link">Blog</a>
+                </>
+              )}
 
             {/* ── Avatar dropdown */}
             {isLoggedIn && (
