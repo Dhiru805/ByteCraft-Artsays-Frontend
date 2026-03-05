@@ -97,8 +97,8 @@ export default function ArtistDashboard() {
   useEffect(() => {
     if (!userId) return;
 
-    const token = localStorage.getItem("token");
-    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+      const token = localStorage.getItem("token");
+      const authHeaders = token ? { Authorization: `Bearer ${token}`, "x-requested-with": "XMLHttpRequest" } : { "x-requested-with": "XMLHttpRequest" };
 
     const load = async () => {
       setLoading(true);

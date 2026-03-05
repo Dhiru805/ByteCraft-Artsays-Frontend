@@ -11,18 +11,17 @@ export const handleLogout = (navigate, logout) => {
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
     confirmButtonText: 'Yes, logout!',
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        // Revoke current session on backend
-        await axiosInstance.post("/user/logout");
-      } catch (error) {
-        console.error("Error revoking session on logout:", error);
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosInstance.post("/user/logout");
+        } catch (error) {
+          console.error("Error revoking session on logout:", error);
+        }
+
+        logout();
+        toast.success("Logout Successful");
+        navigate("/login", { replace: true });
       }
-      
-      logout(); 
-      toast.success("Logout Successful");
-      navigate("/login", { replace: true });
-    }
-  });
+    });
 };

@@ -46,13 +46,15 @@ axiosInstance.interceptors.response.use(
         localStorage.setItem("token", accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        // Refresh token failed or expired
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "/login";
-        return Promise.reject(refreshError);
-      }
+        } catch (refreshError) {
+          // Refresh token failed or expired — only redirect if not already on login
+          if (!window.location.pathname.includes("/login")) {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = "/login";
+          }
+          return Promise.reject(refreshError);
+        }
     }
 
     // ✅ Handle Session Revocation (Immediate Logout)

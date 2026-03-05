@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import axios from "../../../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { API_URL } from "../../../../Constants/index";
 

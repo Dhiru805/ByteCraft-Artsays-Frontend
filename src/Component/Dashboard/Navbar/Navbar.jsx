@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { handleLogout } from '../LogoutConfirmation';
 import { useAuth } from '../../../AuthContext';
 import SellerNotificationDropdown from '../../Notifications/SellerNotificationDropdown';
+import SuperAdminNotificationDropdown from '../../Notifications/SuperAdminNotificationDropdown';
 
 const Navbar = () => {
   const { handleToggleSidebar } = useSidebarToggle();
@@ -53,12 +54,19 @@ const SearchForm = () => (
   </form>
 );
 
-const NavbarMenu = ({ navigate, logout }) => (
-    <div id="navbar-menu">
-      <ul className="nav navbar-nav" style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
-          <li style={{ display: "flex", alignItems: "center" }}>
-            <SellerNotificationDropdown />
-          </li>
+const NavbarMenu = ({ navigate, logout }) => {
+  const userType = localStorage.getItem("userType");
+
+  return (
+      <div id="navbar-menu">
+        <ul className="nav navbar-nav" style={{ display: "flex", alignItems: "center", flexDirection: "row" }}>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              {userType === "Super-Admin" ? (
+                <SuperAdminNotificationDropdown />
+              ) : (
+                <SellerNotificationDropdown />
+              )}
+            </li>
           <li style={{ display: "flex", alignItems: "center" }}>
             <a 
               href="#" 
@@ -79,8 +87,8 @@ const NavbarMenu = ({ navigate, logout }) => (
             </a>
           </li>
         </ul>
-    </div>
-
-);
+      </div>
+  );
+};
 
 export default Navbar;

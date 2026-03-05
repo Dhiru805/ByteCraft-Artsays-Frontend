@@ -25,6 +25,8 @@ import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import HeaderSkeleton from "../../../Component/Skeleton/Home/HeaderSkeleton";
 import NotificationDropdown from "../../../Component/Notifications/NotificationDropdown";
 import SellerNotificationDropdown from "../../../Component/Notifications/SellerNotificationDropdown";
+import { useAuth } from "../../../AuthContext";
+import axiosInstance from "../../../api/axiosConfig";
 
 // ─────────────────────────────────────────────────────────────
 // MEGA AD SLIDER
@@ -469,6 +471,7 @@ const NavBar = () => {
   const userrole = localStorage.getItem("userrole");
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
   const isOnCommunity = location.pathname.startsWith("/artsays-community");
 
   const hasValidUsername =
@@ -562,10 +565,13 @@ const NavBar = () => {
     else if (Usertype === "Super-Admin") navigate("/Super-Admin/dashboard");
   };
 
-  const handleSignOut = () => {
-    ["token", "userType", "email", "userId", "profilePhoto", "username", "firstName", "lastName"]
-      .forEach(k => localStorage.removeItem(k));
-    window.dispatchEvent(new Event("profilePhotoUpdated"));
+  const handleSignOut = async () => {
+    try {
+      await axiosInstance.post("/user/logout");
+    } catch (e) {
+      console.warn("Backend logout failed", e);
+    }
+    logout();
     window.location.href = "/";
   };
 

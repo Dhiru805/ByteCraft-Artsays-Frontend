@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import axios from "../../../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { FaWallet, FaCoins, FaExchangeAlt, FaArrowUp, FaArrowDown, FaCopy, FaDownload, FaGift, FaUsers, FaCheckCircle, FaHistory, FaChartLine, FaPlus } from "react-icons/fa";
 import BuyerWalletSkeleton from "../../../Skeleton/wallet/BuyerWalletSkeleton";

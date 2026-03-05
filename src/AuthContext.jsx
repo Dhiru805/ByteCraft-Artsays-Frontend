@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
-import Axios from "axios";
+import Axios from "./api/axiosConfig";
 
 const AuthContext = createContext();
 
@@ -26,18 +26,15 @@ export const AuthProvider = ({ children }) => {
     () => localStorage.getItem("userId") || null
   );
 
-  const refreshToken = useCallback(async () => {
+    const refreshToken = useCallback(async () => {
     try {
-        const refreshRes = await Axios.get(`${apiBase}/user/refresh`, {
-          withCredentials: true,
-          headers: { "X-Requested-With": "XMLHttpRequest" },
-        });
+        const refreshRes = await Axios.get(`${apiBase}/user/refresh`);
       const { accessToken } = refreshRes.data;
       localStorage.setItem("token", accessToken);
       setIsAuthenticated(true);
       return accessToken;
     } catch (error) {
-      console.error("Failed to refresh token", error);
+      console.error("Failed to refresh token", error?.response?.data || error?.message || error);
       logout();
       return null;
     }
@@ -60,20 +57,7 @@ export const AuthProvider = ({ children }) => {
     setUserId(userId);
   };
 
-  const logout = useCallback(async () => {
-    try {
-      // Call backend logout
-      const token = localStorage.getItem("token");
-      if (token) {
-          await Axios.post(`${apiBase}/user/logout`, {}, {
-            headers: { Authorization: `Bearer ${token}`, "X-Requested-With": "XMLHttpRequest" },
-            withCredentials: true
-          });
-      }
-    } catch (e) {
-      console.warn("Backend logout failed", e);
-    }
-
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     localStorage.removeItem("email");
@@ -117,11 +101,8 @@ export const AuthProvider = ({ children }) => {
         console.error("Error decoding token:", error);
         logout();
       }
-    } else {
-      // If no token but we might have a refresh cookie
-      // We could try to refresh once here
-      refreshToken();
     }
+    // No token and no prior session — do nothing; user must log in explicitly.
   }, [isAuthenticated, refreshToken]);
 
   return (

@@ -124,6 +124,7 @@ import SellerWallet from "../Component/Dashboard/SellerDashboard/Wallet/SellerWa
 import SuperAdminDashboard from "../Component/Dashboard/Super-AdminDashboard/Dashboard/MainContent";
 import SuperAdminBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/BlogRequest";
 import SuperAdminBlogPost from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/BlogPost";
+import SuperAdminNotifications from "../Component/Dashboard/Super-AdminDashboard/Notifications/Notifications";
 import SuperAdminViewBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/ViewBlog";
 import SuperAdminUpdateBlog from "../Component/Dashboard/Super-AdminDashboard/Blog/SuperAdminBlog/UpdateBlogList";
 import SuperAdminProductInfo from "../Component/Dashboard/Super-AdminDashboard/ProductDetails/Productinfo";
@@ -803,9 +804,10 @@ const AppRoutes = () => {
         }
       >
 
-        <Route index element={<SuperAdminDashboard />} />
-        <Route path="dashboard" element={<SuperAdminDashboard />} />
-        <Route path="profile" element={<UserProfile />} />
+          <Route index element={<SuperAdminDashboard />} />
+          <Route path="dashboard" element={<SuperAdminDashboard />} />
+          <Route path="notifications" element={<SuperAdminNotifications />} />
+          <Route path="profile" element={<UserProfile />} />
         <Route path="blog" element={<SuperAdminBlog />} />
         <Route path="blog/create-blog" element={<SuperAdminBlogPost />} />
         <Route path="blog/view-blog" element={<SuperAdminViewBlog />} />
