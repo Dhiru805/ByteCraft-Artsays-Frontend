@@ -21,7 +21,7 @@ const[loading,setLoading]=useState(true)
         response.data &&
         Array.isArray(response.data.data)
       ) {
-        setSubGSTSettings(response.data.data);
+          setSubGSTSettings([...response.data.data].reverse());
       } else {
         console.error("Invalid response format or error in response");
       }

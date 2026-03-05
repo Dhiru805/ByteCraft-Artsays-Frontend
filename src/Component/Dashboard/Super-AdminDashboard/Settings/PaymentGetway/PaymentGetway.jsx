@@ -10,6 +10,7 @@ export default function PaymentGatewaySettings() {
   const [settings, setSettings] = useState({
     key: "",
     salt: "",
+    env: "test",
   });
 
   const [loading, setLoading] = useState(true);
@@ -23,10 +24,11 @@ export default function PaymentGatewaySettings() {
 
       if (res.data && !res.data.hasError && res.data.data) {
         const data = res.data.data;
-        setSettings({
-          key: data.key || "",
-          salt: data.salt || "",
-        });
+          setSettings({
+            key: data.key || "",
+            salt: data.salt || "",
+            env: data.env || "test",
+          });
       }
     } catch (err) {
       console.error(err);
@@ -50,9 +52,9 @@ export default function PaymentGatewaySettings() {
 
   const handleSave = async () => {
     if (!settings.key.trim() || !settings.salt.trim()) {
-      toast.error("Both Key and Salt are required");
-      return;
-    }
+        toast.error("Both Key and Salt are required");
+        return;
+      }
 
     setSaving(true);
     try {
@@ -164,10 +166,27 @@ export default function PaymentGatewaySettings() {
                     </div>
                   </div>
                 </div>
+
+                  {/* Environment */}
+                  <div className="col-md-6">
+                    <div className="form-group mb-3">
+                      <label className="form-label">
+                        Environment <span className="text-danger">*</span>
+                      </label>
+                      <select
+                        name="env"
+                        value={settings.env}
+                        onChange={handleChange}
+                        className="form-control"
+                      >
+                        <option value="test">Test</option>
+                        <option value="prod">Production</option>
+                      </select>
+                    </div>
+                  </div>
               </div>
 
-              {}
-              <div className="text-end mt-4">
+                <div className="text-end mt-4">
                 <button
                   type="button"
                   className="btn btn-primary"

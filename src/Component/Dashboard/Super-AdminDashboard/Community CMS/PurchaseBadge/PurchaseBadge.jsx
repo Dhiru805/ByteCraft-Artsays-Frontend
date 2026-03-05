@@ -14,7 +14,7 @@ const PurchaseBadge = () => {
       try {
         const res = await getAPI("/api/admin/badges", {}, true);
         if (res.data.success) {
-          setUsers(res.data.users || []);
+          setUsers([...(res.data.users || [])].reverse());
         } else {
           toast.error(res.data.message || "Failed to fetch badge users");
         }

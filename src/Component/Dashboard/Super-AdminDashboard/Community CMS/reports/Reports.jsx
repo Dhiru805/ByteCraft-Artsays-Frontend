@@ -16,7 +16,7 @@ function Reports() {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
 
   const navigate = useNavigate();
 
@@ -24,8 +24,8 @@ function Reports() {
     setLoading(true);
     try {
       const response = await getAPI("/api/admin/reports", {}, true);
-      if (response.data?.success) {
-        setReports(response.data.reports || []);
+        if (response.data?.success) {
+          setReports([...(response.data.reports || [])].reverse());
       } else {
         toast.error(response.data?.message || "Failed to fetch reports");
       }
@@ -46,18 +46,21 @@ function Reports() {
     return username.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const totalPages = Math.ceil(filteredReports.length / entriesPerPage);
-  const displayedReports = filteredReports.slice(
-    (currentPage - 1) * entriesPerPage,
-    currentPage * entriesPerPage
-  );
-
-  const groupedReports = displayedReports.reduce((groups, report) => {
+  // Group ALL filtered reports by user first, then paginate the grouped rows
+  const allGrouped = filteredReports.reduce((groups, report) => {
     const userId = report.reportedUser?._id || "unknown";
     if (!groups[userId]) groups[userId] = [];
     groups[userId].push(report);
     return groups;
   }, {});
+
+  const groupedEntries = Object.entries(allGrouped);
+  const totalPages = Math.ceil(groupedEntries.length / entriesPerPage);
+  const paginatedEntries = groupedEntries.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
+  const groupedReports = Object.fromEntries(paginatedEntries);
 
   const handleSuspendUser = async (userId, permanent = false) => {
     const days = suspensionDays[userId] || 3;
@@ -329,15 +332,15 @@ function Reports() {
 
             {/* Pagination */}
             <div className="pagination d-flex justify-content-between mt-4">
-              <span>
-                Showing{" "}
-                {filteredReports.length === 0
-                  ? 0
-                  : (currentPage - 1) * entriesPerPage + 1}{" "}
-                to{" "}
-                {Math.min(currentPage * entriesPerPage, filteredReports.length)}{" "}
-                of {filteredReports.length} entries
-              </span>
+                <span>
+                  Showing{" "}
+                  {groupedEntries.length === 0
+                    ? 0
+                    : (currentPage - 1) * entriesPerPage + 1}{" "}
+                  to{" "}
+                  {Math.min(currentPage * entriesPerPage, groupedEntries.length)}{" "}
+                  of {groupedEntries.length} entries
+                </span>
               <ul className="pagination d-flex">
                 <li
                   className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
