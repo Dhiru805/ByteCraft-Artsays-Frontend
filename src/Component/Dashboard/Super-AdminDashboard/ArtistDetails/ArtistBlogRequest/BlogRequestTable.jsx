@@ -27,7 +27,7 @@ const [loading,setLoading]=useState(false);
             try {
                 const result = await getAPI("/Blog-Post/all-blogs", {}, true, false);
                 if (result.data) {
-                    setBlogs(result.data.blogs);
+                    setBlogs([...result.data.blogs].reverse());
                     console.log(result.data.blogs);
 
                 }

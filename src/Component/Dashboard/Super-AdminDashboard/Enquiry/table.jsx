@@ -597,7 +597,7 @@ const EnquiryTable = () => {
     try {
       const response = await getAPI("/api/enquiry");
       const data = Array.isArray(response.data.data) ? response.data.data : [];
-      setEnquiries(data);
+      setEnquiries([...data].reverse());
     } catch (error) {
       console.error("Error fetching enquiries:", error);
       toast.error(error.response?.data?.message || "Failed to fetch enquiries");

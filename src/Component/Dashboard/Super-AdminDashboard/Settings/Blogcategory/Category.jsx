@@ -15,7 +15,7 @@ const BlogCategory = () => {
         try {
             const response = await getAPI("/api/getblogcategory");
             if (!response.hasError && Array.isArray(response.data)) {
-                    setCategories(response.data);
+                    setCategories([...response.data].reverse());
             } else {
                 setCategories([]);
             }

@@ -146,19 +146,20 @@ function AdminManageTable() {
                           </td>
                         </tr>
                       ) : (
-                        admins
-                          .filter(
-                            (admin) =>
-                              admin.email !== localStorage.getItem("email") &&
-                              admin.email !== "shantu131201@gmail.com"
-                          )
-                          .slice(
+                          [...admins]
+                            .reverse()
+                            .filter(
+                              (admin) =>
+                                admin.email !== localStorage.getItem("email") &&
+                                admin.email !== "shantu131201@gmail.com"
+                            )
+                            .slice(
                             (currentPage - 1) * itemsPerPage,
                             currentPage * itemsPerPage
                           )
                           .map((admin, index) => (
                             <tr key={admin._id}>
-                              <td>{index + 1}</td>
+                              <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                               <td>
                                 <img
                                   src={

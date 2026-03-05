@@ -48,7 +48,7 @@ const BiddedProduct = () => {
       const completed = result?.data?.data;
 
       if (Array.isArray(completed)) {
-        setProducts(completed);
+        setProducts([...completed].reverse());
       } else {
         console.error("Invalid successful bidding response:", result?.data);
         setProducts([]);

@@ -55,7 +55,7 @@ const[loading,setLoading]=useState(false);
         try {
             const response = await getAPI("/api/get-data-admin");
             const buyerRequestsData = response.data.buyerRequests;
-            setBuyerRequestsAdmin(buyerRequestsData);
+            setBuyerRequestsAdmin([...(buyerRequestsData || [])].reverse());
         } catch (error) {
             console.error("Error fetching buyer requests:", error);
         }finally{

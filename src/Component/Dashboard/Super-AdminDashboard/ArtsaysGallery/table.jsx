@@ -310,7 +310,7 @@ const[loading,setLoading]=useState(true);
     try {
       const response = await getAPI("/api/artsays-gallery");
       if (response?.hasError === false) {
-        setCurationsData(response?.data?.data || []);
+        setCurationsData([...(response?.data?.data || [])].reverse());
       } else {
         console.log(response);
       }

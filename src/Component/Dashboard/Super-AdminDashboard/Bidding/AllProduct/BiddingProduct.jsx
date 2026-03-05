@@ -32,7 +32,7 @@ const fetchProducts = async () => {
         const bids = result?.data?.data;
 
         if (Array.isArray(bids)) {
-            setProducts(bids);
+            setProducts([...bids].reverse());
         } else {
             console.error("Invalid bidding response:", result.data);
             setProducts([]);

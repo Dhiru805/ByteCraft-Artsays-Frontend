@@ -129,7 +129,7 @@ const[loading,setLoading]=useState(false);
     try {
       const response = await getAPI(`/api/sub-category`, {}, true);
       if (!response.hasError && response.data && Array.isArray(response.data.data)) {
-        setSubCategories(response.data.data);
+        setSubCategories([...response.data.data]);
         console.log("Sub Category data:", response.data.data);
       }
     } catch (err) {

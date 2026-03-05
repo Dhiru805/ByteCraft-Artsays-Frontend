@@ -8,7 +8,7 @@ function Applications() {
 
     const navigate = useNavigate()
 
-    const [applicationsPerPage, setApplicationsPerPage] = useState(5)
+    const [applicationsPerPage, setApplicationsPerPage] = useState(10)
     const [searchTerm, setSearchTerm] = useState("")
     const [applications, setApplications] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
@@ -23,7 +23,7 @@ const[loading,setLoading]=useState(true)
             const response = await getAPI('/api/career-jobs-applications')
             
             if (response?.hasError === false) {
-                setApplications(response.data.data)
+                setApplications([...response.data.data].reverse())
             }
             else {
                 console.log(response)

@@ -48,7 +48,7 @@ function BuyerManageTable() {
           address: parsedAddress,
         };
       }).filter(buyer => buyer !== null);
-      setBuyers(parsedBuyers);
+      setBuyers(parsedBuyers.reverse());
     } catch (error) {
       console.error("Error fetching buyers:", error);
     } finally {

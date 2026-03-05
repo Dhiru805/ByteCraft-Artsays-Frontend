@@ -46,7 +46,7 @@ const[loading,setLoading]=useState(false);
           address: parsedAddress,
         };
       });
-      setSellers(parsedSellers);
+      setSellers(parsedSellers.reverse());
     } catch (error) {
       console.error("Error fetching sellers:", error);
     }finally{

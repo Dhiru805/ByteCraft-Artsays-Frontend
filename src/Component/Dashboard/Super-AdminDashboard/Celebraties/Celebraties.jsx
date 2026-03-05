@@ -32,7 +32,7 @@ const[loading,setLoading]=useState(true);
 
             if (response?.hasError === false) {
                 console.log(response)
-                setCelebratiesData(response?.data?.data || [])
+                setCelebratiesData([...(response?.data?.data || [])].reverse())
             }
             else {
                 console.log(response)

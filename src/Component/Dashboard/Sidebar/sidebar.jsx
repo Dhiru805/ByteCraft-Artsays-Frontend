@@ -985,33 +985,60 @@ const Sidebar = () => {
     }
   }, []);
 
-  const handleTabToggle = (label) => {
-    setExpandedTab((prev) => (prev === label ? null : label));
-    setIsActive((prev) => {
-      const reset = Object.keys(prev).reduce((acc, key) => {
-        acc[key] = false;
-        return acc;
-      }, {});
-      return { ...reset, [label]: true };
-    });
-    setActiveSubTab(null); // Reset subtab highlight
-  };
-
-  const handleSubTabClick = (path, parentLabel) => {
-    setActiveSubTab(path); // Track by path
-    setExpandedTab(parentLabel);
-    setIsActive((prev) => {
-      const reset = Object.keys(prev).reduce((acc, key) => {
-        acc[key] = false;
-        return acc;
-      }, {});
-      return { ...reset, [parentLabel]: true };
-    });
-  };
-
+    // Derive active tab/subtab purely from the current URL so page-reload works
   useEffect(() => {
+    const path = location.pathname;
+
+    let matchedParent = null;
+    let matchedSubPath = null;
+
+    for (const item of fetchedTabs) {
+        if (item.subTabs && item.subTabs.length > 0) {
+          // Exact match first, then prefix match — ensures more specific paths win
+          const matchedSub =
+            item.subTabs.find((sub) => path === sub.path) ||
+            item.subTabs.find((sub) => path.startsWith(sub.path + "/"));
+          if (matchedSub) {
+            matchedParent = item.label;
+            matchedSubPath = matchedSub.path;
+            break;
+          }
+      } else {
+        // Leaf tab — exact match or basePath prefix
+        if (
+          path === item.path ||
+          (item.basePath && path.startsWith(item.basePath + "/")) ||
+          (item.basePath && path === item.basePath)
+        ) {
+          matchedParent = item.label;
+          break;
+        }
+      }
+    }
+
+    if (matchedParent) {
+      setIsActive({ [matchedParent]: true });
+      setExpandedTab(matchedParent);
+      setActiveSubTab(matchedSubPath);
+    } else {
+      setIsActive({});
+      setExpandedTab(null);
+      setActiveSubTab(null);
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [location.pathname]);
+  }, [location.pathname, fetchedTabs]);
+
+  const handleTabToggle = (label, hasSubTabs) => {
+    // If it has subtabs, toggle expand; active will be set by location effect on navigate
+    if (hasSubTabs) {
+      setExpandedTab((prev) => (prev === label ? null : label));
+    }
+  };
+
+  const handleSubTabClick = () => {
+    // Active state will update via the location useEffect on navigation
+  };
 
 
   return (
@@ -1027,36 +1054,31 @@ const Sidebar = () => {
               className={`menu-item ${isActive[item.label] ? "active" : ""}`}
             >
               <Link
-                to={item.path}
-                onClick={() => handleTabToggle(item.label)}
-                className={item.subTabs.length ? "has-arrow" : ""}
-              >
-                <i className={`fa ${item.icon}`}></i>
-                <span>{item.label}</span>
-              </Link>
-              {item.subTabs.length > 0 && (
-                <ul
-                  className={`collapse ${
-                    expandedTab === item.label ? "in" : ""
-                  }`}
+                  to={item.path}
+                  onClick={() => handleTabToggle(item.label, item.subTabs.length > 0)}
+                  className={item.subTabs.length ? "has-arrow" : ""}
                 >
-                  {item.subTabs.map((subTab, subIndex) => (
-                    <li
-                      key={subIndex}
-                      className={activeSubTab === subTab.path ? "active" : ""}
-                    >
-                      <Link
-                        to={subTab.path}
-                        onClick={() =>
-                          handleSubTabClick(subTab.path, item.label)
-                        }
+                  <i className={`fa ${item.icon}`}></i>
+                  <span>{item.label}</span>
+                </Link>
+                {item.subTabs.length > 0 && (
+                  <ul
+                    className={`collapse ${
+                      expandedTab === item.label ? "in" : ""
+                    }`}
+                  >
+                    {item.subTabs.map((subTab, subIndex) => (
+                      <li
+                        key={subIndex}
+                        className={activeSubTab === subTab.path ? "active" : ""}
                       >
-                        {subTab.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                        <Link to={subTab.path}>
+                          {subTab.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
             </li>
           )
         )}

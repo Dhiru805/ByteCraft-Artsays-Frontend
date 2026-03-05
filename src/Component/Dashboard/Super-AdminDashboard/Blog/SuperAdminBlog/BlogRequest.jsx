@@ -22,7 +22,7 @@ const [loading,setLoading]=useState(true)
     try {
       const result = await getAPI(`/Blog-Post/user-blogs/${userId}`, {}, true, false);
       if (result.data) {
-        setBlogs(result.data.blogs);
+        setBlogs([...result.data.blogs].reverse());
       }
     } catch (error) {
       console.error("Error fetching blogs:", error);

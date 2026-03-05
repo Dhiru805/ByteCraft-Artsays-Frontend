@@ -20,17 +20,7 @@ const CategoryTable = ({
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
 
-    const sortedSubCategories = [...subCategories].sort((a, b) => {
-        const mainCatCompare = (a.mainCategoryName || "").localeCompare(b.mainCategoryName || "");
-        if (mainCatCompare !== 0) return mainCatCompare;
-
-        const catCompare = (a.categoryName || "").localeCompare(b.categoryName || "");
-        if (catCompare !== 0) return catCompare;
-
-        return (a.subCategoryName || "").localeCompare(b.subCategoryName || "");
-    });
-
-    const filteredSubCategories = sortedSubCategories.filter(subCategory => {
+    const filteredSubCategories = subCategories.filter(subCategory => {
         const matchMainCategory = (subCategory.mainCategoryName || "").toLowerCase().includes(searchTerm.toLowerCase());
         const matchCategory = (subCategory.categoryName || "").toLowerCase().includes(searchTerm.toLowerCase());
         const matchSubCategory = (subCategory.subCategoryName || "").toLowerCase().includes(searchTerm.toLowerCase());

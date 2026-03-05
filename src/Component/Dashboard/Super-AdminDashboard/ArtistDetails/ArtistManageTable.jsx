@@ -46,7 +46,7 @@ function ArtistManageTable() {
           address: parsedAddress,
         };
       });
-      setArtists(parsedArtists);
+      setArtists(parsedArtists.reverse());
     } catch (error) {
       console.error("Error fetching artists:", error);
     } finally {

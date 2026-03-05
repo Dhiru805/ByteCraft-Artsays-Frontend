@@ -20,7 +20,7 @@ const[loading,setLoading]=useState(true);
       const response = await getAPI("/api/get-certification");
       console.log("API Response:", response);
       const data = Array.isArray(response.data.data) ? response.data.data : [];
-      setCertifications(data);
+      setCertifications([...data].reverse());
     } catch (error) {
       console.error("Error fetching certifications:", error);
       setCertifications([]);

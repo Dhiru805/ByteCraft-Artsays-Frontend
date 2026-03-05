@@ -64,7 +64,7 @@ useEffect(() => {
       const approvedExhibitions = artistSellerData.filter(ex => ex.status === "Approved");
 
       // Set state
-      setExhibitions(approvedExhibitions);
+      setExhibitions([...approvedExhibitions].reverse());
     } catch (error) {
       console.error("Error fetching exhibitions:", error);
       toast.error(error.response?.data?.message || "Failed to fetch exhibitions");

@@ -36,7 +36,7 @@ const[loading,setLoading]=useState(false);
     try {
       const res = await getAPI("/api/bidding/passes", {}, true);
       const list = Array.isArray(res?.data?.data) ? res.data.data : [];
-      setPasses(list);
+        setPasses([...list].reverse());
     } catch (e) {
       setPasses([]);
     }finally{

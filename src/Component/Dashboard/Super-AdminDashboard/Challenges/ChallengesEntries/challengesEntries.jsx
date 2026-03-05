@@ -293,7 +293,7 @@ import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSk
 const ChallengesEntries = () => {
   const navigate = useNavigate();
 
-  const [applicationsPerPage, setApplicationsPerPage] = useState(5);
+  const [applicationsPerPage, setApplicationsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
   const [applications, setApplications] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -310,17 +310,9 @@ const ChallengesEntries = () => {
     try {
       const response = await getAPI("/api/challenges-applications");
 
-      if (response?.hasError === false) {
-        let data = response.data.data;
-
-        // Sort by createdAt if exists, otherwise sort by _id descending
-        if (data.length > 0 && data[0].createdAt) {
-          data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        } else {
-          data.sort((a, b) => (a._id < b._id ? 1 : -1));
-        }
-
-        setApplications(data);
+        if (response?.hasError === false) {
+          const data = [...(response.data.data || [])].reverse();
+          setApplications(data);
       } else {
         console.log(response);
       }

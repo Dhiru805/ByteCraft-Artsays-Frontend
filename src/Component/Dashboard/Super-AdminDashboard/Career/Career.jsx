@@ -22,7 +22,7 @@ const[loading,setLoading]=useState(true);
       const response = await getAPI("/api/get-career");
       console.log("API Response:", response);
       const data = Array.isArray(response.data.data) ? response.data.data : [];
-      setCareers(data);
+        setCareers([...data].reverse());
     } catch (error) {
       console.error("Error fetching careers:", error);
       setCareers([]);

@@ -21,7 +21,7 @@ const [loading,setLoading]=useState(true)
       try {
         const result = await getAPI("/Blog-Post/statusapproved-blogs", {}, true, false);
         if (result.data) {
-          setBlogs(result.data.blogs);
+          setBlogs([...result.data.blogs].reverse());
           console.log(result.data.blogs);
         }
       } catch (error) {

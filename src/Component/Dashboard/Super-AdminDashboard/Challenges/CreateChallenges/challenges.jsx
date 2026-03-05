@@ -431,7 +431,7 @@ const ChallengesTable = () => {
         const validChallenges = (data.data?.data?.challenges || []).filter(
           (c) => c.title
         );
-        setChallenges(validChallenges);
+        setChallenges([...validChallenges].reverse());
       } else {
         toast.error(data.message || "Failed to load challenges.");
         setError(data.message || "Failed to load challenges.");

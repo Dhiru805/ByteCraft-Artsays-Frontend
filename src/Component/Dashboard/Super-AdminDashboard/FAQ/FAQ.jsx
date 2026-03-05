@@ -16,7 +16,7 @@ const[loading,setLoading]=useState(true);
     try {
       const response = await getAPI(`/api/get-FAQ`, {}, true);
       if (!response.hasError && response.data && Array.isArray(response.data.data)) {
-        setSubFAQs(response.data.data);
+          setSubFAQs([...response.data.data].reverse());
       } else {
         console.error("Invalid response format or error in response");
       }
