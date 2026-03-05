@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "../../../../api/axiosConfig";
 import { toast } from "react-toastify";
+import { FaCheckCircle, FaPlus } from "react-icons/fa";
 import { API_URL } from "../../../../Constants/index";
 
 const ArtistWallet = () => {
@@ -20,6 +21,8 @@ const ArtistWallet = () => {
   const [referralCodeInput, setReferralCodeInput] = useState("");
   const [isApplyingReferral, setIsApplyingReferral] = useState(false);
   const [referralSettings, setReferralSettings] = useState(null);
+  const [savedBankDetails, setSavedBankDetails] = useState(null);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState("saved");
 
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
@@ -85,6 +88,26 @@ const ArtistWallet = () => {
     }
   }, [userId]);
 
+  const fetchBankDetails = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const res = await axios.get(`${API_URL}/auth/bankdetails/${userId}`);
+      if (res.data && res.data.bankDetails) {
+        setSavedBankDetails(res.data.bankDetails);
+        if (res.data.bankDetails.upiId || res.data.bankDetails.accountNumber) {
+          setSelectedPaymentOption("saved");
+        }
+      } else {
+        setSavedBankDetails(null);
+      }
+    } catch (err) {
+      if (err.response?.status !== 404) {
+        console.error("Error fetching bank details:", err);
+      }
+      setSavedBankDetails(null);
+    }
+  }, [userId]);
+
   useEffect(() => {
     if (!userId) return;
     fetchWallet();
@@ -92,7 +115,8 @@ const ArtistWallet = () => {
     fetchWithdrawals();
     fetchReferralData();
     fetchReferralSettings();
-  }, [userId, fetchWallet, fetchTransactions, fetchWithdrawals, fetchReferralData, fetchReferralSettings]);
+    fetchBankDetails();
+  }, [userId, fetchWallet, fetchTransactions, fetchWithdrawals, fetchReferralData, fetchReferralSettings, fetchBankDetails]);
 
     const addMoneyDirect = async () => {
       if (!amount || amount <= 0) return toast.error("Please enter a valid amount");
@@ -152,23 +176,58 @@ const ArtistWallet = () => {
   //   }
   // };
 
+  const isValidUpi = (upi) => /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(upi);
+  const isValidName = (name) => /^[A-Za-z\s]{3,50}$/.test(name);
+  const isValidAccountNumber = (acc) => /^[0-9]{9,18}$/.test(acc);
+  const isValidIFSC = (ifsc) => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc);
+  const isValidText = (text) => text && text.trim().length >= 3;
+
   const requestWithdrawal = async () => {
-    if (!withdrawAmount || withdrawAmount < 100) return toast.error("Minimum withdrawal is ₹100");
-    if (withdrawAmount > wallet.balance) return toast.error("Insufficient balance");
-    if (withdrawMethod === "upi" && !withdrawDestination.upi) return toast.error("Please enter UPI ID");
-    if (withdrawMethod === "bank") {
-      const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
-      if (!name || !accountNumber || !ifsc || !bankName || !purpose) return toast.error("Please fill all bank transfer details");
+    if (!withdrawAmount || Number(withdrawAmount) <= 0) return toast.error("Enter amount to withdraw");
+
+    let destination;
+
+    if (withdrawMethod === "upi") {
+      if (selectedPaymentOption === "saved" && savedBankDetails?.upiId) {
+        destination = savedBankDetails.upiId;
+      } else {
+        if (!withdrawDestination.upi) return toast.error("Please enter UPI ID");
+        if (!isValidUpi(withdrawDestination.upi)) return toast.error("Invalid UPI ID format (example: name@bank)");
+        destination = withdrawDestination.upi;
+      }
     }
+
+    if (withdrawMethod === "bank") {
+      if (selectedPaymentOption === "saved" && savedBankDetails?.accountNumber) {
+        destination = {
+          name: savedBankDetails.accountHolderName,
+          accountNumber: savedBankDetails.accountNumber,
+          ifsc: savedBankDetails.ifscCode,
+          bankName: savedBankDetails.bankName,
+          purpose: "Wallet Withdrawal"
+        };
+      } else {
+        const { name, accountNumber, ifsc, bankName, purpose } = withdrawDestination;
+        if (!isValidName(name)) return toast.error("Enter a valid beneficiary name (letters only)");
+        if (!isValidAccountNumber(accountNumber)) return toast.error("Enter a valid account number (9-18 digits)");
+        if (!isValidIFSC(ifsc)) return toast.error("Enter a valid IFSC code (example: SBIN0001234)");
+        if (!isValidText(bankName)) return toast.error("Enter a valid bank name and branch");
+        if (!isValidText(purpose)) return toast.error("Purpose of transfer is required");
+        destination = withdrawDestination;
+      }
+    }
+
+    if (Number(withdrawAmount) > (wallet?.balance || 0)) return toast.error("Insufficient balance");
+    if (Number(withdrawAmount) < 100) return toast.error("Minimum withdrawal amount is ₹100");
 
     setIsLoading(true);
     try {
       await axios.post(`${API_URL}/api/wallet/withdraw/${userId}`, {
         amount: Number(withdrawAmount),
         method: withdrawMethod,
-        destination: withdrawMethod === "upi" ? withdrawDestination.upi : withdrawDestination
+        destination: destination
       });
-      toast.success("Withdrawal requested successfully!");
+      toast.success("Withdrawal requested successfully! Admin will process it soon.");
       setWithdrawAmount("");
       setWithdrawDestination({});
       fetchWallet();
@@ -390,119 +449,158 @@ const ArtistWallet = () => {
                   onClick={addMoneyViaRazorpay}
                 >
                   Pay via Razorpay
-                </button> */}
+                  </button> */}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="col-lg-6 col-md-12">
-          <div className="card">
-            <div className="header"><h2>Request Withdrawal</h2></div>
-            <div className="body">
-              <div className="form-group">
-                <label>Amount (₹)</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  placeholder="Enter amount"
-                  value={withdrawAmount}
-                  onChange={e => setWithdrawAmount(e.target.value)}
-                  min="100"
-                />
+          <div className="col-lg-6 col-md-12">
+            <div className="card">
+              <div className="header">
+                <h2>Request Withdrawal</h2>
               </div>
-
-              <div className="form-group">
-                <label>Withdrawal Method</label>
-                <select
-                  className="form-control"
-                  value={withdrawMethod}
-                  onChange={e => setWithdrawMethod(e.target.value)}
-                >
-                  <option value="upi">UPI</option>
-                  <option value="bank">Bank Transfer</option>
-                </select>
-              </div>
-
-              {withdrawMethod === "upi" && (
+              <div className="body">
                 <div className="form-group">
-                  <label>UPI ID</label>
+                  <label>Amount (₹)</label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
-                    placeholder="Enter UPI ID"
-                    value={withdrawDestination.upi || ""}
-                    onChange={e => setWithdrawDestination({ upi: e.target.value })}
+                    placeholder="Enter amount"
+                    value={withdrawAmount}
+                    onChange={e => setWithdrawAmount(e.target.value)}
+                    min="100"
                   />
                 </div>
-              )}
+                <div className="form-group">
+                  <label>Withdrawal Method</label>
+                  <select
+                    className="form-control"
+                    value={withdrawMethod}
+                    onChange={e => {
+                      setWithdrawMethod(e.target.value);
+                      setSelectedPaymentOption("saved");
+                      setWithdrawDestination({});
+                    }}
+                  >
+                    <option value="upi">UPI</option>
+                    <option value="bank">Bank Transfer</option>
+                  </select>
+                </div>
 
-              {withdrawMethod === "bank" && (
-                <>
-                  <div className="form-group">
-                    <label>Beneficiary's Full Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter full name"
-                      value={withdrawDestination.name || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, name: e.target.value })}
-                    />
+                {/* Payment Option Toggle */}
+                <div className="form-group">
+                  <label>Select Payment Details</label>
+                  <div className="d-flex gap-2">
+                    {((withdrawMethod === "upi" && savedBankDetails?.upiId) ||
+                      (withdrawMethod === "bank" && savedBankDetails?.accountNumber)) && (
+                      <button
+                        type="button"
+                        className={`btn flex-fill ${selectedPaymentOption === "saved" ? "btn-warning" : "btn-outline-secondary"}`}
+                        onClick={() => setSelectedPaymentOption("saved")}
+                      >
+                        Use Saved Details
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className={`btn flex-fill ${selectedPaymentOption === "new" ? "btn-warning" : "btn-outline-secondary"}`}
+                      onClick={() => { setSelectedPaymentOption("new"); setWithdrawDestination({}); }}
+                    >
+                      <FaPlus style={{ marginRight: 4 }} /> Add New
+                    </button>
                   </div>
-                  <div className="form-group">
-                    <label>Account Number</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter account number"
-                      value={withdrawDestination.accountNumber || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, accountNumber: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>IFSC Code</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter IFSC code"
-                      value={withdrawDestination.ifsc || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value.toUpperCase() })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Bank Name & Branch</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter bank name & branch"
-                      value={withdrawDestination.bankName || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, bankName: e.target.value })}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Purpose of Transfer</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Enter purpose"
-                      value={withdrawDestination.purpose || ""}
-                      onChange={e => setWithdrawDestination({ ...withdrawDestination, purpose: e.target.value })}
-                    />
-                  </div>
-                </>
-              )}
+                </div>
 
-              <button
-                className="btn btn-warning btn-block mt-3"
-                onClick={requestWithdrawal}
-                disabled={isLoading}
-              >
-                {isLoading ? "Processing..." : "Request Withdrawal"}
-              </button>
-              <small className="text-muted">Minimum withdrawal: ₹100. Admin approval required.</small>
+                {/* Saved UPI */}
+                {withdrawMethod === "upi" && selectedPaymentOption === "saved" && savedBankDetails?.upiId && (
+                  <div className="alert alert-success">
+                    <FaCheckCircle style={{ marginRight: 6 }} />
+                    <strong>Saved UPI ID:</strong> {savedBankDetails.upiId}
+                  </div>
+                )}
+
+                {/* Saved Bank */}
+                {withdrawMethod === "bank" && selectedPaymentOption === "saved" && savedBankDetails?.accountNumber && (
+                  <div className="alert alert-success">
+                    <div className="d-flex align-items-center mb-2">
+                      <FaCheckCircle style={{ marginRight: 6 }} />
+                      <strong>Saved Bank Account</strong>
+                    </div>
+                    <div className="row">
+                      <div className="col-6"><small className="text-muted">Account Holder</small><p className="mb-1 font-weight-bold">{savedBankDetails.accountHolderName}</p></div>
+                      <div className="col-6"><small className="text-muted">Account Number</small><p className="mb-1 font-weight-bold">****{savedBankDetails.accountNumber?.slice(-4)}</p></div>
+                      <div className="col-6"><small className="text-muted">IFSC Code</small><p className="mb-0 font-weight-bold">{savedBankDetails.ifscCode}</p></div>
+                      <div className="col-6"><small className="text-muted">Bank</small><p className="mb-0 font-weight-bold">{savedBankDetails.bankName}</p></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* No Saved Details */}
+                {selectedPaymentOption === "saved" &&
+                  ((withdrawMethod === "upi" && !savedBankDetails?.upiId) ||
+                   (withdrawMethod === "bank" && !savedBankDetails?.accountNumber)) && (
+                  <div className="alert alert-warning">
+                    No saved {withdrawMethod === "upi" ? "UPI ID" : "bank account"} found. Please add new details below.
+                  </div>
+                )}
+
+                {/* New UPI Input */}
+                {withdrawMethod === "upi" && (selectedPaymentOption === "new" || !savedBankDetails?.upiId) && (
+                  <div className="form-group">
+                    <label>UPI ID</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="yourname@upi"
+                      value={withdrawDestination.upi || ""}
+                      onChange={e => setWithdrawDestination({ upi: e.target.value })}
+                    />
+                  </div>
+                )}
+
+                {/* New Bank Details */}
+                {withdrawMethod === "bank" && (selectedPaymentOption === "new" || !savedBankDetails?.accountNumber) && (
+                  <>
+                    <div className="form-group">
+                      <input type="text" className="form-control" placeholder="Beneficiary Name"
+                        value={withdrawDestination.name || ""}
+                        onChange={e => setWithdrawDestination({ ...withdrawDestination, name: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <input type="text" className="form-control" placeholder="Account Number"
+                        value={withdrawDestination.accountNumber || ""}
+                        onChange={e => setWithdrawDestination({ ...withdrawDestination, accountNumber: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <input type="text" className="form-control" placeholder="IFSC Code"
+                        value={withdrawDestination.ifsc || ""}
+                        onChange={e => setWithdrawDestination({ ...withdrawDestination, ifsc: e.target.value.toUpperCase() })} />
+                    </div>
+                    <div className="form-group">
+                      <input type="text" className="form-control" placeholder="Bank Name & Branch"
+                        value={withdrawDestination.bankName || ""}
+                        onChange={e => setWithdrawDestination({ ...withdrawDestination, bankName: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <input type="text" className="form-control" placeholder="Purpose of Transfer"
+                        value={withdrawDestination.purpose || ""}
+                        onChange={e => setWithdrawDestination({ ...withdrawDestination, purpose: e.target.value })} />
+                    </div>
+                  </>
+                )}
+
+                <button
+                  className="btn btn-warning btn-block"
+                  onClick={requestWithdrawal}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Processing..." : "Request Withdrawal"}
+                </button>
+                <small className="text-muted d-block text-center mt-2">Minimum withdrawal: ₹100. Admin approval required.</small>
+              </div>
             </div>
           </div>
-        </div>
       </div>
 
       {showReferral && referralData && (
