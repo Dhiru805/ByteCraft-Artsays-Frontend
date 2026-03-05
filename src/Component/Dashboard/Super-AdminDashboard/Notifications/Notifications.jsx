@@ -1,137 +1,123 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import deleteAPI from "../../../../api/deleteAPI";
 
-// ─── SuperAdmin Notification Types ──────────────────────────────────────────
+// ─── Category tabs ────────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { key: "all",            label: "All" },
+  { key: "approvals",      label: "Approvals" },
+  { key: "orders",         label: "Orders" },
+  { key: "financial",      label: "Financial" },
+  { key: "support_tickets",label: "Support" },
+  { key: "user_activity",  label: "User Activity" },
+  { key: "marketing",      label: "Marketing" },
+  { key: "system_alerts",  label: "System Alerts" },
+];
+
+// ─── Type → icon + color map ──────────────────────────────────────────────────
 const TYPE_META = {
-  // Approvals
-  artist_registration: { icon: "🎨", color: "#8b5cf6", bg: "#ede9fe", label: "Artist Reg." },
-  seller_registration: { icon: "🏪", color: "#3b82f6", bg: "#dbeafe", label: "Seller Reg." },
-  celebrity_request: { icon: "🌟", color: "#f59e0b", bg: "#fef3c7", label: "Celebrity Req." },
-  verification_request: { icon: "🔍", color: "#6366f1", bg: "#e0e7ff", label: "Verification" },
-  kyc_submitted: { icon: "📋", color: "#10b981", bg: "#d1fae5", label: "KYC Sub." },
-  product_upload: { icon: "📤", color: "#f59e0b", bg: "#fef3c7", label: "Prod. Upload" },
-  blog_submitted: { icon: "📝", color: "#8b5cf6", bg: "#ede9fe", label: "Blog Sub." },
-  exhibition_request: { icon: "🖼️", color: "#3b82f6", bg: "#dbeafe", label: "Exhib. Req." },
-  challenge_entry: { icon: "🏆", color: "#f59e0b", bg: "#fef3c7", label: "Challenge" },
-  certification_request: { icon: "🏅", color: "#10b981", bg: "#d1fae5", label: "Cert. Req." },
-  resale_submitted: { icon: "♻️", color: "#6366f1", bg: "#e0e7ff", label: "Resale Req." },
-  blue_tick_request: { icon: "✅", color: "#10b981", bg: "#d1fae5", label: "Blue Tick" },
-
-  // Orders
-  order_placed: { icon: "🛒", color: "#10b981", bg: "#d1fae5", label: "New Order" },
-  high_value_order: { icon: "💎", color: "#ef4444", bg: "#fee2e2", label: "VIP Order" },
-  custom_order_created: { icon: "🎨", color: "#8b5cf6", bg: "#ede9fe", label: "Custom Ord." },
-  order_dispute_raised: { icon: "🚨", color: "#ef4444", bg: "#fee2e2", label: "Dispute" },
-
-  // Financial
-  withdrawal_submitted: { icon: "🏦", color: "#6366f1", bg: "#e0e7ff", label: "Withdrawal" },
-  payment_failed: { icon: "❌", color: "#ef4444", bg: "#fee2e2", label: "Pay. Failed" },
-  refund_initiated: { icon: "🔄", color: "#f59e0b", bg: "#fef3c7", label: "Refund Init." },
-  payout_pending: { icon: "⏳", color: "#6b7280", bg: "#f3f4f6", label: "Payout Pend." },
-
-  // Support
-  ticket_created: { icon: "🎫", color: "#3b82f6", bg: "#dbeafe", label: "Support" },
-  ticket_escalated: { icon: "🚨", color: "#ef4444", bg: "#fee2e2", label: "Escalated" },
-  enquiry_received: { icon: "📧", color: "#6b7280", bg: "#f3f4f6", label: "Enquiry" },
-
-  // System
-  security_alert: { icon: "🔒", color: "#ef4444", bg: "#fee2e2", label: "Security" },
-  gateway_disconnected: { icon: "🔌", color: "#ef4444", bg: "#fee2e2", label: "Gateway" },
-  fraud_detected: { icon: "🚨", color: "#ef4444", bg: "#fee2e2", label: "Fraud" },
-};
-
-const getStyle = (type) => TYPE_META[type] || { icon: "🔔", color: "#6b7280", bg: "#f3f4f6", label: "Notification" };
-
-const CATEGORY_LABELS = {
-  all: "All",
-  approvals: "Approvals",
-  orders: "Orders",
-  financial: "Financial",
-  support_tickets: "Support",
-  user_activity: "User Activity",
-  marketing: "Marketing",
-  system_alerts: "System Alerts",
+  artist_registration:   { icon: "🎨", color: "#8b5cf6" },
+  seller_registration:   { icon: "🏪", color: "#3b82f6" },
+  celebrity_request:     { icon: "🌟", color: "#f59e0b" },
+  verification_request:  { icon: "🔍", color: "#6366f1" },
+  kyc_submitted:         { icon: "📋", color: "#10b981" },
+  product_upload:        { icon: "📤", color: "#f59e0b" },
+  blog_submitted:        { icon: "📝", color: "#8b5cf6" },
+  exhibition_request:    { icon: "🖼️", color: "#3b82f6" },
+  challenge_entry:       { icon: "🏆", color: "#f59e0b" },
+  certification_request: { icon: "🏅", color: "#10b981" },
+  resale_submitted:      { icon: "♻️", color: "#6366f1" },
+  blue_tick_request:     { icon: "✅", color: "#10b981" },
+  order_placed:          { icon: "🛒", color: "#10b981" },
+  high_value_order:      { icon: "💎", color: "#ef4444" },
+  custom_order_created:  { icon: "🎨", color: "#8b5cf6" },
+  order_dispute_raised:  { icon: "🚨", color: "#ef4444" },
+  withdrawal_submitted:  { icon: "🏦", color: "#6366f1" },
+  payment_failed:        { icon: "❌", color: "#ef4444" },
+  refund_initiated:      { icon: "🔄", color: "#f59e0b" },
+  payout_pending:        { icon: "⏳", color: "#6b7280" },
+  ticket_created:        { icon: "🎫", color: "#3b82f6" },
+  ticket_escalated:      { icon: "🚨", color: "#ef4444" },
+  enquiry_received:      { icon: "📧", color: "#6b7280" },
+  security_alert:        { icon: "🔒", color: "#ef4444" },
+  gateway_disconnected:  { icon: "🔌", color: "#ef4444" },
+  fraud_detected:        { icon: "🚨", color: "#ef4444" },
 };
 
 const PRIORITY_COLORS = {
   critical: "#ef4444",
-  high: "#f97316",
-  medium: "#3b82f6",
-  low: "#9ca3af",
+  high:     "#f97316",
+  medium:   "#3b82f6",
+  low:      "#9ca3af",
 };
 
+const getMeta = (type) => TYPE_META[type] || { icon: "🔔", color: "#6b7280" };
+
 function timeAgo(dateStr) {
-  const diff = (Date.now() - new Date(dateStr)) / 1000;
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-  return new Date(dateStr).toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "Just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `${d}d ago`;
+  return new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
-const LIMIT = 20;
+const LIMIT = 15;
 
 const SuperAdminNotifications = () => {
   const navigate = useNavigate();
 
   const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(LIMIT);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState({
-    category: "all",
-    isRead: undefined,
-    priority: undefined,
-  });
+  const [unreadCount,   setUnreadCount]   = useState(0);
+  const [total,         setTotal]         = useState(0);
+  const [totalPages,    setTotalPages]    = useState(1);
+  const [page,          setPage]          = useState(1);
+  const [category,      setCategory]      = useState("all");
+  const [filter,        setFilter]        = useState("all"); // all | unread
+  const [priority,      setPriority]      = useState("");    // "" | critical | high | medium | low
+  const [loading,       setLoading]       = useState(false);
+  const [deletingId,    setDeletingId]    = useState(null);
 
-  const fetchNotifications = useCallback(async (pg = 1, currentFilter = filter) => {
+  const fetchNotifications = useCallback(async (pg = 1, cat = category, f = filter, pri = priority) => {
+    setLoading(true);
     try {
-      if (pg === 1) setLoading(true);
-      let query = `?page=${pg}&limit=${limit}`;
-      if (currentFilter.category !== "all") query += `&category=${currentFilter.category}`;
-      if (currentFilter.isRead !== undefined) query += `&isRead=${currentFilter.isRead}`;
-      if (currentFilter.priority) query += `&priority=${currentFilter.priority}`;
+      let query = `?page=${pg}&limit=${LIMIT}`;
+      if (cat !== "all")  query += `&category=${cat}`;
+      if (f === "unread") query += `&isRead=false`;
+      if (pri)            query += `&priority=${pri}`;
 
       const res = await getAPI(`/api/super-admin/notifications${query}`, {}, false, true);
       if (res?.data?.success) {
-        const incoming = res.data.notifications || [];
-        setNotifications((prev) => (pg === 1 ? incoming : [...prev, ...incoming]));
+        setNotifications(res.data.notifications || []);
         setUnreadCount(res.data.unreadCount || 0);
         setTotal(res.data.total || 0);
-        setPage(pg);
+        setTotalPages(res.data.totalPages || Math.ceil((res.data.total || 0) / LIMIT) || 1);
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load notifications");
-    } finally {
-      setLoading(false);
-    }
-  }, [filter, limit]);
+    } catch (_) {}
+    setLoading(false);
+  }, [category, filter, priority]);
 
   useEffect(() => {
-    fetchNotifications(1);
-  }, [fetchNotifications]);
+    setPage(1);
+    fetchNotifications(1, category, filter, priority);
+  }, [category, filter, priority]); // eslint-disable-line
 
-  const handleMarkRead = async (id) => {
+  useEffect(() => {
+    fetchNotifications(page, category, filter, priority);
+  }, [page]); // eslint-disable-line
+
+  const handleMarkRead = async (notifId) => {
     try {
-      await putAPI(`/api/super-admin/notifications/${id}/read`);
-      setNotifications((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
-      );
+      await putAPI(`/api/super-admin/notifications/${notifId}/read`);
+      setNotifications((prev) => prev.map((n) => n._id === notifId ? { ...n, isRead: true } : n));
       setUnreadCount((c) => Math.max(0, c - 1));
-    } catch (err) {
-      console.error(err);
-    }
+      window.dispatchEvent(new CustomEvent("superAdminNotifUpdated", { detail: { notificationId: notifId } }));
+    } catch (_) {}
   };
 
   const handleMarkAllRead = async () => {
@@ -139,240 +125,264 @@ const SuperAdminNotifications = () => {
       await putAPI(`/api/super-admin/notifications/mark-all-read`);
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
-      toast.success("All notifications marked as read");
-    } catch (err) {
-      console.error(err);
-    }
+      window.dispatchEvent(new CustomEvent("superAdminNotifUpdated", { detail: { all: true } }));
+    } catch (_) {}
   };
 
-  const handleDelete = async (id, e) => {
+  const handleDelete = async (notifId, e) => {
     e.stopPropagation();
+    setDeletingId(notifId);
     try {
-      await deleteAPI(`/api/super-admin/notifications/${id}`);
-      setNotifications((prev) => prev.filter((n) => n._id !== id));
+      await deleteAPI(`/api/super-admin/notifications/${notifId}`);
+      setNotifications((prev) => prev.filter((n) => n._id !== notifId));
       setTotal((t) => Math.max(0, t - 1));
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete notification");
-    }
+    } catch (_) {}
+    setDeletingId(null);
   };
 
-  const handleNotificationClick = async (notif) => {
-    if (!notif.isRead) {
-      await handleMarkRead(notif._id);
+  const handleNotificationClick = async (n) => {
+    if (!n.isRead) {
+      try {
+        await putAPI(`/api/super-admin/notifications/${n._id}/read`);
+        setNotifications((prev) => prev.map((item) => item._id === n._id ? { ...item, isRead: true } : item));
+        setUnreadCount((c) => Math.max(0, c - 1));
+        window.dispatchEvent(new CustomEvent("superAdminNotifUpdated", { detail: { notificationId: n._id } }));
+      } catch (_) {}
     }
-
-    // Redirect mapping
-    const category = notif.category;
+    const cat = n.category;
     let url = null;
-    if (category === "approvals") {
-      if (notif.type.includes("artist")) url = "/super-admin/artist/management";
-      else if (notif.type.includes("seller")) url = "/super-admin/seller/management";
-      else if (notif.type.includes("product")) url = "/super-admin/artist/artistproductrequest";
-      else if (notif.type.includes("blog")) url = "/super-admin/artist/blogrequest";
-    } else if (category === "orders") {
+    if (cat === "approvals") {
+      if (n.type?.includes("artist"))  url = "/super-admin/artist/management";
+      else if (n.type?.includes("seller")) url = "/super-admin/seller/management";
+      else if (n.type?.includes("product")) url = "/super-admin/artist/artistproductrequest";
+      else if (n.type?.includes("blog")) url = "/super-admin/artist/blogrequest";
+    } else if (cat === "orders") {
       url = "/super-admin/purchasetable";
-    } else if (category === "financial") {
+    } else if (cat === "financial") {
       url = "/super-admin/wallet-management";
-    } else if (category === "support_tickets") {
+    } else if (cat === "support_tickets") {
       url = "/super-admin/support";
     }
-
     if (url) navigate(url);
   };
 
-  const loadMore = () => {
-    fetchNotifications(page + 1);
+  // ─── Styles ──────────────────────────────────────────────────────────────────
+  const styles = {
+    page:        { padding: "24px", background: "#f5f6fa", minHeight: "100vh" },
+    header:      { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "10px" },
+    title:       { fontSize: "22px", fontWeight: 700, color: "#222", margin: 0 },
+    badge:       { background: "#e74c3c", color: "#fff", borderRadius: "12px", fontSize: "12px", padding: "2px 8px", marginLeft: "8px" },
+    headerActions: { display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" },
+    filterBtn: (active) => ({
+      padding: "6px 14px", borderRadius: "20px", border: "1px solid #ddd",
+      background: active ? "#007bff" : "#fff", color: active ? "#fff" : "#555",
+      cursor: "pointer", fontSize: "13px", fontWeight: active ? 600 : 400,
+    }),
+    markAllBtn: {
+      padding: "6px 14px", borderRadius: "6px", border: "1px solid #007bff",
+      background: "#fff", color: "#007bff", cursor: "pointer", fontSize: "13px",
+    },
+    tabsRow: { display: "flex", gap: "8px", marginBottom: "12px", overflowX: "auto", scrollbarWidth: "none" },
+    tab: (active) => ({
+      padding: "6px 14px", borderRadius: "20px", border: "1px solid #ddd",
+      background: active ? "#343a40" : "#fff", color: active ? "#fff" : "#555",
+      cursor: "pointer", fontSize: "12px", fontWeight: active ? 600 : 400,
+      whiteSpace: "nowrap",
+    }),
+    priorityRow: { display: "flex", gap: "8px", marginBottom: "16px", overflowX: "auto", scrollbarWidth: "none" },
+    priorityBtn: (active, color) => ({
+      padding: "4px 12px", borderRadius: "20px", border: `1px solid ${color}`,
+      background: active ? color : "#fff", color: active ? "#fff" : color,
+      cursor: "pointer", fontSize: "12px", fontWeight: active ? 600 : 400,
+      whiteSpace: "nowrap",
+    }),
+    card: (isRead) => ({
+      background: isRead ? "#fff" : "#f0f7ff",
+      border:     isRead ? "1px solid #eee" : "1px solid #c8e0ff",
+      borderRadius: "8px", padding: "14px 16px", marginBottom: "10px",
+      display: "flex", gap: "12px", alignItems: "flex-start",
+      transition: "box-shadow 0.2s, background 0.15s",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+      cursor: "pointer",
+    }),
+    iconWrap: (color) => ({
+      fontSize: "22px", lineHeight: 1, flexShrink: 0, marginTop: "2px",
+      width: "40px", height: "40px", borderRadius: "10px",
+      background: color + "18",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }),
+    body: { flex: 1, minWidth: 0 },
+    notifTitle: (isRead) => ({
+      fontSize: "14px", fontWeight: isRead ? 500 : 700, color: "#222", marginBottom: "3px",
+    }),
+    notifMsg:  { fontSize: "13px", color: "#555", marginBottom: "6px" },
+    meta:      { fontSize: "11px", color: "#aaa", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" },
+    catBadge: (color) => ({
+      background: color + "18", color, padding: "1px 7px", borderRadius: "4px",
+      fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 600,
+    }),
+    prioBadge: (color) => ({
+      background: color, color: "#fff", padding: "1px 7px", borderRadius: "4px",
+      fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 600,
+    }),
+    actions:   { display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-end", flexShrink: 0 },
+    unreadDot: { width: "8px", height: "8px", borderRadius: "50%", background: "#007bff" },
+    actionBtn: (color) => ({
+      background: "none", border: "none", color, cursor: "pointer",
+      fontSize: "12px", padding: "2px 6px", borderRadius: "4px",
+    }),
+    emptyState: { textAlign: "center", padding: "60px 20px", color: "#999" },
+    pagination: { display: "flex", gap: "8px", justifyContent: "center", marginTop: "24px", flexWrap: "wrap" },
+    pageBtn: (active, disabled) => ({
+      padding: "6px 12px", borderRadius: "6px", border: "1px solid #ddd",
+      background: active ? "#007bff" : disabled ? "#f5f5f5" : "#fff",
+      color:      active ? "#fff"    : disabled ? "#ccc"    : "#555",
+      cursor: disabled ? "not-allowed" : "pointer", fontSize: "13px",
+    }),
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+    const pages = [];
+    const start = Math.max(1, page - 2);
+    const end   = Math.min(totalPages, page + 2);
+    for (let i = start; i <= end; i++) pages.push(i);
+    return (
+      <div style={styles.pagination}>
+        <button style={styles.pageBtn(false, page === 1)} disabled={page === 1} onClick={() => setPage(page - 1)}>
+          ‹ Prev
+        </button>
+        {start > 1 && <button style={styles.pageBtn(false, false)} onClick={() => setPage(1)}>1</button>}
+        {start > 2 && <span style={{ padding: "6px 4px", color: "#aaa" }}>…</span>}
+        {pages.map((p) => (
+          <button key={p} style={styles.pageBtn(p === page, false)} onClick={() => setPage(p)}>{p}</button>
+        ))}
+        {end < totalPages - 1 && <span style={{ padding: "6px 4px", color: "#aaa" }}>…</span>}
+        {end < totalPages && (
+          <button style={styles.pageBtn(false, false)} onClick={() => setPage(totalPages)}>{totalPages}</button>
+        )}
+        <button style={styles.pageBtn(false, page === totalPages)} disabled={page === totalPages} onClick={() => setPage(page + 1)}>
+          Next ›
+        </button>
+      </div>
+    );
   };
 
   return (
-    <div className="container-fluid p-4" style={{ background: "#f8f9fa", minHeight: "100vh" }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 className="mb-0 fw-bold">Notification Center</h2>
-          <p className="text-muted small">Manage and track system-wide alerts</p>
-        </div>
-        <div className="d-flex gap-2">
+    <div style={styles.page}>
+      {/* Header */}
+      <div style={styles.header}>
+        <h2 style={styles.title}>
+          Notifications
+          {unreadCount > 0 && <span style={styles.badge}>{unreadCount} unread</span>}
+        </h2>
+        <div style={styles.headerActions}>
+          <button style={styles.filterBtn(filter === "all")}    onClick={() => setFilter("all")}>All</button>
+          <button style={styles.filterBtn(filter === "unread")} onClick={() => setFilter("unread")}>Unread</button>
           {unreadCount > 0 && (
-            <button className="btn btn-outline-primary btn-sm rounded-pill px-3" onClick={handleMarkAllRead}>
-              Mark all as read
+            <button style={styles.markAllBtn} onClick={handleMarkAllRead}>
+              ✓ Mark all read
             </button>
           )}
         </div>
       </div>
 
-      <div className="row">
-        {/* Filters Sidebar */}
-        <div className="col-lg-3">
-          <div className="card border-0 shadow-sm rounded-4 mb-4">
-            <div className="card-body p-4">
-              <h6 className="fw-bold mb-3">Categories</h6>
-              <div className="d-flex flex-column gap-1">
-                {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-                  <button
-                    key={key}
-                    className={`btn btn-sm text-start rounded-3 px-3 py-2 ${
-                      filter.category === key ? "btn-primary shadow-sm" : "btn-light"
-                    }`}
-                    onClick={() => setFilter({ ...filter, category: key })}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-
-              <hr className="my-4 text-muted opacity-25" />
-
-              <h6 className="fw-bold mb-3">Status</h6>
-              <div className="d-flex flex-column gap-1">
-                <button
-                  className={`btn btn-sm text-start rounded-3 px-3 py-2 ${
-                    filter.isRead === undefined ? "btn-primary shadow-sm" : "btn-light"
-                  }`}
-                  onClick={() => setFilter({ ...filter, isRead: undefined })}
-                >
-                  All Status
-                </button>
-                <button
-                  className={`btn btn-sm text-start rounded-3 px-3 py-2 ${
-                    filter.isRead === false ? "btn-primary shadow-sm" : "btn-light"
-                  }`}
-                  onClick={() => setFilter({ ...filter, isRead: false })}
-                >
-                  Unread Only
-                </button>
-              </div>
-
-              <hr className="my-4 text-muted opacity-25" />
-
-              <h6 className="fw-bold mb-3">Priority</h6>
-              <div className="d-flex flex-column gap-1">
-                <button
-                  className={`btn btn-sm text-start rounded-3 px-3 py-2 ${
-                    filter.priority === undefined ? "btn-primary shadow-sm" : "btn-light"
-                  }`}
-                  onClick={() => setFilter({ ...filter, priority: undefined })}
-                >
-                  All Priority
-                </button>
-                {["critical", "high", "medium", "low"].map((p) => (
-                  <button
-                    key={p}
-                    className={`btn btn-sm text-start rounded-3 px-3 py-2 ${
-                      filter.priority === p ? "btn-primary shadow-sm" : "btn-light"
-                    }`}
-                    onClick={() => setFilter({ ...filter, priority: p })}
-                  >
-                    <span
-                      className="d-inline-block rounded-circle me-2"
-                      style={{ width: 8, height: 8, background: PRIORITY_COLORS[p] }}
-                    />
-                    {p.charAt(0).toUpperCase() + p.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Notifications List */}
-        <div className="col-lg-9">
-          <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div className="card-body p-0">
-              {loading && page === 1 ? (
-                <div className="p-5 text-center">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-              ) : notifications.length === 0 ? (
-                <div className="p-5 text-center text-muted">
-                  <div className="display-4 mb-3">🔔</div>
-                  <h5>No notifications found</h5>
-                  <p className="small">Try adjusting your filters or check back later.</p>
-                </div>
-              ) : (
-                <div className="list-group list-group-flush">
-                  {notifications.map((notif) => {
-                    const style = getStyle(notif.type);
-                    return (
-                      <div
-                        key={notif._id}
-                        onClick={() => handleNotificationClick(notif)}
-                        className={`list-group-item list-group-item-action p-4 border-0 border-bottom d-flex gap-4 align-items-start ${
-                          !notif.isRead ? "bg-light-primary" : ""
-                        }`}
-                        style={{
-                          backgroundColor: !notif.isRead ? "rgba(59, 130, 246, 0.04)" : "white",
-                          cursor: "pointer",
-                          transition: "all 0.2s",
-                        }}
-                      >
-                        <div
-                          className="rounded-4 d-flex align-items-center justify-content-center flex-shrink-0"
-                          style={{ width: 56, height: 56, background: style.bg, fontSize: "24px" }}
-                        >
-                          {style.icon}
-                        </div>
-                        <div className="flex-grow-1 min-width-0">
-                          <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
-                            <h6 className={`mb-0 ${!notif.isRead ? "fw-bold" : "fw-semibold"}`}>
-                              {notif.title || style.label}
-                            </h6>
-                            <div className="d-flex align-items-center gap-3">
-                              <span className="text-muted small whitespace-nowrap">
-                                {timeAgo(notif.createdAt)}
-                              </span>
-                              {!notif.isRead && (
-                                <span className="rounded-circle bg-primary" style={{ width: 8, height: 8 }} />
-                              )}
-                              <button
-                                className="btn btn-link btn-sm p-0 text-muted hover-danger"
-                                onClick={(e) => handleDelete(notif._id, e)}
-                              >
-                                <i className="fa fa-times"></i>
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-muted small mb-3">{notif.message}</p>
-                          <div className="d-flex gap-2">
-                            <span
-                              className="badge rounded-pill text-uppercase px-3 py-1.5"
-                              style={{ background: style.bg, color: style.color, fontSize: "10px" }}
-                            >
-                              {notif.category}
-                            </span>
-                            <span
-                              className="badge rounded-pill text-uppercase px-3 py-1.5 text-white"
-                              style={{
-                                background: PRIORITY_COLORS[notif.priority] || "#9ca3af",
-                                fontSize: "10px",
-                              }}
-                            >
-                              {notif.priority}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-            {notifications.length > 0 && notifications.length < total && (
-              <div className="card-footer bg-white border-0 text-center p-4">
-                <button className="btn btn-outline-primary px-5 rounded-pill" onClick={loadMore}>
-                  Load More
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+      {/* Category tabs */}
+      <div style={styles.tabsRow}>
+        {CATEGORIES.map((c) => (
+          <button key={c.key} style={styles.tab(category === c.key)} onClick={() => setCategory(c.key)}>
+            {c.label}
+          </button>
+        ))}
       </div>
-      <style>{`
-        .bg-light-primary { background-color: rgba(59, 130, 246, 0.05); }
-        .hover-danger:hover { color: #ef4444 !important; }
-      `}</style>
+
+      {/* Priority filter */}
+      <div style={styles.priorityRow}>
+        <button style={styles.priorityBtn(!priority, "#6b7280")} onClick={() => setPriority("")}>All Priority</button>
+        {[
+          { key: "critical", color: "#ef4444" },
+          { key: "high",     color: "#f97316" },
+          { key: "medium",   color: "#3b82f6" },
+          { key: "low",      color: "#9ca3af" },
+        ].map(({ key, color }) => (
+          <button key={key} style={styles.priorityBtn(priority === key, color)} onClick={() => setPriority(priority === key ? "" : key)}>
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Summary */}
+      {!loading && (
+        <p style={{ fontSize: "13px", color: "#888", marginBottom: "14px" }}>
+          Showing {notifications.length} of {total} notification{total !== 1 ? "s" : ""}
+        </p>
+      )}
+
+      {/* List */}
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
+          <div style={{ fontSize: "28px", marginBottom: "10px" }}>⏳</div>
+          Loading notifications…
+        </div>
+      ) : notifications.length === 0 ? (
+        <div style={styles.emptyState}>
+          <div style={{ fontSize: "48px", marginBottom: "12px" }}>🔔</div>
+          <h4 style={{ margin: "0 0 6px", color: "#666" }}>No notifications</h4>
+          <p style={{ margin: 0, fontSize: "14px" }}>
+            {filter === "unread" ? "You're all caught up!" : "You'll see notifications here when there's activity."}
+          </p>
+        </div>
+      ) : (
+        notifications.map((n) => {
+          const meta = getMeta(n.type);
+          return (
+            <div key={n._id} style={styles.card(n.isRead)} onClick={() => handleNotificationClick(n)}>
+              <span style={styles.iconWrap(meta.color)}>{meta.icon}</span>
+              <div style={styles.body}>
+                <div style={styles.notifTitle(n.isRead)}>{n.title}</div>
+                <div style={styles.notifMsg}>{n.message}</div>
+                <div style={styles.meta}>
+                  <span>{timeAgo(n.createdAt)}</span>
+                  {n.category && (
+                    <span style={styles.catBadge(meta.color)}>
+                      {n.category.replace(/_/g, " ")}
+                    </span>
+                  )}
+                  {n.priority && (
+                    <span style={styles.prioBadge(PRIORITY_COLORS[n.priority] || "#9ca3af")}>
+                      {n.priority}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div style={styles.actions}>
+                {!n.isRead && (
+                  <>
+                    <span style={styles.unreadDot} title="Unread" />
+                    <button
+                      style={styles.actionBtn("#007bff")}
+                      onClick={(e) => { e.stopPropagation(); handleMarkRead(n._id); }}
+                      title="Mark as read"
+                    >
+                      ✓ Read
+                    </button>
+                  </>
+                )}
+                <button
+                  style={styles.actionBtn("#e74c3c")}
+                  onClick={(e) => handleDelete(n._id, e)}
+                  disabled={deletingId === n._id}
+                  title="Delete"
+                >
+                  {deletingId === n._id ? "…" : "✕ Delete"}
+                </button>
+              </div>
+            </div>
+          );
+        })
+      )}
+
+      {renderPagination()}
     </div>
   );
 };
