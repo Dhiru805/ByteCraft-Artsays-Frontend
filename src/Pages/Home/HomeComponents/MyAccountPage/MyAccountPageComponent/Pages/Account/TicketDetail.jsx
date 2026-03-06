@@ -17,7 +17,6 @@ const TicketDetail = () => {
                              location.pathname.startsWith('/seller') || 
                              location.pathname.startsWith('/super-admin');
 
-    // Determine path prefix (for /artist, /seller, or /my-account)
     const pathPrefix = location.pathname.includes('/my-account') 
       ? '/my-account/support' 
       : location.pathname.includes('/artist')
@@ -172,7 +171,6 @@ const TicketDetail = () => {
                 alert("Please provide a reason/justification for the refund.");
                 return;
             }
-            // Add as internal note first
             await handleSubmit(null, true, `Refund triggered. Justification: ${actionNote}`);
             await triggerAdminAction('issue_refund');
         } else if (actionConfig.type === 'Resolve') {
@@ -189,18 +187,37 @@ const TicketDetail = () => {
         setShowActionModal(false);
     };
 
-    if (loading) return <div className="p-8 text-center mt-5"><div className="spinner-border text-primary"></div><div className="mt-2">Loading ticket details...</div></div>;
-    if (!ticket) return <div className="p-8 text-center mt-5"><div className="alert alert-warning d-inline-block">Ticket not found</div></div>;
+    if (loading) return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px', gap: '12px' }}>
+            <div className="spinner-border text-primary"></div>
+            <div className="text-muted small">Loading ticket details...</div>
+        </div>
+    );
+    if (!ticket) return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
+            <div className="alert alert-warning d-inline-block">Ticket not found</div>
+        </div>
+    );
 
-    const getStatusStyle = (status) => {
+    const getStatusConfig = (status) => {
       switch (status) {
-        case 'Open': return 'badge-info';
-        case 'In Progress': return 'badge-warning';
-        case 'Resolved': return 'badge-success';
-        case 'Closed': return 'badge-default';
-        case 'Waiting on User': return 'badge-primary';
-        case 'Assigned': return 'badge-indigo';
-        default: return 'badge-default';
+        case 'Open':           return { bg: '#e3f2fd', color: '#1565c0', border: '#90caf9' };
+        case 'In Progress':    return { bg: '#fff8e1', color: '#f57f17', border: '#ffe082' };
+        case 'Resolved':       return { bg: '#e8f5e9', color: '#2e7d32', border: '#a5d6a7' };
+        case 'Closed':         return { bg: '#f5f5f5', color: '#424242', border: '#bdbdbd' };
+        case 'Waiting on User':return { bg: '#ede7f6', color: '#4527a0', border: '#b39ddb' };
+        case 'Assigned':       return { bg: '#e8eaf6', color: '#283593', border: '#9fa8da' };
+        default:               return { bg: '#f5f5f5', color: '#616161', border: '#e0e0e0' };
+      }
+    };
+
+    const getPriorityConfig = (priority) => {
+      switch (priority) {
+        case 'Critical': return { color: '#c62828', bg: '#ffebee', icon: '🔴' };
+        case 'High':     return { color: '#e65100', bg: '#fff3e0', icon: '🟠' };
+        case 'Medium':   return { color: '#f57f17', bg: '#fffde7', icon: '🟡' };
+        case 'Low':      return { color: '#2e7d32', bg: '#e8f5e9', icon: '🟢' };
+        default:         return { color: '#616161', bg: '#f5f5f5', icon: '⚪' };
       }
     };
 
@@ -208,55 +225,446 @@ const TicketDetail = () => {
     const now = new Date();
     const isSlaBreached = slaDate < now && !['Resolved', 'Closed'].includes(ticket.status);
 
+    const statusCfg = getStatusConfig(ticket.status);
+    const priorityCfg = getPriorityConfig(ticket.priority);
+
+    const styles = `
+        .td-page { min-height: 100vh; }
+        .td-header-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            border: 1px solid #e8ecf0;
+        }
+        .td-ticket-code {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #5c6bc0;
+            background: #e8eaf6;
+            border-radius: 20px;
+            padding: 4px 12px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .td-subject { font-size: 18px; font-weight: 700; color: #1a1f36; margin: 0; }
+        .td-category { font-size: 12px; color: #8898aa; margin-top: 3px; }
+        .td-status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border-radius: 20px;
+            padding: 5px 14px;
+            display: inline-block;
+            border: 1px solid;
+        }
+        .td-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #f4f6f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            color: #525f7f;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .td-back-btn:hover { background: #e8ecf0; color: #1a1f36; text-decoration: none; }
+
+        .td-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            border: 1px solid #e8ecf0;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .td-card-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e8ecf0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+        }
+        .td-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1f36;
+            margin: 0;
+        }
+
+        /* Chat */
+        .td-chat-scroll {
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .td-sys-msg {
+            text-align: center;
+            margin: 12px 0;
+        }
+        .td-sys-badge {
+            display: inline-block;
+            background: #fff8e1;
+            color: #856404;
+            border: 1px solid #ffe082;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .td-msg-row {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .td-msg-row.me { flex-direction: row-reverse; }
+        .td-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e8eaf6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .td-avatar.support { background: #e3f2fd; }
+        .td-bubble-wrap { max-width: 70%; }
+        .td-bubble-wrap.me { align-items: flex-end; display: flex; flex-direction: column; }
+        .td-meta {
+            font-size: 10px;
+            color: #8898aa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .td-meta.me { justify-content: flex-end; }
+        .td-bubble {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .td-bubble.them {
+            background: #fff;
+            border: 1px solid #e8ecf0;
+            border-top-left-radius: 4px;
+            color: #1a1f36;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .td-bubble.me {
+            background: #5c6bc0;
+            border-top-right-radius: 4px;
+            color: #fff;
+        }
+        .td-bubble.internal {
+            background: #1a1f36;
+            color: #fff;
+            border: 1px dashed #5c6bc0;
+            border-radius: 8px;
+        }
+        .td-internal-tag {
+            display: inline-block;
+            background: #5c6bc0;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+        }
+        .td-attachment {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 4px 10px;
+            margin-top: 8px;
+            margin-right: 6px;
+            font-size: 11px;
+        }
+
+        /* Reply Box */
+        .td-reply-box {
+            padding: 16px 20px;
+            background: #fff;
+            border-top: 1px solid #e8ecf0;
+        }
+        .td-internal-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #856404;
+        }
+        .td-reply-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .td-textarea {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13.5px;
+            resize: none;
+            outline: none;
+            background: #f8fafc;
+            transition: border 0.2s;
+            font-family: inherit;
+            color: #1a1f36;
+        }
+        .td-textarea:focus { border-color: #5c6bc0; background: #fff; }
+        .td-send-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            font-size: 15px;
+        }
+        .td-send-btn.normal { background: #5c6bc0; color: #fff; }
+        .td-send-btn.internal-mode { background: #f57f17; color: #fff; }
+        .td-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .td-send-btn:not(:disabled):hover { transform: scale(1.06); }
+        .td-closed-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 20px;
+            background: #f5f5f5;
+            border-top: 1px solid #e0e0e0;
+            color: #757575;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Sidebar */
+        .td-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+        .td-info-row:last-child { border-bottom: none; }
+        .td-info-label { color: #8898aa; font-weight: 600; font-size: 12px; }
+        .td-info-value { font-weight: 600; color: #1a1f36; }
+        .td-sla-alert {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffebee;
+            border: 1px solid #ef9a9a;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #c62828;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .td-user-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 12px;
+        }
+        .td-user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #e8eaf6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5c6bc0;
+            flex-shrink: 0;
+        }
+        .td-user-name { font-weight: 700; color: #1a1f36; font-size: 14px; }
+        .td-user-role {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #5c6bc0;
+            background: #e8eaf6;
+            border-radius: 10px;
+            padding: 2px 8px;
+        }
+        .td-user-email { font-size: 12px; color: #8898aa; margin-top: 4px; }
+        .td-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .td-action-btn:last-child { margin-bottom: 0; }
+        .td-action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .td-action-btn.resolve { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .td-action-btn.resolve:not(:disabled):hover { background: #2e7d32; color: #fff; }
+        .td-action-btn.close-t { background: #f5f5f5; color: #424242; border: 1px solid #bdbdbd; }
+        .td-action-btn.close-t:not(:disabled):hover { background: #424242; color: #fff; }
+        .td-action-btn.refund { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+        .td-action-btn.refund:not(:disabled):hover { background: #1565c0; color: #fff; }
+        .td-action-btn.escalate { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+        .td-action-btn.escalate:not(:disabled):hover { background: #c62828; color: #fff; }
+
+        /* Modal */
+        .td-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26,31,54,0.6);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        .td-modal {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 480px;
+            overflow: hidden;
+            animation: tdSlideIn 0.25s ease-out;
+        }
+        @keyframes tdSlideIn {
+            from { transform: translateY(-16px) scale(0.97); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .td-modal-head {
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e8ecf0;
+        }
+        .td-modal-title { font-size: 16px; font-weight: 700; color: #1a1f36; margin: 0; }
+        .td-modal-close {
+            width: 30px; height: 30px; border-radius: 50%; border: none;
+            background: #f4f6f9; color: #525f7f; font-size: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .td-modal-close:hover { background: #e0e0e0; }
+        .td-modal-body { padding: 22px; }
+        .td-modal-msg { font-size: 13.5px; color: #525f7f; margin-bottom: 18px; line-height: 1.6; }
+        .td-modal-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8898aa; letter-spacing: 0.8px; margin-bottom: 6px; }
+        .td-modal-textarea {
+            width: 100%; border: 1px solid #e0e0e0; border-radius: 8px;
+            padding: 10px 12px; font-size: 13.5px; resize: none; outline: none;
+            font-family: inherit; color: #1a1f36; background: #f8fafc;
+        }
+        .td-modal-textarea:focus { border-color: #5c6bc0; background: #fff; }
+        .td-modal-foot {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .td-modal-cancel {
+            flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #e0e0e0;
+            background: #f4f6f9; color: #525f7f; font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+        .td-modal-cancel:hover { background: #e8ecf0; }
+        .td-modal-confirm {
+            flex: 1; padding: 10px; border-radius: 8px; border: none;
+            font-size: 13px; font-weight: 700; cursor: pointer; color: #fff;
+        }
+        .td-modal-confirm.success { background: #2e7d32; }
+        .td-modal-confirm.dark { background: #424242; }
+        .td-modal-confirm.primary { background: #1565c0; }
+        .td-modal-confirm:hover { opacity: 0.9; }
+
+        /* Breadcrumb fix */
+        .td-page .breadcrumb { background: transparent; padding: 0; margin: 0; }
+    `;
+
     const renderChatArea = () => (
-        <div className="chat-content d-flex flex-column h-100">
-            <div className="flex-grow-1 overflow-auto p-4 mb-3 border rounded bg-light shadow-inner" style={{ maxHeight: isDashboardLayout ? 'calc(100vh - 450px)' : '500px', minHeight: '400px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div
+                className="td-chat-scroll"
+                style={{ flexGrow: 1, maxHeight: isDashboardLayout ? 'calc(100vh - 420px)' : '460px', minHeight: '340px' }}
+            >
                 {messages.map((msg) => {
                     const isMe = msg.sender_id === userId;
-                    const isSupport = msg.sender_role.toLowerCase().includes('admin') || msg.sender_role.toLowerCase() === 'super-admin';
+                    const isSupport = msg.sender_role?.toLowerCase().includes('admin') || msg.sender_role?.toLowerCase() === 'super-admin';
 
                     if (msg.system_message) {
                         return (
-                            <div key={msg._id} className="text-center my-3">
-                                <span className="badge badge-soft-warning py-2 px-3 border border-warning" style={{ backgroundColor: '#fff8e1', color: '#856404' }}>{msg.message}</span>
+                            <div key={msg._id} className="td-sys-msg">
+                                <span className="td-sys-badge">{msg.message}</span>
                             </div>
                         );
                     }
 
                     return (
-                        <div key={msg._id} className={`d-flex mb-4 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                            <div className={`${isMe ? 'ml-3' : 'mr-3'}`}>
-                                <div className="rounded-circle bg-white border d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
-                                    <FaUserCircle className={`text-2xl ${isSupport ? 'text-primary' : 'text-muted'}`} size={30} />
-                                </div>
+                        <div key={msg._id} className={`td-msg-row ${isMe ? 'me' : ''}`}>
+                            <div className={`td-avatar ${isSupport ? 'support' : ''}`}>
+                                <FaUserCircle size={20} color={isSupport ? '#1565c0' : '#8898aa'} />
                             </div>
-                            <div style={{ maxWidth: '75%' }} className={isMe ? 'text-right' : 'text-left'}>
-                                <div className={`d-flex align-items-center mb-1 ${isMe ? 'justify-content-end' : ''}`}>
-                                    <small className="font-weight-bold text-uppercase text-muted" style={{ fontSize: '10px' }}>
-                                        {isSupport ? 'Support Team' : (isMe ? 'You' : `${msg.sender_role}`)}
-                                        {msg.is_internal && <span className="ml-2 badge badge-dark">INTERNAL</span>}
-                                    </small>
-                                    <small className="ml-2 text-muted" style={{ fontSize: '9px' }}>
+                            <div className={`td-bubble-wrap ${isMe ? 'me' : ''}`}>
+                                <div className={`td-meta ${isMe ? 'me' : ''}`}>
+                                    <span>
+                                        {isSupport ? 'Support Team' : (isMe ? 'You' : msg.sender_role)}
+                                    </span>
+                                    {msg.is_internal && <span className="td-internal-tag">Internal</span>}
+                                    <span style={{ fontWeight: 400, fontSize: '9px' }}>
                                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </small>
+                                    </span>
                                 </div>
-                                <div className={`p-3 rounded-lg shadow-sm ${
-                                    msg.is_internal 
-                                        ? 'bg-dark text-white'
-                                        : (isMe 
-                                            ? 'bg-primary text-white bubble-me' 
-                                            : 'bg-white border text-dark bubble-them')
-                                }`}>
-                                    <p className="mb-0 text-sm" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{msg.message}</p>
+                                <div className={`td-bubble ${msg.is_internal ? 'internal' : isMe ? 'me' : 'them'}`}>
+                                    {msg.message}
                                     {msg.attachments?.length > 0 && (
-                                        <div className="mt-3 row no-gutters">
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '8px' }}>
                                             {msg.attachments.map((att, i) => (
-                                                <div key={i} className="col-auto mr-2 mb-2">
-                                                    <div className="bg-light p-2 border rounded d-flex align-items-center">
-                                                        <FaImage className="text-muted mr-2" size={12} />
-                                                        <small className="font-weight-bold" style={{ fontSize: '10px' }}>Attachment {i+1}</small>
-                                                    </div>
-                                                </div>
+                                                <span key={i} className="td-attachment">
+                                                    <FaImage size={10} /> Attachment {i + 1}
+                                                </span>
                                             ))}
                                         </div>
                                     )}
@@ -269,188 +677,201 @@ const TicketDetail = () => {
             </div>
 
             {/* Reply Area */}
-            <div className="reply-area">
-                {ticket.status === 'Closed' ? (
-                    <div className="alert alert-secondary text-center border-0 shadow-sm py-4">
-                        <FaLock className="mr-2" /> Ticket Closed. {role !== 'buyer' ? 'Audit trail preserved.' : 'You can reopen once if unsatisfied.'}
-                    </div>
-                ) : (
-                    <div className="reply-form-wrapper bg-white p-3 rounded shadow-sm border">
-                        {isAdminUser && (
-                            <div className="mb-3 d-flex align-items-center bg-warning-light p-2 rounded">
-                                <div className="custom-control custom-switch">
-                                    <input 
-                                        type="checkbox" 
-                                        className="custom-control-input" 
-                                        id="internalCheck" 
-                                        checked={isInternal}
-                                        onChange={(e) => setIsInternal(e.target.checked)}
-                                    />
-                                    <label className="custom-control-label small font-weight-bold text-uppercase text-warning" htmlFor="internalCheck">
-                                        Post as Internal Note (Customer won't see this)
-                                    </label>
-                                </div>
-                            </div>
-                        )}
-                        <form onSubmit={handleSubmit} className="d-flex align-items-center">
-                            <textarea 
-                                className="form-control border-0 bg-transparent flex-grow-1 mr-3" 
-                                rows="2" 
-                                placeholder={isInternal ? "Write internal note here..." : "Type your message here..."}
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                style={{ resize: 'none' }}
-                                disabled={submitting}
+            {ticket.status === 'Closed' ? (
+                <div className="td-closed-notice">
+                    <FaLock size={13} />
+                    <span>Ticket Closed. {role !== 'buyer' ? 'Audit trail preserved.' : 'You can reopen once if unsatisfied.'}</span>
+                </div>
+            ) : (
+                <div className="td-reply-box">
+                    {isAdminUser && (
+                        <div className="td-internal-toggle">
+                            <input
+                                type="checkbox"
+                                id="internalCheck"
+                                checked={isInternal}
+                                onChange={(e) => setIsInternal(e.target.checked)}
+                                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                             />
-                            <button 
-                                type="submit" 
-                                className={`btn ${isInternal ? 'btn-warning' : 'btn-primary'} rounded-circle shadow-sm`} 
-                                style={{ width: '50px', height: '50px' }}
-                                disabled={submitting || !newMessage.trim()}
-                            >
-                                <FaPaperPlane />
-                            </button>
-                        </form>
-                    </div>
-                )}
-            </div>
+                            <label htmlFor="internalCheck" style={{ margin: 0, cursor: 'pointer' }}>
+                                Post as Internal Note &mdash; Customer won't see this
+                            </label>
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit} className="td-reply-row">
+                        <textarea
+                            className="td-textarea"
+                            rows="2"
+                            placeholder={isInternal ? "Write internal note..." : "Type your message..."}
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            disabled={submitting}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(e); }
+                            }}
+                        />
+                        <button
+                            type="submit"
+                            className={`td-send-btn ${isInternal ? 'internal-mode' : 'normal'}`}
+                            disabled={submitting || !newMessage.trim()}
+                        >
+                            <FaPaperPlane />
+                        </button>
+                    </form>
+                </div>
+            )}
         </div>
     );
 
     const renderSidebar = () => (
-        <div className="ticket-sidebar space-y-4">
+        <>
             {/* Ticket Info */}
-            <div className="card shadow-sm border-0 mb-4">
-                <div className="card-header bg-white border-bottom py-3 px-4">
-                    <h2 className="h5 font-weight-bold mb-0">Ticket Info</h2>
+            <div className="td-card">
+                <div className="td-card-header">
+                    <span className="td-card-title">Ticket Details</span>
                 </div>
-                <div className="card-body p-4">
-                    <div className="space-y-3">
-                        <div className="d-flex justify-content-between align-items-center">
-                            <span className="small text-muted font-weight-bold">Status</span>
-                            <span className={`badge ${getStatusStyle(ticket.status)}`}>{ticket.status}</span>
-                        </div>
-                        <div className="d-flex justify-content-between align-items-center">
-                            <span className="small text-muted font-weight-bold">Priority</span>
-                            <span className={`font-weight-bold ${ticket.priority === 'Critical' ? 'text-danger' : ticket.priority === 'High' ? 'text-warning' : 'text-info'}`}>{ticket.priority}</span>
-                        </div>
-                        <div className="d-flex justify-content-between align-items-center">
-                            <span className="small text-muted font-weight-bold">Category</span>
-                            <span className="font-weight-bold">{ticket.category}</span>
-                        </div>
-                        <div className="d-flex justify-content-between align-items-center">
-                            <span className="small text-muted font-weight-bold">Created</span>
-                            <span className="small">{new Date(ticket.createdAt).toLocaleDateString()}</span>
-                        </div>
-                        {isSlaBreached && (
-                            <div className="alert alert-danger p-2 mb-0 mt-2 small">
-                                <FaClock className="mr-1" /> SLA BREACHED
-                            </div>
-                        )}
+                <div style={{ padding: '4px 20px 12px' }}>
+                    <div className="td-info-row">
+                        <span className="td-info-label">Status</span>
+                        <span
+                            className="td-status-badge"
+                            style={{ background: statusCfg.bg, color: statusCfg.color, borderColor: statusCfg.border }}
+                        >
+                            {ticket.status}
+                        </span>
                     </div>
+                    <div className="td-info-row">
+                        <span className="td-info-label">Priority</span>
+                        <span style={{
+                            background: priorityCfg.bg, color: priorityCfg.color,
+                            fontWeight: 700, fontSize: '12px', padding: '3px 10px',
+                            borderRadius: '20px', display: 'inline-flex', alignItems: 'center', gap: '4px'
+                        }}>
+                            {priorityCfg.icon} {ticket.priority}
+                        </span>
+                    </div>
+                    <div className="td-info-row">
+                        <span className="td-info-label">Category</span>
+                        <span className="td-info-value">{ticket.category}</span>
+                    </div>
+                    <div className="td-info-row">
+                        <span className="td-info-label">Created</span>
+                        <span className="td-info-value" style={{ fontWeight: 500 }}>
+                            {new Date(ticket.createdAt).toLocaleDateString()}
+                        </span>
+                    </div>
+                    <div className="td-info-row">
+                        <span className="td-info-label">Messages</span>
+                        <span className="td-info-value">{messages.length}</span>
+                    </div>
+                    {isSlaBreached && (
+                        <div className="td-sla-alert">
+                            <FaClock size={12} /> SLA BREACHED
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* User Info */}
-            <div className="card shadow-sm border-0 mb-4">
-                <div className="card-header bg-white border-bottom py-3 px-4">
-                    <h2 className="h5 font-weight-bold mb-0">User Information</h2>
+            <div className="td-card">
+                <div className="td-card-header">
+                    <span className="td-card-title">User Information</span>
                 </div>
-                <div className="card-body p-4">
-                    <div className="d-flex align-items-center mb-3">
-                        <FaUserCircle className="text-muted mr-3" size={30} />
+                <div style={{ padding: '16px 20px' }}>
+                    <div className="td-user-block">
+                        <div className="td-user-avatar">
+                            <FaUserCircle size={24} />
+                        </div>
                         <div>
-                            <div className="font-weight-bold text-dark">{ticket.user_id?.name} {ticket.user_id?.lastName}</div>
-                            <div className="small text-muted text-uppercase font-weight-bold">{ticket.role}</div>
+                            <div className="td-user-name">
+                                {ticket.user_id?.name} {ticket.user_id?.lastName}
+                            </div>
+                            <span className="td-user-role">{ticket.role}</span>
                         </div>
                     </div>
-                    <div className="small text-muted mb-2">
-                        <i className="fa fa-envelope mr-2"></i> {ticket.user_id?.email}
+                    <div className="td-user-email">
+                        <i className="fa fa-envelope" style={{ marginRight: '6px' }}></i>
+                        {ticket.user_id?.email}
                     </div>
                 </div>
             </div>
 
             {/* Admin Action Center */}
             {isAdminUser && (
-                <div className="card shadow-sm border-0 mb-4 bg-light">
-                    <div className="card-header bg-dark text-white border-bottom py-3 px-4">
-                        <h2 className="h5 font-weight-bold mb-0">Admin Action Center</h2>
+                <div className="td-card">
+                    <div className="td-card-header" style={{ background: '#1a1f36' }}>
+                        <span className="td-card-title" style={{ color: '#fff' }}>Admin Actions</span>
                     </div>
-                    <div className="card-body p-4">
-                        <div className="d-grid gap-2">
-                            <button 
-                                onClick={() => openActionModal('Resolve')} 
-                                className="btn btn-success btn-block mb-2 font-weight-bold"
-                                disabled={ticket.status === 'Resolved' || ticket.status === 'Closed'}
+                    <div style={{ padding: '16px 20px' }}>
+                        <button
+                            className="td-action-btn resolve"
+                            onClick={() => openActionModal('Resolve')}
+                            disabled={ticket.status === 'Resolved' || ticket.status === 'Closed'}
+                        >
+                            <FaCheckCircle size={13} /> Mark Resolved
+                        </button>
+                        <button
+                            className="td-action-btn close-t"
+                            onClick={() => openActionModal('Close')}
+                            disabled={ticket.status === 'Closed'}
+                        >
+                            <FaLock size={13} /> Close Ticket
+                        </button>
+                        {ticket.linked_entity_type === 'Order' && (
+                            <button
+                                className="td-action-btn refund"
+                                onClick={() => openActionModal('Refund')}
                             >
-                                <FaCheckCircle className="mr-2" /> Mark Resolved
+                                <FaWallet size={13} /> Process Refund
                             </button>
-                            <button 
-                                onClick={() => openActionModal('Close')} 
-                                className="btn btn-dark btn-block mb-2 font-weight-bold"
-                                disabled={ticket.status === 'Closed'}
-                            >
-                                <FaLock className="mr-2" /> Close Ticket
-                            </button>
-                            {ticket.linked_entity_type === 'Order' && (
-                                <button 
-                                    onClick={() => openActionModal('Refund')} 
-                                    className="btn btn-primary btn-block mb-2 font-weight-bold"
-                                >
-                                    <FaWallet className="mr-2" /> Process Refund
-                                </button>
-                            )}
-                            <button 
-                                onClick={handleEscalate} 
-                                className="btn btn-outline-danger btn-block font-weight-bold"
-                                disabled={ticket.manual_escalation_count >= 1}
-                            >
-                                <FaGavel className="mr-2" /> Escalate to Super-Admin
-                            </button>
-                        </div>
+                        )}
+                        <button
+                            className="td-action-btn escalate"
+                            onClick={handleEscalate}
+                            disabled={ticket.manual_escalation_count >= 1}
+                        >
+                            <FaGavel size={13} /> Escalate to Super-Admin
+                        </button>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 
+    const modalConfirmClass = actionConfig.btnClass === 'btn-success' ? 'success' : actionConfig.btnClass === 'btn-dark' ? 'dark' : 'primary';
+
     return (
-        <div className="ticket-detail-page p-4 bg-light min-vh-100">
-            {/* Action Confirmation Modal */}
+        <div className="td-page p-4">
+            <style>{styles}</style>
+
+            {/* Action Modal */}
             {showActionModal && (
-                <div className="modal-overlay d-flex align-items-center justify-content-center">
-                    <div className="modal-content-custom bg-white rounded-lg shadow-xl overflow-hidden" style={{ maxWidth: '500px', width: '90%' }}>
-                        <div className={`p-4 ${actionConfig.btnClass} text-white d-flex justify-content-between align-items-center`}>
-                            <h3 className="h5 mb-0 font-weight-bold">{actionConfig.title}</h3>
-                            <button onClick={() => setShowActionModal(false)} className="btn btn-sm text-white p-0" style={{ fontSize: '1.5rem', background: 'none', border: 'none' }}>&times;</button>
+                <div className="td-modal-overlay">
+                    <div className="td-modal">
+                        <div className="td-modal-head">
+                            <h3 className="td-modal-title">{actionConfig.title}</h3>
+                            <button className="td-modal-close" onClick={() => setShowActionModal(false)}>&times;</button>
                         </div>
-                        <div className="p-4">
-                            <p className="text-dark mb-4">{actionConfig.message}</p>
-                            
-                            <div className="form-group mb-4">
-                                <label className="small font-weight-bold text-muted text-uppercase">Reason / Note (Optional)</label>
-                                <textarea 
-                                    className="form-control" 
-                                    rows="3" 
+                        <div className="td-modal-body">
+                            <p className="td-modal-msg">{actionConfig.message}</p>
+                            <div>
+                                <div className="td-modal-label">
+                                    Reason / Note {actionConfig.type === 'Refund' ? <span style={{ color: '#c62828' }}>*</span> : '(Optional)'}
+                                </div>
+                                <textarea
+                                    className="td-modal-textarea"
+                                    rows="3"
                                     placeholder="Enter details here..."
                                     value={actionNote}
                                     onChange={(e) => setActionNote(e.target.value)}
-                                    style={{ resize: 'none' }}
                                 />
-                                {actionConfig.type === 'Refund' && <small className="text-danger">* Justification is mandatory for refunds.</small>}
+                                {actionConfig.type === 'Refund' && (
+                                    <small style={{ color: '#c62828', fontSize: '11px' }}>* Justification is mandatory for refunds.</small>
+                                )}
                             </div>
-
-                            <div className="d-flex gap-3">
-                                <button 
-                                    onClick={() => setShowActionModal(false)} 
-                                    className="btn btn-light flex-grow-1 font-weight-bold py-2"
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    onClick={handleConfirmAction}
-                                    className={`btn ${actionConfig.btnClass} flex-grow-1 font-weight-bold py-2 shadow-sm text-white`}
-                                >
+                            <div className="td-modal-foot">
+                                <button className="td-modal-cancel" onClick={() => setShowActionModal(false)}>Cancel</button>
+                                <button className={`td-modal-confirm ${modalConfirmClass}`} onClick={handleConfirmAction}>
                                     {actionConfig.confirmText}
                                 </button>
                             </div>
@@ -459,31 +880,7 @@ const TicketDetail = () => {
                 </div>
             )}
 
-            <style dangerouslySetInnerHTML={{ __html: `
-                .modal-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(0,0,0,0.6);
-                    z-index: 9999;
-                    backdrop-filter: blur(2px);
-                }
-                .modal-content-custom {
-                    animation: slideIn 0.3s ease-out;
-                }
-                @keyframes slideIn {
-                    from { transform: translateY(-20px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-                .gap-3 { gap: 1rem; }
-                .bg-warning-light { background-color: #fff9e6 !important; }
-                .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
-                .bubble-me { border-bottom-right-radius: 4px !important; }
-                .bubble-them { border-bottom-left-radius: 4px !important; }
-            `}} />
-
+            {/* Page Header */}
             {isDashboardLayout ? (
                 <div className="block-header mb-4">
                     <div className="row align-items-center">
@@ -501,52 +898,79 @@ const TicketDetail = () => {
                             </ul>
                         </div>
                         <div className="col-lg-4 col-md-6 col-sm-12 text-md-right mt-3 mt-md-0">
-                            <button onClick={() => navigate(pathPrefix)} className="btn btn-secondary shadow-sm">
-                                <FaArrowLeft className="mr-2" /> Back to List
+                            <button onClick={() => navigate(pathPrefix)} className="td-back-btn">
+                                <FaArrowLeft size={12} /> Back to Tickets
                             </button>
                         </div>
                     </div>
                 </div>
             ) : (
-                <div className="row mb-5 align-items-center">
-                    <div className="col">
-                        <div className="d-flex align-items-center">
-                            <button 
-                                onClick={() => navigate(pathPrefix)}
-                                className="btn btn-white shadow-sm rounded-circle mr-4"
-                                style={{ width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', border: 'none' }}
-                            >
-                                <FaArrowLeft />
-                            </button>
-                            <div>
-                                <div className="d-flex align-items-center gap-2 mb-1">
-                                    <span className="badge badge-primary px-3 py-1 mr-2 shadow-sm">
-                                        {ticket.ticket_code}
-                                    </span>
-                                    <span className={`badge ${getStatusStyle(ticket.status)} px-3 py-1 shadow-sm`}>
-                                        {ticket.status}
-                                    </span>
-                                </div>
-                                <h1 className="h3 font-weight-bold mb-0 text-dark">{ticket.subject}</h1>
-                                <p className="text-muted mb-0 mt-1">{ticket.category}</p>
+                <div className="td-header-card">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <button onClick={() => navigate(pathPrefix)} className="td-back-btn" style={{ flexShrink: 0 }}>
+                            <FaArrowLeft size={12} /> Back
+                        </button>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                                <span className="td-ticket-code" style={{ marginBottom: 0 }}>{ticket.ticket_code}</span>
+                                <span
+                                    className="td-status-badge"
+                                    style={{ background: statusCfg.bg, color: statusCfg.color, borderColor: statusCfg.border }}
+                                >
+                                    {ticket.status}
+                                </span>
                             </div>
+                            <h1 className="td-subject">{ticket.subject}</h1>
+                            <div className="td-category">{ticket.category}</div>
                         </div>
                     </div>
                 </div>
             )}
 
+            {/* Ticket subject header for dashboard layout */}
+            {isDashboardLayout && (
+                <div className="td-header-card" style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                        <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                <span className="td-ticket-code" style={{ marginBottom: 0 }}>{ticket.ticket_code}</span>
+                                <span
+                                    className="td-status-badge"
+                                    style={{ background: statusCfg.bg, color: statusCfg.color, borderColor: statusCfg.border }}
+                                >
+                                    {ticket.status}
+                                </span>
+                                <span style={{
+                                    background: priorityCfg.bg, color: priorityCfg.color,
+                                    fontWeight: 700, fontSize: '11px', padding: '3px 10px',
+                                    borderRadius: '20px', border: `1px solid ${priorityCfg.bg}`
+                                }}>
+                                    {priorityCfg.icon} {ticket.priority}
+                                </span>
+                            </div>
+                            <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#1a1f36' }}>{ticket.subject}</h2>
+                            <div className="td-category">{ticket.category}</div>
+                        </div>
+                        {isSlaBreached && (
+                            <div className="td-sla-alert" style={{ marginTop: 0 }}>
+                                <FaClock size={12} /> SLA BREACHED
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* Main Layout */}
             <div className="row clearfix">
                 <div className="col-lg-8 col-md-12">
-                    <div className="card shadow-sm border-0 mb-4 h-100">
-                        <div className="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
-                            <h2 className="h5 font-weight-bold mb-0">Conversation</h2>
-                            <span className="small text-muted">
-                                <i className="fa fa-users mr-1"></i> {messages.length} Messages
+                    <div className="td-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="td-card-header">
+                            <span className="td-card-title">Conversation</span>
+                            <span style={{ fontSize: '12px', color: '#8898aa' }}>
+                                {messages.length} {messages.length === 1 ? 'message' : 'messages'}
                             </span>
                         </div>
-                        <div className="card-body p-0">
-                            {renderChatArea()}
-                        </div>
+                        {renderChatArea()}
                     </div>
                 </div>
                 <div className="col-lg-4 col-md-12">

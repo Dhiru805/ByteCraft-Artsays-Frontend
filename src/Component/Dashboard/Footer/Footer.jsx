@@ -1,10 +1,11 @@
 import React from "react";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
   return (
     <>
             <div className="col-12 text-center">
-              All Copyright © 2025 Artsays Tech PVT LTD. All Rights Reserved. Powered By&nbsp; 
+              All Copyright © {currentYear} Artsays Private Limited. All Rights Reserved. Design By&nbsp; 
           <a
           href="https://bytecraftstudios.in/" 
           target="_blank" 
