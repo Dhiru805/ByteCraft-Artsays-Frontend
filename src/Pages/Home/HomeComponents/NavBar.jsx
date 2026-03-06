@@ -46,6 +46,116 @@ const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 let _megaAdsCache = null;
 let _megaAdsFetching = null;
 
+// Shared product cache for fallback when no ads exist
+let _megaProductsCache = null;
+let _megaProductsFetching = null;
+
+const fetchMegaProducts = () => {
+  if (_megaProductsCache) return Promise.resolve(_megaProductsCache);
+  if (_megaProductsFetching) return _megaProductsFetching;
+  _megaProductsFetching = Promise.all([
+    getAPI("/api/getstatusapprovedproduct", {}, true, false),
+    getAPI("/api/getstatusapprovedproductforSELLER", {}, true, false),
+  ])
+    .then(([r1, r2]) => {
+      const p1 = r1?.data?.data?.filter(p => p.status === "Approved") || [];
+      const p2 = r2?.data?.data?.filter(p => p.status === "Approved") || [];
+      const all = [...p1, ...p2].reverse().slice(0, 5);
+      _megaProductsCache = all.length > 0 ? all : null;
+      return _megaProductsCache;
+    })
+    .catch(() => { _megaProductsCache = null; return null; })
+    .finally(() => { _megaProductsFetching = null; });
+  return _megaProductsFetching;
+};
+
+const MegaProductGrid = () => {
+  const [products, setProducts] = useState(null);
+  const [idx, setIdx] = useState(0);
+  const [slideDir, setSlideDir] = useState("right");
+  const [hovered, setHovered] = useState(false);
+  const timerRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchMegaProducts().then(data => {
+      if (!cancelled) setProducts(data || []);
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  const total = products ? products.length : 0;
+
+  useEffect(() => {
+    if (total <= 1 || hovered) return;
+    timerRef.current = setInterval(() => {
+      setSlideDir("right");
+      setIdx(p => (p + 1) % total);
+    }, 4000);
+    return () => clearInterval(timerRef.current);
+  }, [total, hovered]);
+
+  const goTo = (i) => { setSlideDir(i > idx ? "right" : "left"); setIdx(i); };
+
+  if (products === null) return <div className="mad-card mad-skeleton" />;
+  if (products.length === 0) return null;
+
+  const p = products[idx];
+  const img = p.mainImage ? `${imageBaseURL}${p.mainImage}` : "/assets/home/biditemurl.jpg";
+  const name = p.productName || "Artwork";
+  const seller = p.userId?.name ? `${p.userId.name}${p.userId.lastName ? " " + p.userId.lastName : ""}` : "";
+  const finalPrice = p.finalPrice || p.price;
+  const marketPrice = p.marketPrice;
+  const price = finalPrice ? `₹${Number(finalPrice).toLocaleString()}` : "";
+  const hasDiscount = finalPrice && marketPrice && finalPrice < marketPrice;
+  const discountPct = hasDiscount ? Math.round(((marketPrice - finalPrice) / marketPrice) * 100) : 0;
+  const href = `/product-details/${name.toLowerCase().replace(/\s+/g, "-")}/${p._id}`;
+
+  return (
+    <div
+      className="mad-card"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => navigate(href)}
+    >
+      <div className="mad-img-wrap">
+        <img
+          key={idx}
+          src={img}
+          alt={name}
+          className="mad-img"
+          style={{ animation: total > 1 ? `madSlide${slideDir === "right" ? "R" : "L"} 0.35s ease-out` : "none" }}
+          draggable={false}
+        />
+        <span className="mad-badge" style={{ background: "#48372d" }}>Product</span>
+        {hasDiscount && <span className="mad-discount-badge">{discountPct}% OFF</span>}
+      </div>
+      <div className="mad-body">
+        <p className="mad-title">{name}</p>
+        {seller && <p className="mad-sub">{seller}</p>}
+        <div className="mad-row">
+          <span className="mad-price">{price}</span>
+          <button className="mad-cta" onClick={e => { e.stopPropagation(); navigate(href); }}>
+            View <ArrowRight size={11} />
+          </button>
+        </div>
+        {total > 1 && (
+          <div className="mad-dots">
+            {products.map((_, i) => (
+              <button
+                key={i}
+                className={`mad-dot-btn${i === idx ? " mad-dot-on" : ""}`}
+                onClick={e => { e.stopPropagation(); goTo(i); }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const fetchMegaAds = () => {
   if (_megaAdsCache) return Promise.resolve(_megaAdsCache);
   if (_megaAdsFetching) return _megaAdsFetching;
@@ -63,6 +173,7 @@ const fetchMegaAds = () => {
 // Each menu gets a slice of real ads offset by menuIndex so menus show different ads when possible
 const MegaAdSlider = ({ menuIndex = 0 }) => {
   const [ads, setAds] = useState([]);
+  const [hasAds, setHasAds] = useState(true);
   const [idx, setIdx] = useState(0);
   const [slideDir, setSlideDir] = useState("right");
   const [hovered, setHovered] = useState(false);
@@ -91,8 +202,9 @@ const MegaAdSlider = ({ menuIndex = 0 }) => {
           href: `/product-details/${(ad.productName || "product").toLowerCase().replace(/\s+/g, "-")}/${ad._id}`,
           _raw: ad,
         })));
+        setHasAds(true);
       } else {
-        setAds(STATIC_ADS_FALLBACK);
+        setHasAds(false);
       }
       setLoaded(true);
     });
@@ -130,7 +242,9 @@ const MegaAdSlider = ({ menuIndex = 0 }) => {
   };
 
   const cur = ads[idx];
-  if (!loaded || !cur) return <div className="mad-card mad-skeleton" />;
+  if (!loaded) return <div className="mad-card mad-skeleton" />;
+  if (!hasAds) return <MegaProductGrid />;
+  if (!cur) return <div className="mad-card mad-skeleton" />;
 
   const hasDiscount = cur.finalPrice && cur.marketPrice && cur.finalPrice < cur.marketPrice;
   const discountPct = hasDiscount ? Math.round(((cur.marketPrice - cur.finalPrice) / cur.marketPrice) * 100) : 0;
@@ -344,11 +458,11 @@ const LearnMega = () => (
         <a className="mp-link" href="/blogs"><span className="mp-dot" />Blog</a>
         <a className="mp-link" href="/faqs"><span className="mp-dot" />FAQs</a>
         <a className="mp-link" href="/why-artsays"><span className="mp-dot" />Why Artsays</a>
-        <a className="mp-link" href="/privacy-policy"><span className="mp-dot" />Privacy Policy</a>
+        <a className="mp-link" href="/policy"><span className="mp-dot" />Privacy Policy</a>
       </div>
       <div className="mp-col">
         <span className="mp-head">Support</span>
-        <a className="mp-link" href="/faqs"><span className="mp-dot" />Help Center</a>
+        <a className="mp-link" href="/policy"><span className="mp-dot" />Help Center</a>
         <a className="mp-link" href="/faqs"><span className="mp-dot" />Contact Support</a>
         <a className="mp-link" href="/faqs"><span className="mp-dot" />Report an Issue</a>
       </div>
@@ -427,7 +541,7 @@ const CreateDrop = ({ usertype, onClose }) => (
 // NAV CONFIG
 // ─────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
-  { key: "art", label: "ART", Mega: null, href: "/art-gallery" },
+  { key: "art", label: "Gallery", Mega: null, href: "/art-gallery" },
   { key: "bid", label: "BID", Mega: null, href: "/bid" },
   { key: "stores", label: "STORES", Mega: null, href: "/store" },
   { key: "community", label: "COMMUNITY", Mega: CommunityMega, href: "/artsays-community" },

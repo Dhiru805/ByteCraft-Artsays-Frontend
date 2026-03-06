@@ -40,7 +40,7 @@ const BiddedProduct = () => {
                 console.log("Data Type:", typeof result.data);
 
                 if (result && result.data && Array.isArray(result.data.biddedProducts)) {
-                    setProducts(result.data.biddedProducts);
+                    setProducts([...result.data.biddedProducts].reverse());
                 } else {
                     console.error("API response does not contain an array:", result.data);
                     setProducts([]);

@@ -500,6 +500,95 @@
   background: #48372d;
 }
 
+/* ── Mega Product Grid (fallback when no ads) */
+.mad-product-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 4px 0;
+  cursor: default;
+  overflow-y: auto;
+  max-height: 270px;
+}
+.mad-product-grid:hover {
+  transform: none;
+  box-shadow: 0 2px 12px rgba(72,55,45,0.07);
+}
+
+.mpg-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #f5ede8;
+  transition: background 0.12s;
+}
+.mpg-item:last-child { border-bottom: none; }
+.mpg-item:hover { background: #fdf4ef; }
+
+.mpg-img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid #ede5e0;
+}
+
+.mpg-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mpg-name {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #2c1e17;
+  margin: 0 0 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mpg-seller {
+  font-size: 10px;
+  color: #9a7b6e;
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mpg-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mpg-price {
+  font-size: 11px;
+  font-weight: 800;
+  color: #6F4D34;
+}
+
+.mpg-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #48372d;
+  background: #f5ede8;
+  padding: 3px 8px;
+  border-radius: 20px;
+  transition: background 0.15s, color 0.15s;
+}
+.mpg-item:hover .mpg-cta {
+  background: #48372d;
+  color: #fff;
+}
+
 /* ═══════════════════════════════════════════════════════════
    SEARCH DROPDOWN
    ═══════════════════════════════════════════════════════════ */

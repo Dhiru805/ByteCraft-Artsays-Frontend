@@ -23,8 +23,8 @@ const Product = () => {
     const fetchProducts = async () => {
       const userId = localStorage.getItem('userId');
       try {
-        const result = await getAPI(`/api/get-certificationbyId/${userId}`, {}, true, false);
-        setProducts(result.data.data);
+          const result = await getAPI(`/api/get-certificationbyId/${userId}`, {}, true, false);
+          setProducts([...result.data.data].reverse());
         console.log(result.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);

@@ -32,11 +32,9 @@ const InsuranceList = () => {
           false
         );
 
-        if (!response.hasError) {
-          setInsurances(response.data.data || []);
-        } else {
-          console.error("Error in response:", response.message);
-        }
+          if (!response.hasError) {
+            setInsurances([...(response.data.data || [])].reverse());
+          }
       } catch (error) {
         console.error("Error fetching insurances:", error);
       } finally {

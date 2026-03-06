@@ -581,7 +581,7 @@ const ArtistBiddingProducts = () => {
       list = result.data.products;
     }
 
-    setProducts(list);   // ✅ now safe
+     setProducts([...list].reverse());   // latest first
   } catch (err) {
     console.error("Error fetching products:", err);
     setProducts([]);
