@@ -44,6 +44,7 @@ const RaiseTicket = () => {
             "Payment failed but debited",
             "Seller unresponsive",
             "Product query",
+            "Technical Bug",
             "General Query"
         ],
         artist: [
@@ -54,6 +55,7 @@ const RaiseTicket = () => {
             "Withdrawal delay",
             "Payout Issue",
             "Custom Order",
+            "Technical Bug",
             "General Query"
         ],
         seller: [
@@ -64,6 +66,7 @@ const RaiseTicket = () => {
             "Auction restart needed",
             "Packaging material delay",
             "Wallet settlement mismatch",
+            "Technical Bug",
             "General Query"
         ],
         'super-admin': [
