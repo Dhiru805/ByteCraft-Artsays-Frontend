@@ -317,18 +317,6 @@ const LegalCompliance = ({
             </label>
           </div>
         </label>
-        {!formData.coaAvailable && (
-          <div className="mt-2">
-            <a
-              href="https://example.com/purchase-coa"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary"
-            >
-              Purchase a Certificate of Authenticity
-            </a>
-          </div>
-        )}
       </div>
 
       { }
