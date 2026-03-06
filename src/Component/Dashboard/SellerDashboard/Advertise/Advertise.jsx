@@ -19,8 +19,8 @@ const Product = () => {
       setLoading(true);
       const userId = localStorage.getItem('userId');
       try {
-        const result = await getAPI(`/api/campaigns/${userId}`, {}, true, false);
-        setProducts(result.data.data);
+          const result = await getAPI(`/api/campaigns/${userId}`, {}, true, false);
+          setProducts([...result.data.data].reverse());
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {

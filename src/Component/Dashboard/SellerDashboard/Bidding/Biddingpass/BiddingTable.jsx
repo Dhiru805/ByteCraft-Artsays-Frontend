@@ -255,7 +255,7 @@ const BiddingTable = () => {
     try {
       const userId = localStorage.getItem("userId");
       const res = await getAPI(`/api/bidding/pass-orders/my?userId=${userId}`, {}, true);
-      setOrders(Array.isArray(res?.data?.data) ? res.data.data : []);
+      setOrders(Array.isArray(res?.data?.data) ? [...res.data.data].reverse() : []);
     } catch (e) {
       setOrders([]);
     }

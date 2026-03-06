@@ -33,7 +33,7 @@ const ApprovedProduct = () => {
                 console.log("Data Type:", typeof result.data);
 
                 if (result && result.data && Array.isArray(result.data.data)) {
-                    setProducts(result.data.data);
+                    setProducts([...result.data.data].reverse());
                 } else {
                     console.error("API response does not contain an array:", result.data);
                     setProducts([]);

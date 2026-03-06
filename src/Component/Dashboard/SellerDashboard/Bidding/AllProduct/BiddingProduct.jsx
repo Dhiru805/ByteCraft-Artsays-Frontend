@@ -310,7 +310,7 @@ const SellerBiddingProducts = () => {
       else if (Array.isArray(result?.data?.products)) list = result.data.products;
       else list = [];
 
-      setProducts(list);
+       setProducts([...list].reverse());
     } catch (err) {
       console.error("Error fetching products:", err);
       setProducts([]);

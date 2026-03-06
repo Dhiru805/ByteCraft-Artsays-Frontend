@@ -22,8 +22,8 @@ const ExhibitionTable = () => {
       }
 
       const response = await getAPI(`/api/get-exhibition-userId/${userId}`);
-      const data = Array.isArray(response.data.data) ? response.data.data : [];
-      setExhibitions(data);
+        const data = Array.isArray(response.data.data) ? response.data.data : [];
+        setExhibitions([...data].reverse());
     } catch (error) {
       console.error("Error fetching exhibitions:", error);
       toast.error(error.response?.data?.message || "Failed to fetch exhibitions");

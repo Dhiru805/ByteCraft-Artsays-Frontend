@@ -33,7 +33,7 @@ const InsuranceList = () => {
         );
 
         if (!response.hasError) {
-          setInsurances(response.data.data || []);
+          setInsurances([...(response.data.data || [])].reverse());
         } else {
           console.error("Error in response:", response.message);
         }
