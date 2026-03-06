@@ -251,6 +251,8 @@ import Unsubscribe from "../Pages/Unsubscribe/Unsubscribe";
 import SMSSettingSignup from "../Component/Dashboard/Super-AdminDashboard/SMSSettings/SmsSettingsSignup";
 import PaymentGetwaySetting from "../Component/Dashboard/Super-AdminDashboard/Settings/PaymentGetway/PaymentGetway"
 import GoogleSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/GoogleSetting/GoogleSetting"
+import FeedbackFormBuilder from "../Component/Dashboard/Super-AdminDashboard/Settings/FeedbackForm/FeedbackFormBuilder";
+import FeedbackResponses from "../Component/Dashboard/Super-AdminDashboard/Settings/FeedbackForm/FeedbackResponses";
 
 //----------------------------------------Homepage Super-Admin Dashboard-----------------------------------------------------------
 import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
@@ -1130,6 +1132,9 @@ const AppRoutes = () => {
         <Route path="settings/insurance" element={<InsuranceSetting />} />
         <Route path="settings/exhibition" element={<ExhibitionSetting />} />
         <Route path="settings/sidebar-visibility" element={<SidebarVisibility />} />
+        <Route path="settings/google-oauth" element={<GoogleSetting />} />
+        <Route path="settings/feedback-form" element={<FeedbackFormBuilder />} />
+        <Route path="settings/feedback-responses" element={<FeedbackResponses />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />

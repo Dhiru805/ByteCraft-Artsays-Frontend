@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 import ChatIcon from "./Component/chatbot/ChatIcon";
 import ScrollToTop from "./Component/ScrollToTop";
 import WonBidPopup from "./Component/WonBidPopup/WonBidPopup";
+import FeedbackPopup from "./Component/FeedbackPopup/FeedbackPopup";
 import { HelmetProvider } from "react-helmet-async";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
@@ -78,6 +79,7 @@ const AppContent = () => {
       <CookieConsent />
       <ChatIcon />
       <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />
+        <FeedbackPopup />
     </div>
   );
 };

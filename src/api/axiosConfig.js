@@ -57,18 +57,19 @@ axiosInstance.interceptors.response.use(
         }
     }
 
-    // ✅ Handle Session Revocation (Immediate Logout)
-    if (status === 401 && (res?.sessionRevoked === true || res?.message === "Unauthorized: No token provided")) {
-      console.warn("Session revoked or unauthorized. Logging out automatically.");
-      
-      // If it's just missing token and we aren't on login page, redirect
-      if (!window.location.pathname.includes("/login")) {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "/login";
+      // ✅ Handle Session Revocation (Immediate Logout)
+      // Only redirect if there IS a stored token (i.e. a real session was revoked).
+      // Guests with no token hitting public routes should never be force-redirected.
+      if (status === 401 && (res?.sessionRevoked === true || res?.message === "Unauthorized: No token provided")) {
+        const hasToken = !!localStorage.getItem("token");
+        if (hasToken && !window.location.pathname.includes("/login")) {
+          console.warn("Session revoked or unauthorized. Logging out automatically.");
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = "/login";
+        }
+        return Promise.reject(error);
       }
-      return Promise.reject(error);
-    }
 
     // ✅ Handle User Suspension
     if (

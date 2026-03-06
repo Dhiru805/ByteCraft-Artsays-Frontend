@@ -524,11 +524,15 @@ const Sidebar = () => {
                label: "Default Auto Targeting",
                path: `/super-admin/settings/auto-targeting`,
              },
-             {
-               label: "Google OAuth",
-               path: `/super-admin/settings/google-oauth`,
-             },
-          ],
+            {
+              label: "Google OAuth",
+              path: `/super-admin/settings/google-oauth`,
+            },
+            {
+              label: "Feedback Form",
+              path: `/super-admin/settings/feedback-form`,
+            },
+         ],
         },
       {
         label: "SMS Settings",

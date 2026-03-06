@@ -173,7 +173,12 @@ const MyLive = () => {
     hiddenVideo.srcObject = originalStream;
     hiddenVideo.muted = true;
     hiddenVideo.playsInline = true;
-    hiddenVideo.play();
+      const playPromise = hiddenVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Interrupted by pause/unmount — safe to ignore
+        });
+      }
 
     const delayMs = delaySeconds * 1000;
 
