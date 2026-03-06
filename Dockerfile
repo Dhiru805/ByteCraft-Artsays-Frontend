@@ -1,14 +1,25 @@
-# Use Nginx image directly
+# ── Stage 1: Build the React app ─────────────────────────────────────────────
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies first (layer cache)
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps
+
+# Copy source and build (CRA outputs to /app/build)
+COPY . .
+RUN npm run build
+
+# ── Stage 2: Serve with Nginx ─────────────────────────────────────────────────
 FROM nginx:alpine
 
-# Copy your manually built React app to Nginx html folder
-COPY build /usr/share/nginx/html
+# Copy built app from builder stage
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Optional: custom Nginx config
+# Custom Nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
 EXPOSE 80
 
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

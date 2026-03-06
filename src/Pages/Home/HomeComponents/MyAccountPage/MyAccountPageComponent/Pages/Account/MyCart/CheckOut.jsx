@@ -34,10 +34,11 @@ const CheckOut = () => {
     const [couponDiscountAmount, setCouponDiscountAmount] = useState(0);
     const [setAppliedCoupons] = useState([]);
   
-    const [wallet, setWallet] = useState(null);
-    const [useWallet, setUseWallet] = useState(false);
-    const [useArtCoins, setUseArtCoins] = useState(false);
-    const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR" });
+  const [wallet, setWallet] = useState(null);
+  const [useWallet, setUseWallet] = useState(false);
+  const [useArtCoins, setUseArtCoins] = useState(false);
+  const [coinSetting, setCoinSetting] = useState({ coinValue: 0.10, currency: "INR" });
+  const [checkoutEnabled, setCheckoutEnabled] = useState(true);
   
     // Address selection states
 
@@ -234,6 +235,16 @@ const CheckOut = () => {
         if (coinSettingsRes.data) {
           setCoinSetting(coinSettingsRes.data);
         }
+
+        // Fetch checkout enabled/disabled setting
+        try {
+          const paymentSettingsRes = await getAPI("/api/get-payment-settings");
+          if (paymentSettingsRes?.data?.data) {
+            setCheckoutEnabled(paymentSettingsRes.data.data.checkoutEnabled !== false);
+          }
+        } catch (_) {
+          // if fetch fails, default to enabled
+        }
       } catch (err) {
         console.error("Error loading wallet data:", err);
       }
@@ -254,6 +265,76 @@ const CheckOut = () => {
 
 
     if (loading) return <CheckOutSkeleton />;
+
+    if (!checkoutEnabled) {
+        return (
+          <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
+            <div className="w-full max-w-md">
+              <div className="bg-white rounded-[2rem] border border-gray-100 shadow-2xl shadow-gray-200/40 overflow-hidden">
+                {/* Top accent bar */}
+                <div className="h-1.5 w-full bg-gradient-to-r from-[#5C4033] via-[#8B6356] to-[#5C4033]" />
+
+                <div className="px-10 py-12 text-center">
+                  {/* Icon */}
+                  <div className="w-20 h-20 rounded-3xl bg-[#5C4033]/8 flex items-center justify-center mx-auto mb-6">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-10 h-10 text-[#5C4033]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                      />
+                    </svg>
+                  </div>
+
+                  {/* Heading */}
+                  <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-3">
+                    Checkout Unavailable
+                  </h2>
+
+                  {/* Divider */}
+                  <div className="w-12 h-0.5 bg-[#5C4033]/30 mx-auto mb-4 rounded-full" />
+
+                  {/* Message */}
+                  <p className="text-gray-500 text-sm leading-relaxed mb-8">
+                    Our checkout is temporarily disabled by the admin. Please check back shortly - we'll be back up soon.
+                  </p>
+
+                  {/* Buttons */}
+                  <div className="flex flex-col gap-3">
+                    <button
+                      onClick={() => navigate(-1)}
+                      className="w-full bg-[#5C4033] hover:bg-[#4b3327] text-white font-semibold py-3 px-6 rounded-2xl transition-all active:scale-95 text-sm"
+                    >
+                      Go Back
+                    </button>
+                    <button
+                      onClick={() => navigate("/")}
+                      className="w-full border border-gray-200 hover:border-[#5C4033]/30 hover:bg-[#5C4033]/5 text-gray-600 font-medium py-3 px-6 rounded-2xl transition-all text-sm"
+                    >
+                      Back to Home
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Subtle note */}
+              <p className="text-center text-xs text-gray-400 mt-5">
+                Need help?{" "}
+                <a href="/contact-us" className="text-[#5C4033] hover:underline font-medium">
+                  Contact Support
+                </a>
+              </p>
+            </div>
+          </div>
+        );
+      }
 
     const handleApplyCoupon = async () => {
       if (!couponCode.trim()) {

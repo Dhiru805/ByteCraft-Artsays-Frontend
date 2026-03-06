@@ -11,6 +11,7 @@ export default function PaymentGatewaySettings() {
     key: "",
     salt: "",
     env: "test",
+    checkoutEnabled: true,
   });
 
   const [loading, setLoading] = useState(true);
@@ -25,10 +26,11 @@ export default function PaymentGatewaySettings() {
       if (res.data && !res.data.hasError && res.data.data) {
         const data = res.data.data;
           setSettings({
-            key: data.key || "",
-            salt: data.salt || "",
-            env: data.env || "test",
-          });
+             key: data.key || "",
+             salt: data.salt || "",
+             env: data.env || "test",
+             checkoutEnabled: data.checkoutEnabled !== false,
+           });
       }
     } catch (err) {
       console.error(err);
@@ -48,6 +50,10 @@ export default function PaymentGatewaySettings() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleToggleCheckout = () => {
+    setSettings((prev) => ({ ...prev, checkoutEnabled: !prev.checkoutEnabled }));
   };
 
   const handleSave = async () => {
@@ -181,12 +187,67 @@ export default function PaymentGatewaySettings() {
                       >
                         <option value="test">Test</option>
                         <option value="prod">Production</option>
-                      </select>
+                        </select>
+                        </div>
+                      </div>
+
+                {/* Checkout Page Toggle */}
+                <div className="col-md-12">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "14px 18px",
+                      background: settings.checkoutEnabled ? "#e8f5e9" : "#fce4ec",
+                      borderRadius: 8,
+                      border: `1px solid ${settings.checkoutEnabled ? "#a5d6a7" : "#f48fb1"}`,
+                      marginBottom: 8,
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: "1.35rem" }}>
+                        Checkout Page
+                      </div>
+                      <div style={{ fontSize: "1.2rem", color: "#666", marginTop: 2 }}>
+                        {settings.checkoutEnabled
+                          ? "Checkout is currently enabled. Users can place orders."
+                          : "Checkout is currently disabled. Users cannot place orders."}
+                      </div>
+                    </div>
+                    {/* Toggle switch */}
+                    <div
+                      onClick={handleToggleCheckout}
+                      style={{
+                        width: 52,
+                        height: 28,
+                        borderRadius: 14,
+                        background: settings.checkoutEnabled ? "#4caf50" : "#e53935",
+                        cursor: "pointer",
+                        position: "relative",
+                        transition: "background 0.25s",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 4,
+                          left: settings.checkoutEnabled ? 28 : 4,
+                          width: 20,
+                          height: 20,
+                          borderRadius: "50%",
+                          background: "#fff",
+                          transition: "left 0.25s",
+                          boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
+                        }}
+                      />
                     </div>
                   </div>
-              </div>
+                </div>
+              </div>{/* end row */}
 
-                <div className="text-end mt-4">
+                  <div className="text-end mt-4">
                 <button
                   type="button"
                   className="btn btn-primary"
