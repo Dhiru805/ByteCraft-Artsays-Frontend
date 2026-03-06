@@ -535,7 +535,7 @@ const Footer = () => {
               <span>India | English (UK) | &#8377; (INR)</span>
             </div>
             <div className="text-white text-[11px] md:text-xs text-center md:text-right">
-              &copy; {new Date().getFullYear()} Artsays Pvt. Ltd. All rights reserved. | Designed for Global Artists &amp; Collectors |{" "}
+              &copy; {new Date().getFullYear()} Artsays Private Limited. All Rights Reserved. | Designed for Global Artists &amp; Collectors |{" "}
               <Link to="/policy" className="text-white hover:text-[#FB5934] transition-colors">Terms</Link>
               {" \u2022 "}
               <Link to="/policy" className="text-white hover:text-[#FB5934] transition-colors">Privacy</Link>
