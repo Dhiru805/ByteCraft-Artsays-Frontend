@@ -23,6 +23,8 @@ const ArtistWallet = () => {
   const [referralSettings, setReferralSettings] = useState(null);
   const [savedBankDetails, setSavedBankDetails] = useState(null);
   const [selectedPaymentOption, setSelectedPaymentOption] = useState("saved");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
@@ -345,9 +347,13 @@ const ArtistWallet = () => {
     other: "#17a2b8"
   };
 
-  const filteredTransactions = txnCategory === "all"
-    ? transactions
-    : transactions.filter(t => categorize(t) === txnCategory);
+  const filteredTransactions = transactions.filter(t => {
+    const matchesCategory = txnCategory === "all" || categorize(t) === txnCategory;
+    const txnDate = new Date(t.createdAt);
+    const matchesFrom = dateFrom ? txnDate >= new Date(dateFrom + "T00:00:00") : true;
+    const matchesTo = dateTo ? txnDate <= new Date(dateTo + "T23:59:59") : true;
+    return matchesCategory && matchesFrom && matchesTo;
+  });
 
   // Cumulative balance: credits add, debits subtract
   const sortedForCumulative = [...filteredTransactions].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -360,6 +366,39 @@ const ArtistWallet = () => {
 
   const displayedTransactions = filteredTransactions.slice((page - 1) * pageSize, page * pageSize);
   const totalPages = Math.ceil(filteredTransactions.length / pageSize);
+
+  const exportCSV = () => {
+    if (filteredTransactions.length === 0) return toast.error("No transactions to export");
+    const headers = ["#", "Date", "Category", "Type", "Amount (₹)", "Purpose", "Status", "Cumulative (₹)"];
+    const rows = filteredTransactions.map((txn, idx) => {
+      const cat = categorize(txn);
+      const cumVal = cumulativeMap[txn._id] || 0;
+      return [
+        idx + 1,
+        new Date(txn.createdAt).toLocaleString(),
+        categoryLabels[cat] || cat,
+        txn.type,
+        txn.type === "credit" ? `+${txn.amount}` : `-${txn.amount}`,
+        `"${(txn.purpose || "").replace(/"/g, '""')}"`,
+        txn.status,
+        cumVal.toFixed(2)
+      ].join(",");
+    });
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const dateLabel = dateFrom && dateTo ? `_${dateFrom}_to_${dateTo}` : dateFrom ? `_from_${dateFrom}` : dateTo ? `_to_${dateTo}` : "";
+    link.setAttribute("href", url);
+    link.setAttribute("download", `transactions${dateLabel}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success("CSV exported successfully");
+  };
+
+
 
   return (
     <div className="container-fluid">
@@ -741,33 +780,85 @@ const ArtistWallet = () => {
               </ul>
             </div>
 
-            {activeTab === 'transactions' && (
-              <>
-                <div className="header d-flex justify-content-between align-items-center flex-wrap">
-                  <h2>Recent Transactions</h2>
-                  <div className="d-flex align-items-center gap-2 flex-wrap">
-                    <select
-                      className="form-control d-inline-block w-auto"
-                      value={txnCategory}
-                      onChange={e => { setTxnCategory(e.target.value); setPage(1); }}
-                    >
-                      {Object.entries(categoryLabels).map(([key, label]) => (
-                        <option key={key} value={key}>{label}</option>
-                      ))}
-                    </select>
-                    <span className="ml-2">Show</span>
-                    <select
-                      className="form-control d-inline-block w-auto ml-1"
-                      value={pageSize}
-                      onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
-                    >
-                      {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-                    </select>
-                    <span>entries</span>
+              {activeTab === 'transactions' && (
+                <>
+                  <div className="header d-flex justify-content-between align-items-center flex-wrap" style={{ gap: "10px" }}>
+                    <h2 style={{ marginBottom: 0 }}>Recent Transactions</h2>
+                    <div className="d-flex align-items-center flex-wrap" style={{ gap: "8px" }}>
+                      {/* Category filter */}
+                      <select
+                        className="form-control d-inline-block w-auto"
+                        value={txnCategory}
+                        onChange={e => { setTxnCategory(e.target.value); setPage(1); }}
+                      >
+                        {Object.entries(categoryLabels).map(([key, label]) => (
+                          <option key={key} value={key}>{label}</option>
+                        ))}
+                      </select>
+
+                      {/* Date range */}
+                      <div className="d-flex align-items-center" style={{ gap: "4px" }}>
+                        <label className="mb-0 text-muted" style={{ fontSize: "12px", whiteSpace: "nowrap" }}>From</label>
+                        <input
+                          type="date"
+                          className="form-control"
+                          style={{ width: "140px" }}
+                          value={dateFrom}
+                          onChange={e => { setDateFrom(e.target.value); setPage(1); }}
+                        />
+                        <label className="mb-0 text-muted" style={{ fontSize: "12px", whiteSpace: "nowrap" }}>To</label>
+                        <input
+                          type="date"
+                          className="form-control"
+                          style={{ width: "140px" }}
+                          value={dateTo}
+                          onChange={e => { setDateTo(e.target.value); setPage(1); }}
+                        />
+                        {(dateFrom || dateTo) && (
+                          <button
+                            className="btn btn-sm btn-outline-secondary"
+                            title="Clear dates"
+                            onClick={() => { setDateFrom(""); setDateTo(""); setPage(1); }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Export buttons */}
+                        <button
+                          className="btn btn-sm btn-success d-flex align-items-center"
+                          style={{ gap: "5px" }}
+                          onClick={exportCSV}
+                          title="Export as CSV"
+                        >
+                          Export
+                        </button>
+
+
+                      {/* Page size */}
+                      <span className="text-muted" style={{ fontSize: "13px" }}>Show</span>
+                      <select
+                        className="form-control d-inline-block w-auto"
+                        value={pageSize}
+                        onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                      >
+                        {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+                      </select>
+                      <span className="text-muted" style={{ fontSize: "13px" }}>entries</span>
+                    </div>
                   </div>
-                </div>
-                <div className="body table-responsive">
-                  <table className="table table-hover mb-0">
+                  <div className="body table-responsive">
+                    {(dateFrom || dateTo) && (
+                      <div className="px-3 pt-2 pb-1">
+                        <small className="text-muted">
+                          Showing <strong>{filteredTransactions.length}</strong> transaction{filteredTransactions.length !== 1 ? "s" : ""}
+                          {dateFrom && <> from <strong>{dateFrom}</strong></>}
+                          {dateTo && <> to <strong>{dateTo}</strong></>}
+                        </small>
+                      </div>
+                    )}
+                    <table className="table table-hover mb-0">
                     <thead>
                       <tr>
                         <th>#</th>

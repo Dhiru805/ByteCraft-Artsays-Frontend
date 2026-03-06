@@ -16,6 +16,8 @@ const SellerWallet = () => {
   const [pageSize, setPageSize] = useState(10);
   const [activeTab, setActiveTab] = useState("transactions");
   const [txnCategory, setTxnCategory] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [withdrawals, setWithdrawals] = useState([]);
   const [referralData, setReferralData] = useState(null);
   const [referralCodeInput, setReferralCodeInput] = useState("");
@@ -304,9 +306,37 @@ const SellerWallet = () => {
     other: "#17a2b8"
   };
 
-  const filteredTransactions = txnCategory === "all"
-    ? transactions
-    : transactions.filter(t => categorize(t) === txnCategory);
+  const filteredTransactions = transactions.filter(t => {
+    if (txnCategory !== "all" && categorize(t) !== txnCategory) return false;
+    if (dateFrom && new Date(t.createdAt) < new Date(dateFrom)) return false;
+    if (dateTo && new Date(t.createdAt) > new Date(dateTo + "T23:59:59")) return false;
+    return true;
+  });
+
+  const exportCSV = () => {
+    if (filteredTransactions.length === 0) return toast.error("No transactions to export");
+    const headers = ["#", "Date", "Category", "Type", "Amount", "Purpose", "Status", "Cumulative"];
+    const rows = filteredTransactions.map((t, i) => [
+      i + 1,
+      new Date(t.createdAt).toLocaleString(),
+      categoryLabels[categorize(t)] || categorize(t),
+      t.type,
+      (t.type === "credit" ? "+" : "-") + t.amount,
+      `"${(t.purpose || "").replace(/"/g, '""')}"`,
+      t.status,
+      (cumulativeMap[t._id] || 0).toFixed(2)
+    ]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const from = dateFrom || "all";
+    const to = dateTo || "all";
+    a.href = url;
+    a.download = `transactions_${from}_to_${to}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Cumulative balance: credits add, debits subtract
   const sortedForCumulative = [...filteredTransactions].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -691,31 +721,79 @@ const SellerWallet = () => {
               </ul>
             </div>
 
-            {activeTab === 'transactions' && (
-              <>
-                <div className="header d-flex justify-content-between align-items-center flex-wrap">
-                  <h2>Recent Transactions</h2>
-                  <div className="d-flex align-items-center gap-2 flex-wrap">
-                    <select
-                      className="form-control d-inline-block w-auto"
-                      value={txnCategory}
-                      onChange={e => { setTxnCategory(e.target.value); setPage(1); }}
-                    >
-                      {Object.entries(categoryLabels).map(([key, label]) => (
-                        <option key={key} value={key}>{label}</option>
-                      ))}
-                    </select>
-                    <span className="ml-2">Show</span>
-                    <select
-                      className="form-control d-inline-block w-auto ml-1"
-                      value={pageSize}
-                      onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
-                    >
-                      {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
-                    </select>
-                    <span>entries</span>
+              {activeTab === 'transactions' && (
+                <>
+                  <div className="header d-flex justify-content-between align-items-center flex-wrap" style={{ gap: "10px" }}>
+                    <h2>Recent Transactions</h2>
+                    <div className="d-flex align-items-center flex-wrap" style={{ gap: "8px" }}>
+                      {/* Category filter */}
+                      <select
+                        className="form-control d-inline-block w-auto"
+                        value={txnCategory}
+                        onChange={e => { setTxnCategory(e.target.value); setPage(1); }}
+                      >
+                        {Object.entries(categoryLabels).map(([key, label]) => (
+                          <option key={key} value={key}>{label}</option>
+                        ))}
+                      </select>
+
+                      {/* Date range */}
+                      <input
+                        type="date"
+                        className="form-control d-inline-block w-auto"
+                        value={dateFrom}
+                        onChange={e => { setDateFrom(e.target.value); setPage(1); }}
+                        title="From date"
+                      />
+                      <span className="text-muted" style={{ fontSize: "13px" }}>to</span>
+                      <input
+                        type="date"
+                        className="form-control d-inline-block w-auto"
+                        value={dateTo}
+                        onChange={e => { setDateTo(e.target.value); setPage(1); }}
+                        title="To date"
+                      />
+                      {(dateFrom || dateTo) && (
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => { setDateFrom(""); setDateTo(""); setPage(1); }}
+                          title="Clear date filter"
+                        >
+                          ✕
+                        </button>
+                      )}
+
+                      {/* Export CSV */}
+                      <button
+                        className="btn btn-sm btn-success d-flex align-items-center"
+                        style={{ gap: "5px" }}
+                        onClick={exportCSV}
+                        title="Export as CSV"
+                      >
+                        Export
+                      </button>
+
+                      {/* Page size */}
+                      <span className="text-muted" style={{ fontSize: "13px" }}>Show</span>
+                      <select
+                        className="form-control d-inline-block w-auto"
+                        value={pageSize}
+                        onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                      >
+                        {[5, 10, 15, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+                      </select>
+                      <span className="text-muted" style={{ fontSize: "13px" }}>entries</span>
+                    </div>
                   </div>
-                </div>
+                  {(dateFrom || dateTo) && (
+                    <div className="px-3 pb-2">
+                      <small className="text-muted">
+                        Showing {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? "s" : ""}
+                        {dateFrom ? ` from ${dateFrom}` : ""}
+                        {dateTo ? ` to ${dateTo}` : ""}
+                      </small>
+                    </div>
+                  )}
                 <div className="body table-responsive">
                   <table className="table table-hover mb-0">
                     <thead>
