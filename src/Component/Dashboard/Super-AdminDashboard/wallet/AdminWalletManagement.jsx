@@ -18,6 +18,22 @@ const AdminWalletManagement = () => {
   const [adjustType, setAdjustType] = useState("credit");
   const [adjustReason, setAdjustReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Coins adjustment
+  const [coinUser, setCoinUser] = useState(null);
+  const [coinAmount, setCoinAmount] = useState("");
+  const [coinType, setCoinType] = useState("add");
+  const [coinReason, setCoinReason] = useState("");
+  const [isCoinLoading, setIsCoinLoading] = useState(false);
+
+  // User type filters for adjustment forms
+  const [adjustUserTypeFilter, setAdjustUserTypeFilter] = useState("");
+  const [coinUserTypeFilter, setCoinUserTypeFilter] = useState("");
+  const [usersByRole, setUsersByRole] = useState([]);
+  const [adjustSearch, setAdjustSearch] = useState("");
+  const [coinSearch, setCoinSearch] = useState("");
+  const [adjustDropdownOpen, setAdjustDropdownOpen] = useState(false);
+  const [coinDropdownOpen, setCoinDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   
   // Filters
@@ -69,12 +85,15 @@ const AdminWalletManagement = () => {
     // Platform Earnings (from dedicated API)
     const [platformEarnings, setPlatformEarnings] = useState({ transactions: [], summary: {} });
   
-    const fetchData = async () => {
+  const fetchData = async () => {
 
-    setLoading(true);
-    try {
-      const walletsRes = await axios.get(`/api/wallet/admin/all-wallets`);
-      setWallets(walletsRes.data || []);
+  setLoading(true);
+  try {
+    const walletsRes = await axios.get(`/api/wallet/admin/all-wallets`);
+    const walletData = walletsRes.data || [];
+      console.log("Wallets total:", walletData.length);
+      console.log("Wallets roles:", walletData.map(w => ({ name: w.name, role: w.role, userType: w.userType })).slice(0, 10));
+      setWallets(walletData);
       
       const transRes = await axios.get(`/api/wallet/admin/all-transactions`);
       setTransactions(transRes.data || []);
@@ -98,9 +117,37 @@ const AdminWalletManagement = () => {
     }
   };
 
+  const fetchUsersByRole = async (role) => {
+    try {
+      if (!role) {
+        // fetch all roles
+        const [a, s, b] = await Promise.all([
+          axios.get(`/api/wallet/get-users-by-role?role=artist`),
+          axios.get(`/api/wallet/get-users-by-role?role=seller`),
+          axios.get(`/api/wallet/get-users-by-role?role=buyer`),
+        ]);
+        setUsersByRole([
+          ...(a.data?.users || []),
+          ...(s.data?.users || []),
+          ...(b.data?.users || []),
+        ]);
+      } else {
+        const res = await axios.get(`/api/wallet/get-users-by-role?role=${role}`);
+        setUsersByRole(res.data?.users || []);
+      }
+    } catch (err) {
+      console.error("fetchUsersByRole error:", err);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchUsersByRole("");
   }, []);
+
+  useEffect(() => {
+    fetchUsersByRole(adjustUserTypeFilter || coinUserTypeFilter || "");
+  }, [adjustUserTypeFilter, coinUserTypeFilter]);
 
   const handleAdjustBalance = async () => {
     if (!selectedUser || !adjustAmount) return toast.warning("Select user and enter amount");
@@ -119,6 +166,26 @@ const AdminWalletManagement = () => {
       toast.error("Failed to adjust balance");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAdjustCoins = async () => {
+    if (!coinUser || !coinAmount) return toast.warning("Select user and enter coin amount");
+    setIsCoinLoading(true);
+    try {
+      await axios.post(`/api/wallet/admin/adjust-coins/${coinUser}`, {
+        coins: Number(coinAmount),
+        type: coinType,
+        reason: coinReason || `Admin Art Coins ${coinType === "add" ? "Added" : "Deducted"}`
+      });
+      toast.success("Art Coins adjusted successfully");
+      fetchData();
+      setCoinAmount("");
+      setCoinReason("");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to adjust coins");
+    } finally {
+      setIsCoinLoading(false);
     }
   };
 
@@ -335,48 +402,223 @@ const AdminWalletManagement = () => {
           <div className="row clearfix">
             <div className="col-md-6">
               <div className="card">
-                <div className="header"><h2>Manual Balance Adjustment</h2></div>
-                <div className="body">
-                  <div className="form-group">
-                    <label>Select User</label>
-                    <select className="form-control" value={selectedUser || ""} onChange={e => setSelectedUser(e.target.value)}>
-                      <option value="">Select User</option>
-                      {wallets.map(w => (
-                        <option key={w._id} value={w.userId?._id || w.userId}>
-                          {w.name} {w.lastName} (₹{w.balance})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <div className="header"><h2>Manual Balance Adjustment</h2></div>
+                    <div className="body">
+                      <div className="form-group">
+                        <label>User Type</label>
+                        <select className="form-control" value={adjustUserTypeFilter} onChange={e => { setAdjustUserTypeFilter(e.target.value); setSelectedUser(null); setAdjustSearch(""); setAdjustDropdownOpen(false); fetchUsersByRole(e.target.value); }}>
+                          <option value="">All Types</option>
+                          <option value="artist">Artist</option>
+                          <option value="seller">Seller</option>
+                          <option value="buyer">Buyer</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label>Select User</label>
+                        <div style={{ position: 'relative' }}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search and select user..."
+                            value={adjustSearch}
+                            onChange={e => { setAdjustSearch(e.target.value); setSelectedUser(null); setAdjustDropdownOpen(true); }}
+                            onFocus={() => setAdjustDropdownOpen(true)}
+                            onBlur={() => setTimeout(() => setAdjustDropdownOpen(false), 150)}
+                            autoComplete="off"
+                          />
+                          {adjustDropdownOpen && (
+                            <div style={{ position: 'absolute', zIndex: 1050, width: '100%', maxHeight: '220px', overflowY: 'auto', background: '#fff', border: '1px solid #ced4da', borderRadius: '0 0 4px 4px', boxShadow: '0 4px 10px rgba(0,0,0,0.12)', top: '100%', left: 0 }}>
+                              {usersByRole
+                                .filter(u => {
+                                  if (adjustUserTypeFilter) {
+                                    const r = (u.role || u.userType || '').toLowerCase().trim();
+                                    if (r !== adjustUserTypeFilter) return false;
+                                  }
+                                  if (adjustSearch.trim()) {
+                                    const fullName = `${u.name || ''} ${u.lastName || ''}`.toLowerCase();
+                                    if (!fullName.includes(adjustSearch.toLowerCase())) return false;
+                                  }
+                                  return true;
+                                })
+                                .map(u => {
+                                  const wallet = wallets.find(w => String(w.userId?._id || w.userId) === String(u._id));
+                                  const balance = wallet?.balance ?? '?';
+                                  const role = (u.role || u.userType || '').toLowerCase();
+                                  const isSelected = selectedUser === u._id;
+                                  return (
+                                    <div
+                                      key={u._id}
+                                      onMouseDown={() => { setSelectedUser(u._id); setAdjustSearch(`${u.name} ${u.lastName}`); setAdjustDropdownOpen(false); }}
+                                      style={{ padding: '8px 12px', cursor: 'pointer', background: isSelected ? '#e8f4fd' : '#fff', borderBottom: '1px solid #f0f0f0', fontSize: '13px' }}
+                                    >
+                                      <strong>{u.name} {u.lastName}</strong>
+                                      <span className="badge badge-secondary ml-1" style={{ fontSize: '10px' }}>{role}</span>
+                                      <span style={{ float: 'right', color: '#28a745', fontWeight: 600 }}>₹{balance}</span>
+                                    </div>
+                                  );
+                                })}
+                              {usersByRole.filter(u => {
+                                if (adjustUserTypeFilter) {
+                                  const r = (u.role || u.userType || '').toLowerCase().trim();
+                                  if (r !== adjustUserTypeFilter) return false;
+                                }
+                                if (adjustSearch.trim()) {
+                                  const fullName = `${u.name || ''} ${u.lastName || ''}`.toLowerCase();
+                                  if (!fullName.includes(adjustSearch.toLowerCase())) return false;
+                                }
+                                return true;
+                              }).length === 0 && (
+                                <div style={{ padding: '10px 12px', color: '#999', fontSize: '13px' }}>No users found</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {selectedUser && (
+                          <small className="text-success mt-1 d-block">
+                            <i className="fa fa-check-circle mr-1"></i>
+                            {usersByRole.find(u => u._id === selectedUser)?.name} {usersByRole.find(u => u._id === selectedUser)?.lastName} selected
+                            <span className="ml-2 text-danger" style={{ cursor: 'pointer' }} onMouseDown={() => { setSelectedUser(null); setAdjustSearch(""); }}>✕</span>
+                          </small>
+                        )}
+                      </div>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label>Action</label>
+                            <select className="form-control" value={adjustType} onChange={e => setAdjustType(e.target.value)}>
+                              <option value="credit">Credit (+)</option>
+                              <option value="debit">Debit (-)</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" className="form-control" value={adjustAmount} onChange={e => setAdjustAmount(e.target.value)} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>Reason</label>
+                        <input type="text" className="form-control" placeholder="Internal note..." value={adjustReason} onChange={e => setAdjustReason(e.target.value)} />
+                      </div>
+                      <button className="btn btn-warning btn-block" onClick={handleAdjustBalance} disabled={isLoading}>
+                        {isLoading ? 'Processing...' : 'Execute Amount Adjustment'}
+                      </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="col-md-6">
+              <div className="card">
+                <div className="header"><h2>Manual Coins Adjustment</h2></div>
+                    <div className="body">
+                      <div className="form-group">
+                        <label>User Type</label>
+                        <select className="form-control" value={coinUserTypeFilter} onChange={e => { setCoinUserTypeFilter(e.target.value); setCoinUser(null); setCoinSearch(""); setCoinDropdownOpen(false); fetchUsersByRole(e.target.value); }}>
+                          <option value="">All Types</option>
+                          <option value="artist">Artist</option>
+                          <option value="seller">Seller</option>
+                          <option value="buyer">Buyer</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label>Select User</label>
+                        <div style={{ position: 'relative' }}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search and select user..."
+                            value={coinSearch}
+                            onChange={e => { setCoinSearch(e.target.value); setCoinUser(null); setCoinDropdownOpen(true); }}
+                            onFocus={() => setCoinDropdownOpen(true)}
+                            onBlur={() => setTimeout(() => setCoinDropdownOpen(false), 150)}
+                            autoComplete="off"
+                          />
+                          {coinDropdownOpen && (
+                            <div style={{ position: 'absolute', zIndex: 1050, width: '100%', maxHeight: '220px', overflowY: 'auto', background: '#fff', border: '1px solid #ced4da', borderRadius: '0 0 4px 4px', boxShadow: '0 4px 10px rgba(0,0,0,0.12)', top: '100%', left: 0 }}>
+                              {usersByRole
+                                .filter(u => {
+                                  if (coinUserTypeFilter) {
+                                    const r = (u.role || u.userType || '').toLowerCase().trim();
+                                    if (r !== coinUserTypeFilter) return false;
+                                  }
+                                  if (coinSearch.trim()) {
+                                    const fullName = `${u.name || ''} ${u.lastName || ''}`.toLowerCase();
+                                    if (!fullName.includes(coinSearch.toLowerCase())) return false;
+                                  }
+                                  return true;
+                                })
+                                .map(u => {
+                                  const wallet = wallets.find(w => String(w.userId?._id || w.userId) === String(u._id));
+                                  const coins = wallet?.artCoins ?? '?';
+                                  const role = (u.role || u.userType || '').toLowerCase();
+                                  const isSelected = coinUser === u._id;
+                                  return (
+                                    <div
+                                      key={u._id}
+                                      onMouseDown={() => { setCoinUser(u._id); setCoinSearch(`${u.name} ${u.lastName}`); setCoinDropdownOpen(false); }}
+                                      style={{ padding: '8px 12px', cursor: 'pointer', background: isSelected ? '#e8f4fd' : '#fff', borderBottom: '1px solid #f0f0f0', fontSize: '13px' }}
+                                    >
+                                      <strong>{u.name} {u.lastName}</strong>
+                                      <span className="badge badge-secondary ml-1" style={{ fontSize: '10px' }}>{role}</span>
+                                      <span style={{ float: 'right', color: '#17a2b8', fontWeight: 600 }}>{coins} coins</span>
+                                    </div>
+                                  );
+                                })}
+                              {usersByRole.filter(u => {
+                                if (coinUserTypeFilter) {
+                                  const r = (u.role || u.userType || '').toLowerCase().trim();
+                                  if (r !== coinUserTypeFilter) return false;
+                                }
+                                if (coinSearch.trim()) {
+                                  const fullName = `${u.name || ''} ${u.lastName || ''}`.toLowerCase();
+                                  if (!fullName.includes(coinSearch.toLowerCase())) return false;
+                                }
+                                return true;
+                              }).length === 0 && (
+                                <div style={{ padding: '10px 12px', color: '#999', fontSize: '13px' }}>No users found</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {coinUser && (
+                          <small className="text-success mt-1 d-block">
+                            <i className="fa fa-check-circle mr-1"></i>
+                            {usersByRole.find(u => u._id === coinUser)?.name} {usersByRole.find(u => u._id === coinUser)?.lastName} selected
+                            <span className="ml-2 text-danger" style={{ cursor: 'pointer' }} onMouseDown={() => { setCoinUser(null); setCoinSearch(""); }}>✕</span>
+                          </small>
+                        )}
+                      </div>
                   <div className="row">
                     <div className="col-md-6">
                       <div className="form-group">
                         <label>Action</label>
-                        <select className="form-control" value={adjustType} onChange={e => setAdjustType(e.target.value)}>
-                          <option value="credit">Credit (+)</option>
-                          <option value="debit">Debit (-)</option>
+                        <select className="form-control" value={coinType} onChange={e => setCoinType(e.target.value)}>
+                          <option value="add">Add Coins (+)</option>
+                          <option value="deduct">Deduct Coins (-)</option>
                         </select>
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label>Amount (₹)</label>
-                        <input type="number" className="form-control" value={adjustAmount} onChange={e => setAdjustAmount(e.target.value)} />
+                        <label>Coins</label>
+                        <input type="number" className="form-control" placeholder="e.g. 100" value={coinAmount} onChange={e => setCoinAmount(e.target.value)} min="1" />
                       </div>
                     </div>
                   </div>
                   <div className="form-group">
                     <label>Reason</label>
-                    <input type="text" className="form-control" placeholder="Internal note..." value={adjustReason} onChange={e => setAdjustReason(e.target.value)} />
+                    <input type="text" className="form-control" placeholder="Internal note..." value={coinReason} onChange={e => setCoinReason(e.target.value)} />
                   </div>
-                  <button className="btn btn-warning btn-block" onClick={handleAdjustBalance} disabled={isLoading}>
-                    {isLoading ? 'Processing...' : 'Execute Adjustment'}
+                  <button className="btn btn-info btn-block" onClick={handleAdjustCoins} disabled={isCoinLoading}>
+                    {isCoinLoading ? 'Processing...' : 'Execute Coins Adjustment'}
                   </button>
                 </div>
               </div>
             </div>
-            
-            <div className="col-md-6">
+
+          <div className="col-md-6">
               <div className="card">
                 <div className="header"><h2>Platform Quick Stats</h2></div>
                 <div className="body">
@@ -452,7 +694,7 @@ const AdminWalletManagement = () => {
                     <td>{w.lastActivityAt ? new Date(w.lastActivityAt).toLocaleDateString() : 'N/A'}</td>
                       <td>
                         <div className="btn-group">
-                          <button className="btn btn-sm btn-outline-primary" onClick={() => { setSelectedUser(w.userId?._id || w.userId); setActiveTab('overview'); }}>Adjust</button>
+                          <button className="btn btn-sm btn-outline-primary" onClick={() => { setSelectedUser(w.userId?._id || w.userId); setCoinUser(w.userId?._id || w.userId); setActiveTab('overview'); }}>Adjust</button>
                           <button className="btn btn-sm btn-outline-secondary" title="View History" onClick={() => {
                             setFilterAllUser(w.userId?._id || w.userId);
                             setActiveTab('transactions');
