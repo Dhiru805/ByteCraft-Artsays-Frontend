@@ -50,24 +50,24 @@ const items = [
 // ─── Notification Settings Panel ────────────────────────────────────────────
 
 const BUYER_TOGGLES = [
-  { key: "likes",        label: "Likes",                  desc: "When someone likes your comment" },
-  { key: "comments",     label: "Comments",               desc: "When someone replies to your comment" },
-  { key: "followers",    label: "Followers",              desc: "When someone follows you" },
-  { key: "mentions",     label: "Mentions",               desc: "When someone mentions you" },
+  { key: "likes", label: "Likes", desc: "When someone likes your comment" },
+  { key: "comments", label: "Comments", desc: "When someone replies to your comment" },
+  { key: "followers", label: "Followers", desc: "When someone follows you" },
+  { key: "mentions", label: "Mentions", desc: "When someone mentions you" },
   { key: "following_posts", label: "Posts from people you follow", desc: "When an artist you follow posts" },
-  { key: "live",         label: "Live Sessions",          desc: "When a followed artist goes live" },
-    { key: "memberships",  label: "Memberships",            desc: "Purchase confirmations and renewals" },
-    { key: "badges",       label: "Badges",                 desc: "Badge purchase confirmations" },
-    { key: "support_tickets", label: "Support Tickets",    desc: "Updates on your support requests" },
-  ];
+  { key: "live", label: "Live Sessions", desc: "When a followed artist goes live" },
+  { key: "memberships", label: "Memberships", desc: "Purchase confirmations and renewals" },
+  { key: "badges", label: "Badges", desc: "Badge purchase confirmations" },
+  { key: "support_tickets", label: "Support Tickets", desc: "Updates on your support requests" },
+];
 
 const ARTIST_EXTRA_TOGGLES = [
-  { key: "saves",        label: "Post Saves",             desc: "When someone saves your post" },
-  { key: "tips",         label: "Tips Received",          desc: "When a viewer sends you a tip" },
-  { key: "promotions",   label: "Promotions",             desc: "Approval, rejection and campaign updates" },
-  { key: "sales",        label: "Sales & Revenue",        desc: "Product purchases and milestones" },
-  { key: "milestones",   label: "Engagement Milestones",  desc: "When your post crosses like / save thresholds" },
-  { key: "collaborations", label: "Collaborations",       desc: "Collaboration requests and updates" },
+  { key: "saves", label: "Post Saves", desc: "When someone saves your post" },
+  { key: "tips", label: "Tips Received", desc: "When a viewer sends you a tip" },
+  { key: "promotions", label: "Promotions", desc: "Approval, rejection and campaign updates" },
+  { key: "sales", label: "Sales & Revenue", desc: "Product purchases and milestones" },
+  { key: "milestones", label: "Engagement Milestones", desc: "When your post crosses like / save thresholds" },
+  { key: "collaborations", label: "Collaborations", desc: "Collaboration requests and updates" },
 ];
 
 const Toggle = ({ value, onChange }) => (
@@ -98,7 +98,7 @@ const NotificationSettingsPanel = ({ userType, lgActive, setLgActive }) => {
       try {
         const res = await getAPI(`/api/social-media/notification-settings/${userId}`);
         if (res?.data?.settings) setSettings(prev => ({ ...prev, ...res.data.settings }));
-      } catch (_) {}
+      } catch (_) { }
       setLoaded(true);
     };
     load();
@@ -319,9 +319,9 @@ const Setting = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const userId = localStorage.getItem("userId");
+    const userId = localStorage.getItem("userId");
 
     const formData = new FormData();
     formData.append("userId", userId);
@@ -330,16 +330,16 @@ const Setting = () => {
     formData.append("username", username);
     formData.append("website", website);
     formData.append("bio", bio);
- 
-  if (profilePhotoFile) {
-    formData.append("profilePhoto", profilePhotoFile);
-  }
+
+    if (profilePhotoFile) {
+      formData.append("profilePhoto", profilePhotoFile);
+    }
 
 
-  console.log(
-    "Submitting profile update:",
-    [...formData.entries()]
-  );
+    console.log(
+      "Submitting profile update:",
+      [...formData.entries()]
+    );
 
     try {
       const res = await putAPI(
@@ -349,18 +349,18 @@ const Setting = () => {
         true
       );
 
-    if (res && !res.hasError) {
-      toast.success("Profile updated successfully!");
-      fetchProfile(); 
-    } else {
-      toast.error(res?.message || "Failed to update profile");
-    }
-  } catch (error) {
-    const errorMessage =
-      error?.response?.data?.message ||
-      error.message ||
-      "Something went wrong. Please try again.";
-    toast.error(errorMessage);
+      if (res && !res.hasError) {
+        toast.success("Profile updated successfully!");
+        fetchProfile();
+      } else {
+        toast.error(res?.message || "Failed to update profile");
+      }
+    } catch (error) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Something went wrong. Please try again.";
+      toast.error(errorMessage);
     }
   };
   // privacy center panel
@@ -387,7 +387,7 @@ const Setting = () => {
     fetchPolicies();
   }, []);
 
-    // collaboration and mention panel
+  // collaboration and mention panel
   const [collaborationSetting, setCollaborationSetting] = useState("everyone"); // or 'following' / 'none'
   const [manualApprove, setManualApprove] = useState(false);
   const [mentionSetting, setMentionSetting] = useState("everyone");
@@ -600,11 +600,11 @@ const Setting = () => {
       // } else {
       //   toast.error(res.data.message || "Failed to apply badge");
       // }
-         if (res.data?.data?.paymentUrl) {
-              window.location.href = res.data.data.paymentUrl;
-            } else {
-              toast.error(`Failed to create certifications: ${res.message}`);
-            }
+      if (res.data?.data?.paymentUrl) {
+        window.location.href = res.data.data.paymentUrl;
+      } else {
+        toast.error(`Failed to create certifications: ${res.message}`);
+      }
     } catch (err) {
       console.error("Apply Badge Error:", err);
       toast.error("Error applying badge 123");
@@ -830,7 +830,7 @@ const Setting = () => {
     const fetchToggleState = async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) return;
-      
+
       try {
         const res = await getAPI(`/api/memberships/active?userId=${userId}`);
         if (res?.data?.success) {
@@ -849,7 +849,7 @@ const Setting = () => {
     const fetchToggle = async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) return;
-      
+
       try {
         const res = await getAPI(`/api/profile/post-products?userId=${userId}`);
         if (res?.data?.success) {
@@ -868,7 +868,7 @@ const Setting = () => {
   const handleToggleChange = async () => {
     const userId = localStorage.getItem("userId");
     if (!userId) return;
-    
+
     try {
       const newValue = !toggleEnable;
 
@@ -1016,36 +1016,36 @@ const Setting = () => {
                 </div>
 
                 {/* Username */}
-                  <div>
-                    <label className="block text-md font-semibold text-[#000000] mb-1">
-                      User Name
-                    </label>
-                    <input
-                        value={username}
-                        maxLength={30}
-                        onChange={(e) => {
-                          const lowercaseValue = e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, '');
-                          setUsername(lowercaseValue);
-                          handleLiveUsernameCheck(lowercaseValue);
-                        }}
-                        className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
-                      />
-                      <span className="text-gray-400 text-xs mt-1 block">
-                        {username.length}/30 — Only letters (a-z), numbers, periods (.) and underscores (_)
-                      </span>
-                      {usernameError && (
-                        <small className="text-red-600 text-xs mt-1 block">{usernameError}</small>
-                      )}
-                      {usernameCheckLoading && (
-                        <small className="text-gray-500 text-xs mt-1 block">Checking availability...</small>
-                      )}
-                      {!usernameError && !usernameCheckLoading && usernameAvailable === true && (
-                        <small className="text-green-600 text-xs mt-1 block">Username is available</small>
-                      )}
-                      {!usernameError && !usernameCheckLoading && usernameAvailable === false && (
-                        <small className="text-red-600 text-xs mt-1 block">Username is already taken</small>
-                      )}
-                  </div>
+                <div>
+                  <label className="block text-md font-semibold text-[#000000] mb-1">
+                    User Name
+                  </label>
+                  <input
+                    value={username}
+                    maxLength={30}
+                    onChange={(e) => {
+                      const lowercaseValue = e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, '');
+                      setUsername(lowercaseValue);
+                      handleLiveUsernameCheck(lowercaseValue);
+                    }}
+                    className="w-full bg-[#EBEBEB] rounded-md px-3 py-2 font-semibold text-[#000000] text-sm placeholder-[#000000] placeholder:font-semibold outline-none"
+                  />
+                  <span className="text-gray-400 text-xs mt-1 block">
+                    {username.length}/30 — Only letters (a-z), numbers, periods (.) and underscores (_)
+                  </span>
+                  {usernameError && (
+                    <small className="text-red-600 text-xs mt-1 block">{usernameError}</small>
+                  )}
+                  {usernameCheckLoading && (
+                    <small className="text-gray-500 text-xs mt-1 block">Checking availability...</small>
+                  )}
+                  {!usernameError && !usernameCheckLoading && usernameAvailable === true && (
+                    <small className="text-green-600 text-xs mt-1 block">Username is available</small>
+                  )}
+                  {!usernameError && !usernameCheckLoading && usernameAvailable === false && (
+                    <small className="text-red-600 text-xs mt-1 block">Username is already taken</small>
+                  )}
+                </div>
 
                 {/* Website */}
                 <div>
@@ -1165,18 +1165,18 @@ const Setting = () => {
             </div>
           )}
 
-            {/* Notifications panel */}
-            {active === "notifications" && (
-              <div className="w-full my-4">
-                <NotificationSettingsPanel
-                  userType={userType}
-                  lgActive={lgActive}
-                  setLgActive={setLgActive}
-                />
-              </div>
-            )}
+          {/* Notifications panel */}
+          {active === "notifications" && (
+            <div className="w-full my-4">
+              <NotificationSettingsPanel
+                userType={userType}
+                lgActive={lgActive}
+                setLgActive={setLgActive}
+              />
+            </div>
+          )}
 
-            {/* Membership panel */}
+          {/* Membership panel */}
           {userType === "Artist" && active === "membership" && (
             <div className="w-full my-4 lg:p-[1rem] bg-white lg:rounded-xl space-y-3 lg:border lg:border-gray-200 lg:shadow-sm h-fit">
               <div className="flex items-center gap-2 rounded-md">
@@ -1497,15 +1497,15 @@ const Setting = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left border-collapse">
                     <thead>
-                        <tr className="bg-[#48372D] text-white">
-                          <th className="px-3 py-2 font-semibold rounded-tl-lg">Membership</th>
-                          <th className="px-3 py-2 font-semibold">{userType === "Artist" ? "Buyer" : "Creator"}</th>
-                          <th className="px-3 py-2 font-semibold">Amount</th>
-                          <th className="px-3 py-2 font-semibold">Date</th>
-                          <th className="px-3 py-2 font-semibold">Expires</th>
-                          <th className="px-3 py-2 font-semibold">Status</th>
-                          <th className="px-3 py-2 font-semibold rounded-tr-lg">Txn ID</th>
-                        </tr>
+                      <tr className="bg-[#48372D] text-white">
+                        <th className="px-3 py-2 font-semibold rounded-tl-lg">Membership</th>
+                        <th className="px-3 py-2 font-semibold">{userType === "Artist" ? "Buyer" : "Creator"}</th>
+                        <th className="px-3 py-2 font-semibold">Amount</th>
+                        <th className="px-3 py-2 font-semibold">Date</th>
+                        <th className="px-3 py-2 font-semibold">Expires</th>
+                        <th className="px-3 py-2 font-semibold">Status</th>
+                        <th className="px-3 py-2 font-semibold rounded-tr-lg">Txn ID</th>
+                      </tr>
                     </thead>
                     <tbody>
                       {membershipOrders.map((order) => (
@@ -1521,46 +1521,45 @@ const Setting = () => {
                           <td className="px-3 py-2 font-semibold text-[#48372D]">
                             {"₹"}{order.amount}
                           </td>
-                            <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
-                              {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                            </td>
-                            <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
-                              {order.expiresAt
-                                ? (() => {
-                                    const isExpired = new Date(order.expiresAt) < new Date();
-                                    return (
-                                      <span className={isExpired ? "text-red-500 font-semibold" : ""}>
-                                        {new Date(order.expiresAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                                        {!isExpired && order.status === "Paid" && (
-                                          <span className="block text-xs text-gray-400">
-                                            {Math.ceil((new Date(order.expiresAt) - new Date()) / (1000 * 60 * 60 * 24))} days left
-                                          </span>
-                                        )}
+                          <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
+                            {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                          </td>
+                          <td className="px-3 py-2 text-gray-600 whitespace-nowrap">
+                            {order.expiresAt
+                              ? (() => {
+                                const isExpired = new Date(order.expiresAt) < new Date();
+                                return (
+                                  <span className={isExpired ? "text-red-500 font-semibold" : ""}>
+                                    {new Date(order.expiresAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                                    {!isExpired && order.status === "Paid" && (
+                                      <span className="block text-xs text-gray-400">
+                                        {Math.ceil((new Date(order.expiresAt) - new Date()) / (1000 * 60 * 60 * 24))} days left
                                       </span>
-                                    );
-                                  })()
-                                : "-"}
-                            </td>
-                            <td className="px-3 py-2">
-                              <span
-                                className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                  order.status === "Paid"
-                                    ? "bg-green-100 text-green-700"
-                                    : order.status === "Expired"
+                                    )}
+                                  </span>
+                                );
+                              })()
+                              : "-"}
+                          </td>
+                          <td className="px-3 py-2">
+                            <span
+                              className={`text-xs font-semibold px-2 py-1 rounded-full ${order.status === "Paid"
+                                  ? "bg-green-100 text-green-700"
+                                  : order.status === "Expired"
                                     ? "bg-orange-100 text-orange-700"
                                     : order.status === "Pending"
-                                    ? "bg-yellow-100 text-yellow-700"
-                                    : "bg-red-100 text-red-700"
+                                      ? "bg-yellow-100 text-yellow-700"
+                                      : "bg-red-100 text-red-700"
                                 }`}
-                              >
-                                {order.status === "Paid" && order.expiresAt && new Date(order.expiresAt) < new Date()
-                                  ? "Expired"
-                                  : order.status}
-                              </span>
-                            </td>
-                            <td className="px-3 py-2 text-xs text-gray-400 break-all">
-                              {order.easebuzzTxnId || "-"}
-                            </td>
+                            >
+                              {order.status === "Paid" && order.expiresAt && new Date(order.expiresAt) < new Date()
+                                ? "Expired"
+                                : order.status}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 text-xs text-gray-400 break-all">
+                            {order.easebuzzTxnId || "-"}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1575,13 +1574,13 @@ const Setting = () => {
             <div className="w-full my-4 bg-white rounded-xl lg:border lg:border-gray-200 lg:shadow-sm lg:p-[1rem] space-y-3 h-fit">
               <div className="flex items-center gap-2">
                 {lgActive && (
-                    <button
-                      className="text-2xl font-bold text-[#000000]"
-                      onClick={() => setLgActive(false)}
-                    >
-                      <i className="ri-arrow-left-s-line"></i>
-                    </button>
-                  )}
+                  <button
+                    className="text-2xl font-bold text-[#000000]"
+                    onClick={() => setLgActive(false)}
+                  >
+                    <i className="ri-arrow-left-s-line"></i>
+                  </button>
+                )}
                 <h1 className="text-2xl font-bold text-[#000000]">
                   Collaboration and Mentions
                 </h1>
@@ -2010,104 +2009,104 @@ const Setting = () => {
                       return true;
                     })
                     .map((badge) => {
-                    const alreadyHasBadge = profile?.verified?.some(
-                      (b) => b._id.toString() === badge._id.toString()
-                    );
+                      const alreadyHasBadge = profile?.verified?.some(
+                        (b) => b._id.toString() === badge._id.toString()
+                      );
 
-                    const errorMessage = eligibilityErrors[badge._id];
-                    return (
-                      <div key={badge._id} className="space-y-2">
-                        <div className="flex justify-between items-center ">
-                          <div className="flex items-center gap-2 font-semibold text-[#000000] text-md">
-                            {badge.badgeName}
-                            <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${badge.badgeImage}`}
-                              className="w-6 h-6 object-cover rounded-full"
-                              alt="badge"
-                            />
+                      const errorMessage = eligibilityErrors[badge._id];
+                      return (
+                        <div key={badge._id} className="space-y-2">
+                          <div className="flex justify-between items-center ">
+                            <div className="flex items-center gap-2 font-semibold text-[#000000] text-md">
+                              {badge.badgeName}
+                              <img
+                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${badge.badgeImage}`}
+                                className="w-6 h-6 object-cover rounded-full"
+                                alt="badge"
+                              />
+                            </div>
+
+                            {/* ✅ Hide button completely if higher-level badge owned */}
+                            {!errorMessage
+                              ?.toLowerCase()
+                              .includes("higher-level") && (
+                                <button
+                                  disabled={alreadyHasBadge || !!errorMessage}
+                                  onClick={() => handleOpenPopup(badge)}
+                                  className={`px-2 py-1 rounded-md font-semibold text-md text-[#000000] ${alreadyHasBadge
+                                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                    : errorMessage
+                                      ? "bg-red-200 text-red-600 cursor-not-allowed"
+                                      : badge.badgeName
+                                        .toLowerCase()
+                                        .includes("master")
+                                        ? "bg-[#4B2B1C] text-white"
+                                        : "border-[1px] border-[#777574]"
+                                    } `}
+                                >
+                                  {alreadyHasBadge
+                                    ? "Already Owned"
+                                    : errorMessage
+                                      ? "Not Eligible"
+                                      : "Get your Badge"}
+                                </button>
+                              )}
                           </div>
 
-                          {/* ✅ Hide button completely if higher-level badge owned */}
-                          {!errorMessage
-                            ?.toLowerCase()
-                            .includes("higher-level") && (
-                              <button
-                                disabled={alreadyHasBadge || !!errorMessage}
-                                onClick={() => handleOpenPopup(badge)}
-                                className={`px-2 py-1 rounded-md font-semibold text-md text-[#000000] ${alreadyHasBadge
-                                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                                  : errorMessage
-                                    ? "bg-red-200 text-red-600 cursor-not-allowed"
-                                    : badge.badgeName
-                                      .toLowerCase()
-                                      .includes("master")
-                                      ? "bg-[#4B2B1C] text-white"
-                                      : "border-[1px] border-[#777574]"
-                                  } `}
-                              >
-                                {alreadyHasBadge
-                                  ? "Already Owned"
-                                  : errorMessage
-                                    ? "Not Eligible"
-                                    : "Get your Badge"}
-                              </button>
-                            )}
-                        </div>
-
-                        {/* Badge Description */}
-                        <p className="text-sm text-[#000000]">
-                          {badge.badgeDescription}
-                        </p>
-
-                        {/* Criteria Section */}
-                        <div className="text-md text-[#000000] font-semibold">
-                          Criteria
-                        </div>
-                        <div className="text-sm space-y-2">
-                          {badge.badgeName.toLowerCase().includes("trusted") && (
-                            <>
-                              <div>At least 5 original artworks uploaded</div>
-                              <div>
-                                Active profile with bio and profile picture
-                              </div>
-                              <div>1 month+ on the platform</div>
-                              <div>Social link/portfolio linked & verified</div>
-                            </>
-                          )}
-                          {badge.badgeName.toLowerCase().includes("master") && (
-                            <>
-                              <div>Have a Trusted Badge</div>
-                              <div>At least 20 original artworks uploaded</div>
-                              <div>Minimum ₹10,000 in sales on platform</div>
-                              <div>
-                                Verified portfolio and social media presence
-                              </div>
-                            </>
-                          )}
-                          {badge.badgeName.toLowerCase().includes("artsays") && (
-                            <div>No criteria – available for everyone</div>
-                          )}
-                        </div>
-
-                        {/* Eligibility error */}
-                        {errorMessage &&
-                          !errorMessage
-                            .toLowerCase()
-                            .includes("higher-level") && (
-                            <p className="text-xs text-red-500">
-                              {errorMessage}
-                            </p>
-                          )}
-
-                        {/* Price Section */}
-                        <div className="text-md font-semibold">
-                          <p className="font-semibold text-[#000000]">
-                            <span>Charges:</span> ₹{badge.badgePrice}
+                          {/* Badge Description */}
+                          <p className="text-sm text-[#000000]">
+                            {badge.badgeDescription}
                           </p>
+
+                          {/* Criteria Section */}
+                          <div className="text-md text-[#000000] font-semibold">
+                            Criteria
+                          </div>
+                          <div className="text-sm space-y-2">
+                            {badge.badgeName.toLowerCase().includes("trusted") && (
+                              <>
+                                <div>At least 5 original artworks uploaded</div>
+                                <div>
+                                  Active profile with bio and profile picture
+                                </div>
+                                <div>1 month+ on the platform</div>
+                                <div>Social link/portfolio linked & verified</div>
+                              </>
+                            )}
+                            {badge.badgeName.toLowerCase().includes("master") && (
+                              <>
+                                <div>Have a Trusted Badge</div>
+                                <div>At least 20 original artworks uploaded</div>
+                                <div>Minimum ₹10,000 in sales on platform</div>
+                                <div>
+                                  Verified portfolio and social media presence
+                                </div>
+                              </>
+                            )}
+                            {badge.badgeName.toLowerCase().includes("artsays") && (
+                              <div>No criteria – available for everyone</div>
+                            )}
+                          </div>
+
+                          {/* Eligibility error */}
+                          {errorMessage &&
+                            !errorMessage
+                              .toLowerCase()
+                              .includes("higher-level") && (
+                              <p className="text-xs text-red-500">
+                                {errorMessage}
+                              </p>
+                            )}
+
+                          {/* Price Section */}
+                          <div className="text-md font-semibold">
+                            <p className="font-semibold text-[#000000]">
+                              <span>Charges:</span> ₹{badge.badgePrice}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
 
@@ -2208,9 +2207,24 @@ const Setting = () => {
 
                     {/* Terms */}
                     <p className="text-sm text-gray-500 text-center">
-                      By tapping Confirm & Apply, you agree to our{" "}
-                      <span className="underline">Terms</span> and{" "}
-                      <span className="underline">Privacy Policy</span>.
+                      By tapping <strong>Confirm & Apply</strong>, you agree to our{" "}
+                      <a
+                        href="/policy"
+                        className="underline hover:text-gray-700"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Terms & Conditions
+                      </a>{" "}
+                      and{" "}
+                      <a
+                        href="/policy"
+                        className="underline hover:text-gray-700"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Privacy Policy
+                      </a>.
                     </p>
 
                     {/* Action Button */}

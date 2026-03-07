@@ -197,7 +197,7 @@ function UpdateApplication() {
                                         required
                                     />
                                     <label className="form-check-label">
-                                        By using this form you agree with the storage and handling of your data.
+                                        By submitting this form, you agree to the storage and handling of your data by our organization.
                                     </label>
                                 </div>
 

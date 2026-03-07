@@ -494,10 +494,10 @@ const Register = () => {
                     checked={acceptTerms}
                     onChange={(e) => setAcceptTerms(e.target.checked)}
                   />
-                  <label className="remember-me-label" htmlFor="acceptTerms">
-                    I accept{' '}
-                    <a href="/terms-services" target="_blank" rel="noopener noreferrer" className="forgot-password-link">
-                      Terms & Conditions
+                  <label className="remember-me-label" htmlFor="acceptTerms" style={{ marginBottom: 0 }}>
+                    I have read and agree to the{' '}
+                    <a href="/policy" target="_blank" rel="noopener noreferrer" className="forgot-password-link">
+                      Terms & Conditions.
                     </a>
                     <span style={{ color: 'red' }}> *</span>
                   </label>

@@ -106,7 +106,7 @@ const AccountSecurityAgreement = ({ userId }) => {
                     <label className="mx-2">
                         I agree to&nbsp;
                         <a
-                            href="/terms-services"
+                            href="/policy"
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{ color: '#6b4f36', textDecoration: 'underline' }}
@@ -115,7 +115,7 @@ const AccountSecurityAgreement = ({ userId }) => {
                         </a>
                         &nbsp;and&nbsp;
                         <a
-                            href="/privacy-policy"
+                            href="/policy"
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{ color: '#6b4f36', textDecoration: 'underline' }}
