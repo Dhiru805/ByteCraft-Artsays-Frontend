@@ -28,8 +28,6 @@ const Sidebar = () => {
         path: "/super-admin/dashboard",
         subTabs: [],
       },
-      // ...(email === "shantu131201@gmail.com"
-      //   ? [
       ...(userType?.toLowerCase() === "super-admin"
         ? [
             {
@@ -864,7 +862,7 @@ const Sidebar = () => {
 
     const roleMenu = menuConfig[roleKey] || [];
 
-    if (email === "shantu131201@gmail.com") {
+    if (email === "dhiraj.zope1997@gmail.com") {
       setFetchedTabs(menuConfig["Super-Admin"]);
       return;
     }

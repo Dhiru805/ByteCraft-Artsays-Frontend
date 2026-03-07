@@ -151,7 +151,7 @@ function AdminManageTable() {
                             .filter(
                               (admin) =>
                                 admin.email !== localStorage.getItem("email") &&
-                                admin.email !== "shantu131201@gmail.com"
+                                admin.email !== "dhiraj.zope1997@gmail.com"
                             )
                             .slice(
                             (currentPage - 1) * itemsPerPage,
