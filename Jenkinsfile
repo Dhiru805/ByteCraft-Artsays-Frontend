@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo '📥 Checking out frontend code...'
                 checkout([$class: 'GitSCM',
-                          branches: [[name: '*/anshul2.0']],
+                          branches: [[name: '*/frontend-sever']],
                           userRemoteConfigs: [[url: 'https://github.com/Shantanu58/ByteCraft-Artsays-Frontend.git']]])
             }
         }
@@ -50,7 +50,7 @@ pipeline {
                 docker run -d \
                   --name artsays-frontend-container \
                   --network artsays-network \
-                  -p 80:80 \
+                  -p 3000:80 \
                   artsays-frontend
 
                 echo "⏳ Waiting for frontend to start..."
