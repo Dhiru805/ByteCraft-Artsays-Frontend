@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo '📥 Checking out frontend code...'
                 checkout([$class: 'GitSCM',
-                          branches: [[name: '*/frontend-sever']],
+                          branches: [[name: '*/frontend-server']],
                           userRemoteConfigs: [[url: 'https://github.com/Shantanu58/ByteCraft-Artsays-Frontend.git']]])
             }
         }
