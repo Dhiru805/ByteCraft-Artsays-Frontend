@@ -100,8 +100,22 @@ pipeline {
         stage('Final Health Check') {
             steps {
                 sh '''
-                sleep 5
-                docker exec ${CONTAINER_NAME} wget -qO- http://localhost:80/health > /dev/null || exit 1
+                echo "Checking health endpoint..."
+
+for i in {1..10}; do
+  if docker exec ${NEW_CONTAINER} wget -qO- http://localhost:80/health > /dev/null; then
+      echo "New frontend container is healthy"
+      exit 0
+  fi
+  echo "Waiting for container... attempt $i"
+  sleep 3
+done
+
+echo "New container failed health check — aborting, old container stays live"
+docker logs ${NEW_CONTAINER} || true
+docker stop ${NEW_CONTAINER} || true
+docker rm  ${NEW_CONTAINER} || true
+exit 1
                 echo "Production frontend container is live"
                 '''
             }
