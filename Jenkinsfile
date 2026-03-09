@@ -97,29 +97,26 @@ pipeline {
             }
         }
 
-        stage('Health Check New Container') {
-    steps {
-        sh '''
-        echo "Checking new container health..."
+        stage('Final Health Check') {
+            steps {
+                sh '''
+                echo "Checking production container health..."
 
-        for i in $(seq 1 10); do
-          if docker exec ${NEW_CONTAINER} wget -qO- http://localhost:80/ > /dev/null; then
-              echo "New frontend container is healthy"
-              exit 0
-          fi
+                for i in $(seq 1 10); do
+                  if docker exec ${CONTAINER_NAME} wget -qO- http://localhost:80/ > /dev/null; then
+                      echo "Production frontend container is healthy"
+                      exit 0
+                  fi
+                  echo "Waiting for container... attempt $i"
+                  sleep 3
+                done
 
-          echo "Waiting for container... attempt $i"
-          sleep 3
-        done
-
-        echo "New container failed health check — aborting deployment"
-        docker logs ${NEW_CONTAINER} || true
-        docker stop ${NEW_CONTAINER} || true
-        docker rm  ${NEW_CONTAINER} || true
-        exit 1
-        '''
-    }
-}
+                echo "Production container failed health check"
+                docker logs ${CONTAINER_NAME} || true
+                exit 1
+                '''
+            }
+        }
 
         stage('Clear Backend Prerender Cache') {
             steps {
