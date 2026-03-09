@@ -12,9 +12,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Remove default config so entrypoint scripts don't create a conflicting server block
 RUN rm -f /etc/nginx/conf.d/default.conf
 
-# Ensure nginx user can write the pid file
-RUN touch /var/run/nginx.pid && chown nginx:nginx /var/run/nginx.pid
-
 # Validate config at build time so errors are caught early
 RUN nginx -t 2>&1
 
