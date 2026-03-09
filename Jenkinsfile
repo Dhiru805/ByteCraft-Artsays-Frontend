@@ -63,8 +63,8 @@ pipeline {
             steps {
                 echo 'Waiting for new frontend container to be healthy...'
                 sh '''
-                sleep 10
-                curl --fail --retry 5 --retry-delay 3 http://localhost:3003/ || {
+                sleep 5
+                docker exec ${NEW_CONTAINER} wget -qO- http://localhost:80/ > /dev/null || {
                     echo "New container failed health check — aborting, old container stays live"
                     docker stop ${NEW_CONTAINER} || true
                     docker rm  ${NEW_CONTAINER} || true
@@ -100,7 +100,7 @@ pipeline {
             steps {
                 sh '''
                 sleep 5
-                curl --fail http://localhost:3000/ || exit 1
+                docker exec ${CONTAINER_NAME} wget -qO- http://localhost:80/ > /dev/null || exit 1
                 echo "Production frontend container is live"
                 '''
             }
