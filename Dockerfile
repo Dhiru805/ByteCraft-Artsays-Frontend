@@ -9,8 +9,11 @@ COPY build /usr/share/nginx/html
 # Replace main nginx config (resolver must be at http level in nginx 1.29+)
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Remove default config so entrypoint scripts don't create a conflicting server block
+RUN rm -f /etc/nginx/conf.d/default.conf
+
 # Validate config at build time so errors are caught early
-RUN nginx -t
+RUN nginx -t 2>&1
 
 EXPOSE 80
 
