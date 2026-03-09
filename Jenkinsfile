@@ -104,23 +104,26 @@ pipeline {
         }
 
         stage('Final Health Check') {
-            steps {
-                sh '''
-                echo "Checking production container..."
-                for i in $(seq 1 10); do
-                  if docker exec ${CONTAINER_NAME} wget -qO- http://localhost:80/ > /dev/null; then
-                      echo "Production frontend container is live"
-                      exit 0
-                  fi
-                  echo "Waiting for container... attempt $i"
-                  sleep 3
-                done
-                echo "Production container failed health check"
-                docker logs ${CONTAINER_NAME} || true
-                exit 1
-                '''
-            }
-        }
+    steps {
+        sh '''
+        echo "Checking production container health..."
+
+        for i in $(seq 1 15); do
+            if curl -f http://127.0.0.1:3000 > /dev/null 2>&1; then
+                echo "Production frontend container is healthy"
+                exit 0
+            fi
+
+            echo "Waiting for production container... attempt $i"
+            sleep 3
+        done
+
+        echo "Production container failed health check"
+        docker logs ${CONTAINER_NAME} || true
+        exit 1
+        '''
+    }
+}
 
         stage('Clear Backend Prerender Cache') {
             steps {
