@@ -62,6 +62,9 @@ pipeline {
                   # Set permissions so nginx (www-data) can read everything
                   find ${SERVE_PATH} -type d -exec chmod 755 {} +
                   find ${SERVE_PATH} -type f -exec chmod 644 {} +
+
+                  # Reload nginx so it picks up new files without dropping connections
+                  sudo systemctl reload nginx
                   '''
             }
         }
