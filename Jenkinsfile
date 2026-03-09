@@ -60,21 +60,27 @@ pipeline {
         }
 
         stage('Health Check New Container') {
-            steps {
-                echo 'Waiting for new frontend container to be healthy...'
-                sh '''
-                sleep 5
-                docker exec ${NEW_CONTAINER} wget -qO- http://localhost:80/ > /dev/null || {
-                    echo "New container failed health check — aborting, old container stays live"
-                    docker logs ${NEW_CONTAINER} || true
-                    docker stop ${NEW_CONTAINER} || true
-                    docker rm  ${NEW_CONTAINER} || true
-                    exit 1
-                }
+    steps {
+        echo 'Checking new frontend container health...'
+        sh '''
+        for i in $(seq 1 15); do
+            if curl -f http://127.0.0.1:3003 > /dev/null 2>&1; then
                 echo "New frontend container is healthy"
-                '''
-            }
-        }
+                exit 0
+            fi
+
+            echo "Waiting for container startup... attempt $i"
+            sleep 3
+        done
+
+        echo "New container failed health check — aborting deployment"
+        docker logs ${NEW_CONTAINER} || true
+        docker stop ${NEW_CONTAINER} || true
+        docker rm ${NEW_CONTAINER} || true
+        exit 1
+        '''
+    }
+}
 
         stage('Swap Containers') {
             steps {
@@ -97,28 +103,24 @@ pipeline {
             }
         }
 
-        stage('Health Check New Container') {
-    steps {
-        echo 'Checking new frontend container health...'
-        sh '''
-        for i in $(seq 1 15); do
-            if curl -f http://127.0.0.1:3003 > /dev/null 2>&1; then
-                echo "New frontend container is healthy"
-                exit 0
-            fi
-
-            echo "Waiting for container startup... attempt $i"
-            sleep 3
-        done
-
-        echo "New container failed health check — aborting deployment"
-        docker logs ${NEW_CONTAINER} || true
-        docker stop ${NEW_CONTAINER} || true
-        docker rm ${NEW_CONTAINER} || true
-        exit 1
-        '''
-    }
-}
+        stage('Final Health Check') {
+            steps {
+                sh '''
+                echo "Checking production container..."
+                for i in $(seq 1 10); do
+                  if docker exec ${CONTAINER_NAME} wget -qO- http://localhost:80/ > /dev/null; then
+                      echo "Production frontend container is live"
+                      exit 0
+                  fi
+                  echo "Waiting for container... attempt $i"
+                  sleep 3
+                done
+                echo "Production container failed health check"
+                docker logs ${CONTAINER_NAME} || true
+                exit 1
+                '''
+            }
+        }
 
         stage('Clear Backend Prerender Cache') {
             steps {
