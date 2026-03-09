@@ -104,8 +104,7 @@ const HomeChallenges = () => {
         )}
 
         <div className="space-y-6">
-          {detailedChallenges.length > 0 ? (
-            detailedChallenges.map((challenge, index) => (
+          {detailedChallenges.length > 0 && detailedChallenges.map((challenge, index) => (
               <div
                 key={challenge._id || index}
                 className={`flex flex-col lg:flex-row gap-8 bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group ${
@@ -250,18 +249,7 @@ const HomeChallenges = () => {
                   )}
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-gray-300">
-              <p className="text-gray-500 font-medium">No live challenges at the moment.</p>
-              <button 
-                onClick={() => navigate('/challenges')}
-                className="mt-4 text-[#6F4D34] font-bold hover:underline"
-              >
-                View all challenges
-              </button>
-            </div>
-          )}
+            ))}
         </div>
       </div>
     </div>

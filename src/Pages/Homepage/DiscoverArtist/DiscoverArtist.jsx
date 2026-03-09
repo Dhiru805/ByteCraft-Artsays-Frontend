@@ -584,7 +584,7 @@ const DiscoverArtist = () => {
   }, []);
 
   if (loading) return <div><DiscoverArtistSkeleton/></div>;
-  if (!data) return <div>No Discover Artist section available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">

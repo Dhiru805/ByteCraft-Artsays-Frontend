@@ -104,36 +104,38 @@ const Login = () => {
         const res = await postAPI("/auth/googlelogin", { code }, true);
         console.log("google login api response", res);
 
-        const {
-          token,
-          userType,
-          email,
-          userId,
-          status,
-          userrole,
-          username,
-          firstName,
-          lastName,
-        } = res.data;
-        if (!token || !userType) {
-          throw new Error("Invalid response from server");
-        }
+          const {
+            token,
+            refreshToken,
+            userType,
+            email,
+            userId,
+            status,
+            userrole,
+            username,
+            firstName,
+            lastName,
+          } = res.data;
+          if (!token || !userType) {
+            throw new Error("Invalid response from server");
+          }
 
-        const normalizedUserType = normalizeUserType(userType);
-        const normalizedStatus = status
-          ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
-          : null;
+          const normalizedUserType = normalizeUserType(userType);
+          const normalizedStatus = status
+            ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+            : null;
 
-        login(
-          token,
-          normalizedUserType,
-          normalizedStatus,
-          username,
-          firstName,
-          lastName,
-          userId,
-          userrole
-        );
+          login(
+            token,
+            normalizedUserType,
+            normalizedStatus,
+            username,
+            firstName,
+            lastName,
+            userId,
+            userrole,
+            refreshToken
+          );
 
         localStorage.setItem("email", email);
 
@@ -177,36 +179,37 @@ const Login = () => {
         },
         true
       );
-      const {
-        token,
-        userType,
-        email,
-        userId,
-        status,
-        userrole,
-        username,
-        firstName,
-        lastName,
-      } = res.data;
-      console.log("Login API response:", {
-        token,
-        userType,
-        email,
-        userId,
-        status,
-        username,
-      });
+        const {
+          token,
+          refreshToken,
+          userType,
+          email,
+          userId,
+          status,
+          userrole,
+          username,
+          firstName,
+          lastName,
+        } = res.data;
+        console.log("Login API response:", {
+          token,
+          userType,
+          email,
+          userId,
+          status,
+          username,
+        });
 
-      if (!token || !userType) {
-        throw new Error("Invalid response from server");
-      }
+        if (!token || !userType) {
+          throw new Error("Invalid response from server");
+        }
 
-      const normalizedUserType = normalizeUserType(userType);
-      const normalizedStatus = status
-        ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
-        : null;
+        const normalizedUserType = normalizeUserType(userType);
+        const normalizedStatus = status
+          ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+          : null;
 
-      login(token, normalizedUserType, normalizedStatus, username, firstName, lastName, userId, userrole);
+        login(token, normalizedUserType, normalizedStatus, username, firstName, lastName, userId, userrole, refreshToken);
 
       localStorage.setItem("email", email);
       

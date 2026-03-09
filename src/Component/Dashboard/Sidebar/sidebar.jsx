@@ -530,6 +530,11 @@ const Sidebar = () => {
               label: "Feedback Form",
               path: `/super-admin/settings/feedback-form`,
             },
+            {
+              label: "Website Mode",
+              subtabId: "stg18",
+              path: `/super-admin/settings/website-mode`,
+            },
          ],
         },
       {
@@ -862,7 +867,7 @@ const Sidebar = () => {
 
     const roleMenu = menuConfig[roleKey] || [];
 
-    if (email === "dhiraj.zope1997@gmail.com") {
+    if (email === "shantu131201@gmail.com") {
       setFetchedTabs(menuConfig["Super-Admin"]);
       return;
     }

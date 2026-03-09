@@ -35,7 +35,7 @@ const HowToBuy = () => {
   }, []);
 
   if (loading) return <div><HowToBuySkeleton/></div>;
-  if (!data) return <div>How To Buy section not available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gradient-to-br from-gray-50 via-white to-amber-50/30 font-[poppins] py-12 md:py-24 px-3 md:px-6 overflow-hidden relative">

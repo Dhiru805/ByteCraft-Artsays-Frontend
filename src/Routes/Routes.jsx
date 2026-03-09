@@ -455,6 +455,7 @@ import StorageSettingPage from "../Component/Dashboard/Super-AdminDashboard/Sett
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
 import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Productcategory/Category";
 import CertificationSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/Certification/Certifiaction";
+import WebsiteModeSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/WebsiteMode/WebsiteModeSetting";
 
 //----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
@@ -622,6 +623,8 @@ import SharePost from "../Component/SocialMedia/Posts/SharePost";
 import SinglePost from "../Component/SocialMedia/Posts/SinglePost";
 import ProfileLogout from "../Pages/socialMedia/ProfileLogout";
 import Sitemap from "../Pages/Sitemap/Sitemap";
+import ComingSoon from "../Pages/ComingSoon/ComingSoon";
+import Maintenance from "../Pages/Maintenance/Maintenance";
 
 
 
@@ -685,22 +688,41 @@ const PublicRoute = ({ children }) => {
 };
 
 const WebsiteWrapper = () => {
+  const { isAuthenticated, userType } = useAuth();
+  const location = useLocation();
+
+  // --- Website mode gate ---
+  const [websiteMode, setWebsiteMode] = useState(null);
+  const [modeLoaded, setModeLoaded] = useState(false);
+
+  useEffect(() => {
+    const fetchMode = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL || "http://localhost:3001"}/api/website-mode`
+        );
+        const data = await res.json();
+        if (data?.data) setWebsiteMode(data.data);
+      } catch {
+        // silently fail — don't block the site if endpoint is unreachable
+      } finally {
+        setModeLoaded(true);
+      }
+    };
+    fetchMode();
+  }, []);
+
+  // --- Preloader ---
   const [showAnimation, setShowAnimation] = useState(() => {
     if (typeof window !== "undefined") {
-      // Check if user has already seen the preloader
       const hasSeen = localStorage.getItem("hasSeenPreloader");
-      
-      // Bot Detection: Skip preloader for Lighthouse, PageSpeed, and other search engine bots
       const isBot = /Lighthouse|PageSpeed|Googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot/i.test(
         window.navigator.userAgent
       );
-
       return !hasSeen && !isBot;
     }
-    return false; // Don't show by default on SSR
+    return false;
   });
-
-  const location = useLocation();
 
   useEffect(() => {
     if (location.pathname === "/" && showAnimation) {
@@ -711,12 +733,22 @@ const WebsiteWrapper = () => {
         } catch (e) {
           console.warn("localStorage is not available", e);
         }
-      }, 3500); // Reduced from 9000 to 3500ms
+      }, 3500);
       return () => clearTimeout(timer);
     } else {
       setShowAnimation(false);
     }
   }, [location.pathname, showAnimation]);
+
+  // --- Mode gate rendering (after all hooks) ---
+  const isSuperAdmin = isAuthenticated && userType === "Super-Admin";
+
+  if (!modeLoaded) return null;
+
+  if (!isSuperAdmin) {
+    if (websiteMode?.comingSoon) return <ComingSoon />;
+    if (websiteMode?.maintenance) return <Maintenance />;
+  }
 
   return showAnimation && location.pathname === "/" ? (
     <PreloaderAnimation />
@@ -1133,8 +1165,9 @@ const AppRoutes = () => {
         <Route path="settings/exhibition" element={<ExhibitionSetting />} />
         <Route path="settings/sidebar-visibility" element={<SidebarVisibility />} />
         <Route path="settings/google-oauth" element={<GoogleSetting />} />
-        <Route path="settings/feedback-form" element={<FeedbackFormBuilder />} />
-        <Route path="settings/feedback-responses" element={<FeedbackResponses />} />
+          <Route path="settings/feedback-form" element={<FeedbackFormBuilder />} />
+          <Route path="settings/feedback-responses" element={<FeedbackResponses />} />
+          <Route path="settings/website-mode" element={<WebsiteModeSetting />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />

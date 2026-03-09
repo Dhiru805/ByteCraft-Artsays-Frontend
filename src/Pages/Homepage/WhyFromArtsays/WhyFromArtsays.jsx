@@ -35,7 +35,7 @@ const WhyFromArtsays = () => {
   }, []);
 
   if (loading) return <div><WhyFromSkeleton/></div>;
-  if (!data) return <div>No 'Why Buy from Artsays' section available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gradient-to-b from-white via-gray-50 to-white font-[poppins] py-16 md:py-24 px-4 md:px-6 overflow-hidden">

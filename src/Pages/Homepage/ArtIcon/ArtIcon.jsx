@@ -408,7 +408,7 @@ const ArtIcon = () => {
   };
 
   if (loading) return <div><ArtlconSkeleton /></div>;
-  if (!data) return <div>No Art Icon section available</div>;
+  if (!data) return null;
 
     return (
     <div className="bg-[#F8F8F8] font-[poppins] py-12">

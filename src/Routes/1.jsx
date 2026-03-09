@@ -103,6 +103,7 @@ import BiddedProductTransaction from "../Component/Dashboard/Super-AdminDashboar
 import EmailSettings from "../Component/Dashboard/Super-AdminDashboard/Settings/EmailSetting/EmailSetting";
 import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Blogcategory/Category";
 import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Productcategory/Category";
+import WebsiteModeSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/WebsiteMode/WebsiteModeSetting";
 
 //----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
@@ -256,6 +257,7 @@ const AppRoutes = () => {
         <Route path="settings/email-setting" element={<EmailSettings />} />
         <Route path="settings/blog-category" element={<BlogCategory />} />
         <Route path="settings/product-category" element={<ProductCategory />} />
+        <Route path="settings/website-mode" element={<WebsiteModeSetting />} />
       </Route>
 
       {/*-------------------------------------------- Artist Routes-------------------------------------------------- */}

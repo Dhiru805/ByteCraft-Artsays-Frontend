@@ -31,7 +31,7 @@ const WhyArtsaysDifferent = () => {
   }, []);
 
   if (loading) return <div><WhyArtsaysDiffSkeleton/></div>;
-  if (!data) return <div>No "Why Artsays Is Different" section available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gray-50 font-[poppins] py-16 px-4 md:px-6">

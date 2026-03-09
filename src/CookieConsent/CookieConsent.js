@@ -104,6 +104,15 @@ import { motion, AnimatePresence } from "framer-motion";
  */
 
 const CookieConsent = () => {
+  const [websiteMode, setWebsiteMode] = useState(null);
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL || "http://localhost:3001"}/api/website-mode`)
+      .then((r) => r.json())
+      .then((d) => { if (d?.data) setWebsiteMode(d.data); })
+      .catch(() => {});
+  }, []);
+
   const [cookies, setCookie] = useCookies([
     "userConsent",
     "pageData",
@@ -225,6 +234,7 @@ const CookieConsent = () => {
     setShowPrefs(false);
   };
 
+  if (websiteMode?.comingSoon || websiteMode?.maintenance) return null;
   if (!visible) return null;
 
   return (

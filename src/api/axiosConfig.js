@@ -14,6 +14,39 @@ const axiosInstance = Axios.create({
   },
 });
 
+// ─── Global refresh lock ───────────────────────────────────────────────────
+// If multiple requests fail with 403 at the same time, only ONE refresh call
+// is made. All queued requests wait for that single promise to resolve.
+let refreshPromise = null;
+
+const doRefresh = async () => {
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    try {
+      const storedRefreshToken = localStorage.getItem("refreshToken");
+      const refreshRes = await Axios.post(
+        `${apiBase}/user/refresh`,
+        storedRefreshToken ? { refreshToken: storedRefreshToken } : {},
+        {
+          withCredentials: true,
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        }
+      );
+      const { accessToken, refreshToken: newRefreshToken } = refreshRes.data;
+      localStorage.setItem("token", accessToken);
+      if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
+      return accessToken;
+    } finally {
+      // Always clear the lock so future refreshes can run
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+};
+// ──────────────────────────────────────────────────────────────────────────
+
 // ✅ Request Interceptor: Attach Access Token
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -26,7 +59,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Interceptor: Logout only when backend explicitly says user is suspended or session is revoked
+// ✅ Response Interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -34,42 +67,37 @@ axiosInstance.interceptors.response.use(
     const res = error?.response?.data;
     const status = error?.response?.status;
 
-    // ✅ Handle Token Expiration (Attempt Refresh)
+    // ✅ Handle Token Expiration — one shared refresh, then retry
     if (status === 403 && res?.message === "Token expired" && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-          const refreshRes = await Axios.get(`${apiBase}/user/refresh`, {
-            withCredentials: true,
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-          });
-        const { accessToken } = refreshRes.data;
-        localStorage.setItem("token", accessToken);
+        const accessToken = await doRefresh();
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return axiosInstance(originalRequest);
-        } catch (refreshError) {
-          // Refresh token failed or expired — only redirect if not already on login
-          if (!window.location.pathname.includes("/login")) {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = "/login";
-          }
-          return Promise.reject(refreshError);
-        }
-    }
-
-      // ✅ Handle Session Revocation (Immediate Logout)
-      // Only redirect if there IS a stored token (i.e. a real session was revoked).
-      // Guests with no token hitting public routes should never be force-redirected.
-      if (status === 401 && (res?.sessionRevoked === true || res?.message === "Unauthorized: No token provided")) {
-        const hasToken = !!localStorage.getItem("token");
-        if (hasToken && !window.location.pathname.includes("/login")) {
-          console.warn("Session revoked or unauthorized. Logging out automatically.");
+      } catch (refreshError) {
+        if (!window.location.pathname.includes("/login")) {
           localStorage.clear();
           sessionStorage.clear();
           window.location.href = "/login";
         }
-        return Promise.reject(error);
+        return Promise.reject(refreshError);
       }
+    }
+
+    // ✅ Handle Session Revocation
+    if (
+      status === 401 &&
+      (res?.sessionRevoked === true || res?.message === "Unauthorized: No token provided")
+    ) {
+      const hasToken = !!localStorage.getItem("token");
+      if (hasToken && !window.location.pathname.includes("/login")) {
+        console.warn("Session revoked or unauthorized. Logging out automatically.");
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "/login";
+      }
+      return Promise.reject(error);
+    }
 
     // ✅ Handle User Suspension
     if (
@@ -79,16 +107,9 @@ axiosInstance.interceptors.response.use(
       res.message.toLowerCase().includes("suspend")
     ) {
       console.warn("Suspended user detected. Logging out automatically.");
-
-      toast.error(res.message || "Your account has been suspended.", {
-        autoClose: 3000,
-      });
-
-      // Clear all caches
+      toast.error(res.message || "Your account has been suspended.", { autoClose: 3000 });
       localStorage.clear();
       sessionStorage.clear();
-
-      // Redirect to login
       setTimeout(() => {
         window.location.href = "/login";
       }, 1500);

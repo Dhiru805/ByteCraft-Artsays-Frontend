@@ -197,12 +197,7 @@ const Hero = () => {
         <HeroSectionSkeleton />
       </div>
     );
-  if (!heroData)
-    return (
-      <div className="h-[600px] flex items-center justify-center">
-        No Hero section available
-      </div>
-    );
+  if (!heroData) return null;
 
   const titles = heroData.recurrentTitles || [];
   const currentTitleObj = titles[wordIndex] || {};

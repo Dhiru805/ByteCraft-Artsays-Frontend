@@ -40,7 +40,7 @@ const HowToSell = () => {
   }, []);
 
   if (loading) return <div><HowToSellSkeleton /></div>;
-  if (!data) return <div>How To Sell section not available</div>;
+  if (!data) return null;
 
   const containerVariants = {
     hidden: { opacity: 0 },
