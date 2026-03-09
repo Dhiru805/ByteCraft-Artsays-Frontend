@@ -55,9 +55,13 @@ pipeline {
                 # Ensure target directory exists
                 mkdir -p ${SERVE_PATH}
 
-                # Atomic-style deploy: rsync extracted build to serve path
-                rsync -a --delete build-extracted/ ${SERVE_PATH}/
-                '''
+                  # Sync files without trying to preserve ownership (jenkins user lacks chown rights)
+                  rsync -rlptD --delete build-extracted/ ${SERVE_PATH}/
+
+                  # Ensure nginx (www-data group) can read everything
+                  find ${SERVE_PATH} -type d -exec chmod 755 {} +
+                  find ${SERVE_PATH} -type f -exec chmod 644 {} +
+                  '''
             }
         }
 
