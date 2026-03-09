@@ -6,8 +6,8 @@ FROM nginx:alpine
 # Copy pre-built React app
 COPY build /usr/share/nginx/html
 
-# Custom Nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Replace main nginx config (resolver must be at http level in nginx 1.29+)
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
