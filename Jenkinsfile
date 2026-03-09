@@ -129,9 +129,20 @@ pipeline {
             steps {
                 echo 'Clearing backend prerender cache...'
                 sh '''
-                curl -s -X POST http://artsays-backend-container:3001/__prerender-cache-clear || \
-                  curl -s -X POST http://localhost:3001/__prerender-cache-clear || \
-                  echo "Cache-clear request failed — backend will auto-refresh on next request"
+                CACHE_CLEARED=0
+
+                if curl -sf -X POST http://artsays-backend-container:3001/__prerender-cache-clear; then
+                    echo "Cache cleared via container hostname"
+                    CACHE_CLEARED=1
+                elif curl -sf -X POST http://127.0.0.1:3001/__prerender-cache-clear; then
+                    echo "Cache cleared via localhost"
+                    CACHE_CLEARED=1
+                fi
+
+                if [ "$CACHE_CLEARED" = "0" ]; then
+                    echo "ERROR: Could not reach backend cache-clear endpoint — deployment may serve stale HTML"
+                    exit 1
+                fi
                 '''
             }
         }
