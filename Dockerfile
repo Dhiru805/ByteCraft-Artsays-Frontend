@@ -1,14 +1,12 @@
-# Pre-built locally — build/ folder is committed to repo
+# Pre-built locally — build/ folder is committed to the repo
+# No npm install or build step needed on the server
 
 FROM nginx:alpine
 
-# Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
+# Copy pre-built React app
+COPY build /usr/share/nginx/html
 
-# Copy React build
-COPY build/ /var/www/artsays/frontend/
-
-# Copy custom nginx config
+# Custom Nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
