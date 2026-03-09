@@ -131,7 +131,7 @@ pipeline {
                 sh '''
                 CACHE_CLEARED=0
 
-                if curl -sf -X POST http://artsays-backend-container:3001/__prerender-cache-clear; then
+                if curl -sf -X POST http://backend.artsays.in/__prerender-cache-clear; then
                     echo "Cache cleared via container hostname"
                     CACHE_CLEARED=1
                 elif curl -sf -X POST http://127.0.0.1:3001/__prerender-cache-clear; then
