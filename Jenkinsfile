@@ -52,13 +52,14 @@ pipeline {
             steps {
                 echo "Deploying build artifacts to ${SERVE_PATH}..."
                 sh '''
-                # Ensure target directory exists
-                mkdir -p ${SERVE_PATH}
+                  # Ensure target directory exists
+                  mkdir -p ${SERVE_PATH}
 
-                  # Sync files without trying to preserve ownership (jenkins user lacks chown rights)
-                  rsync -rlptD --delete build-extracted/ ${SERVE_PATH}/
+                  # Sync files: recursive, no ownership/permission/time preservation
+                  # (jenkins does not own the destination; --omit-dir-times skips utimes errors)
+                  rsync -rl --delete --omit-dir-times build-extracted/ ${SERVE_PATH}/
 
-                  # Ensure nginx (www-data group) can read everything
+                  # Set permissions so nginx (www-data) can read everything
                   find ${SERVE_PATH} -type d -exec chmod 755 {} +
                   find ${SERVE_PATH} -type f -exec chmod 644 {} +
                   '''
