@@ -4,7 +4,7 @@
 FROM nginx:alpine
 
 # Copy pre-built React app
-COPY build /var/www/artsays/frontend
+COPY build /usr/share/nginx/html
 
 # Custom Nginx config
 COPY nginx.conf /etc/nginx/nginx.conf

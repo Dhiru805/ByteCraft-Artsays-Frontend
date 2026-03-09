@@ -2,10 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME     = "artsays-frontend"
-        CONTAINER_NAME = "artsays-frontend-container"
-        NEW_CONTAINER  = "artsays-frontend-new"
-        NETWORK_NAME   = "artsays-network"
+        IMAGE_NAME  = "artsays-frontend"
+        SERVE_PATH  = "/var/www/artsays/frontend"
     }
 
     stages {
@@ -29,101 +27,52 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                echo 'Building Docker image for frontend...'
+                echo 'Building Docker image to capture build artifacts...'
                 sh 'docker build --no-cache -t ${IMAGE_NAME}:${BUILD_NUMBER} .'
             }
         }
 
-        stage('Setup Network') {
+        stage('Extract Build Artifacts') {
             steps {
+                echo 'Extracting build/ from Docker image to host...'
                 sh '''
-                docker network inspect ${NETWORK_NAME} >/dev/null 2>&1 || docker network create ${NETWORK_NAME}
-                docker network connect ${NETWORK_NAME} artsays-backend-container 2>/dev/null || true
+                # Create a temporary container (don't start it)
+                TEMP_CONTAINER=$(docker create ${IMAGE_NAME}:${BUILD_NUMBER})
+
+                # Copy build artifacts out of the image
+                docker cp ${TEMP_CONTAINER}:/usr/share/nginx/html/. build-extracted/
+
+                # Remove the temporary container
+                docker rm ${TEMP_CONTAINER}
                 '''
             }
         }
 
-        stage('Start New Container') {
+        stage('Deploy to Serve Path') {
             steps {
-                echo 'Starting new frontend container on staging port 3003...'
+                echo "Deploying build artifacts to ${SERVE_PATH}..."
                 sh '''
-                docker stop ${NEW_CONTAINER} 2>/dev/null || true
-                docker rm  ${NEW_CONTAINER} 2>/dev/null || true
+                # Ensure target directory exists
+                mkdir -p ${SERVE_PATH}
 
-                docker run -d \
-                  --name ${NEW_CONTAINER} \
-                  --network ${NETWORK_NAME} \
-                  -p 127.0.0.1:3003:80 \
-                  ${IMAGE_NAME}:${BUILD_NUMBER}
+                # Atomic-style deploy: rsync extracted build to serve path
+                rsync -a --delete build-extracted/ ${SERVE_PATH}/
                 '''
             }
         }
 
-        stage('Health Check New Container') {
-    steps {
-        echo 'Checking new frontend container health...'
-        sh '''
-        for i in $(seq 1 15); do
-            if curl -f http://127.0.0.1:3003 > /dev/null 2>&1; then
-                echo "New frontend container is healthy"
-                exit 0
-            fi
-
-            echo "Waiting for container startup... attempt $i"
-            sleep 3
-        done
-
-        echo "New container failed health check — aborting deployment"
-        docker logs ${NEW_CONTAINER} || true
-        docker stop ${NEW_CONTAINER} || true
-        docker rm ${NEW_CONTAINER} || true
-        exit 1
-        '''
-    }
-}
-
-        stage('Swap Containers') {
+        stage('Verify Deployment') {
             steps {
-                echo 'New container healthy — swapping old container out...'
                 sh '''
-                # Remove old production container
-                docker stop ${CONTAINER_NAME} 2>/dev/null || true
-                docker rm  ${CONTAINER_NAME} 2>/dev/null || true
-
-                # Stop staging container and relaunch on production port
-                docker stop ${NEW_CONTAINER}
-                docker rm   ${NEW_CONTAINER}
-
-                docker run -d \
-                  --name ${CONTAINER_NAME} \
-                  --network ${NETWORK_NAME} \
-                  -p 3000:80 \
-                  ${IMAGE_NAME}:${BUILD_NUMBER}
+                # Check index.html exists at the serve path
+                if [ ! -f "${SERVE_PATH}/index.html" ]; then
+                    echo "ERROR: index.html not found at ${SERVE_PATH} — deployment failed"
+                    exit 1
+                fi
+                echo "Deployment verified: index.html present at ${SERVE_PATH}"
                 '''
             }
         }
-
-        stage('Final Health Check') {
-    steps {
-        sh '''
-        echo "Checking production container health..."
-
-        for i in $(seq 1 15); do
-            if curl -f http://127.0.0.1:3000 > /dev/null 2>&1; then
-                echo "Production frontend container is healthy"
-                exit 0
-            fi
-
-            echo "Waiting for production container... attempt $i"
-            sleep 3
-        done
-
-        echo "Production container failed health check"
-        docker logs ${CONTAINER_NAME} || true
-        exit 1
-        '''
-    }
-}
 
         stage('Clear Backend Prerender Cache') {
             steps {
@@ -147,9 +96,18 @@ pipeline {
             }
         }
 
-        stage('Cleanup Old Images') {
+        stage('Cleanup') {
             steps {
-                sh 'docker image prune -af'
+                sh '''
+                # Remove extracted artifacts from workspace
+                rm -rf build-extracted/
+
+                # Remove build image (no longer needed at runtime)
+                docker rmi ${IMAGE_NAME}:${BUILD_NUMBER} 2>/dev/null || true
+
+                # Prune any dangling images
+                docker image prune -f
+                '''
             }
         }
 
@@ -158,15 +116,12 @@ pipeline {
     post {
 
         success {
-            echo 'Frontend deployed successfully — old build replaced only after new build passed health check.'
+            echo 'Frontend deployed successfully — static files live at /var/www/artsays/frontend.'
         }
 
         failure {
-            echo 'Deployment failed — old container was NOT stopped, production is still running.'
-            sh '''
-            docker stop ${NEW_CONTAINER} 2>/dev/null || true
-            docker rm  ${NEW_CONTAINER} 2>/dev/null || true
-            '''
+            echo 'Deployment failed — previous files at /var/www/artsays/frontend are unchanged.'
+            sh 'rm -rf build-extracted/ 2>/dev/null || true'
         }
 
         always {
