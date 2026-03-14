@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.63b176bb.css",
+    "main.js": "/static/js/main.50383462.js",
+    "static/css/828.cd8ea6db.chunk.css": "/static/css/828.cd8ea6db.chunk.css",
+    "static/js/828.7af2466b.chunk.js": "/static/js/828.7af2466b.chunk.js",
+    "static/js/52.96d1f15d.chunk.js": "/static/js/52.96d1f15d.chunk.js",
+    "static/js/239.f6ca85f4.chunk.js": "/static/js/239.f6ca85f4.chunk.js",
+    "static/js/206.85f1ef97.chunk.js": "/static/js/206.85f1ef97.chunk.js",
+    "static/css/488.7853683e.chunk.css": "/static/css/488.7853683e.chunk.css",
+    "static/media/remixicon.svg?t=1769685282643": "/static/media/remixicon.56e14bd6fc2e5b0bd258.svg",
+    "static/media/artlogo.png": "/static/media/artlogo.f735efd95b90886809c6.png",
+    "static/media/remixicon.eot?t=1769685282643": "/static/media/remixicon.31ba1400c6b409835452.eot",
+    "static/media/remixicon.ttf?t=1769685282643": "/static/media/remixicon.f2f55fcd071e638a7d9c.ttf",
+    "static/media/blog-grid-main.png": "/static/media/blog-grid-main.8f2b581f493d4524bb4e.png",
+    "static/media/remixicon.woff?t=1769685282643": "/static/media/remixicon.eaeefc68d4120a79ca83.woff",
+    "static/media/remixicon.woff2?t=1769685282643": "/static/media/remixicon.271974494fce11723bf5.woff2",
+    "static/media/404.png": "/static/media/404.a0ab202666e909ffaf20.png",
+    "static/media/artist-image.png": "/static/media/artist-image.7844a06479d37c47f3fc.png",
+    "static/media/blog-1.jpg": "/static/media/blog-1.666d64b22d2f2a69ad99.jpg",
+    "index.html": "/index.html",
+    "static/media/logo.svg": "/static/media/logo.5335519e9bcb5b986b687379947806b8.svg"
+  },
+  "entrypoints": [
+    "static/css/main.63b176bb.css",
+    "static/js/main.50383462.js"
+  ]
+}

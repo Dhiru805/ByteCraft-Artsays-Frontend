@@ -1,0 +1,205 @@
+/* ═══════════════════════════════
+   NAVBAR SKELETON — matches NavBar exactly
+   ═══════════════════════════════ */
+
+/* shimmer base */
+.sk {
+  background: linear-gradient(90deg, #f0ebe7 25%, #e8e0db 50%, #f0ebe7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.wrapper {
+  width: 100%;
+}
+
+/* ────────────────────────────────
+   DESKTOP HEADER
+   height: 64px, grid: 1fr auto 1fr, padding: 0 48px, max-width: 1440px
+   ──────────────────────────────── */
+.desktopHeader {
+  display: none;
+  background: #fff;
+  border-bottom: 1px solid #f0ebe7;
+  height: 64px;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 48px;
+  height: 64px;
+}
+
+/* Left: nav link pills */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navLink {
+  height: 32px;
+  width: 52px;
+  border-radius: 8px;
+}
+
+.navLinkWide {
+  width: 78px;
+}
+
+/* Center: logo */
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  width: 100px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+/* Right: search + icon + cta + avatar */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* search pill — matches nav-search-btn: ~160px wide, 34px tall, border-radius 24px */
+.searchPill {
+  width: 130px;
+  height: 34px;
+  border-radius: 24px;
+}
+
+/* icon btn — matches nav-icon-btn: ~36px wide, 34px tall, border-radius 10px */
+.iconBtn {
+  width: 36px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+/* CTA / Create pill — ~88px wide, 34px tall */
+.ctaPill {
+  width: 88px;
+  height: 34px;
+  border-radius: 24px;
+}
+
+/* avatar pill — matches nav-avatar-btn: ~76px wide, 38px tall, border-radius 30px */
+.avatarPill {
+  width: 76px;
+  height: 38px;
+  border-radius: 30px;
+}
+
+/* ────────────────────────────────
+   MOBILE TOP BAR
+   padding: 10px 18px, sticky top
+   ──────────────────────────────── */
+.mobileBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: #fff;
+  border-bottom: 1px solid #f0ebe7;
+  height: 54px;
+}
+
+.mobileLogo {
+  width: 90px;
+  height: 30px;
+  border-radius: 6px;
+}
+
+.mobileRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* bell icon */
+.mobileIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+}
+
+/* avatar circle */
+.mobileAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
+/* ────────────────────────────────
+   MOBILE BOTTOM NAV
+   height: 60px, 5 slots, raised center
+   ──────────────────────────────── */
+.mobileBottom {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #fff;
+  border-top: 1px solid #ede5e0;
+  align-items: center;
+  padding: 0 4px;
+}
+
+/* regular tab slot — icon 20px + label 9px ≈ 36px height */
+.mbnTab {
+  flex: 1;
+  height: 36px;
+  border-radius: 8px;
+  margin: 0 4px;
+}
+
+/* wrapper for raised centre button */
+.mbnCenterWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* raised circle — matches mbn-create-btn: 52px, margin-bottom: 10px */
+.mbnCenter {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+/* ────────────────────────────────
+   RESPONSIVE
+   ──────────────────────────────── */
+@media (min-width: 993px) {
+  .desktopHeader { display: block; }
+  .mobileBar     { display: none; }
+  .mobileBottom  { display: none !important; }
+}
+
+@media (max-width: 992px) {
+  .desktopHeader { display: none !important; }
+  .mobileBar     { display: flex; }
+  .mobileBottom  { display: flex; }
+}

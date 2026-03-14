@@ -1,0 +1,192 @@
+/* body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  padding-bottom: 0;
+  transition: filter 0.3s ease;
+} */
+
+/* Desktop Sidebar Styles */
+.sidebar-container-s {
+  /* width: 22%; */
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 93vh;
+  display: flex;
+  z-index: 99;
+  padding: 40px;
+}
+
+.sidebar-icons-s {
+  width: 70px;
+  background-color: #4a372b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0 0 0;
+  border-radius: 10px;
+  max-height:90vh ; 
+   overflow-y:auto ;
+     -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.icon-wrapper-s {
+  padding: 10px;
+  color: white;
+  font-size: 1.3rem;
+  /* margin: 12px 0; */
+  border-radius: 12px;
+  transition: 0.3s;
+  background-color: transparent;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-wrapper-s:hover {
+  background-color: #5c4538;
+  cursor: pointer;
+}
+
+.icon-wrapper-s.active {
+  background-color: white;
+  color: #4a372b;
+}
+
+.sidebar-expanded-s {
+  width: 0;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease;
+  border-radius: 0 10px 10px 0;
+  padding: 40px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-height:90vh ; 
+   overflow-y:auto ;
+     -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.sidebar-container-s:hover .sidebar-expanded-s:hover {
+  width: 100%;
+}
+
+.label-wrapper-s {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #4a372b;
+  font-weight: 600;
+  border-radius: 0px 12px 12px 0px;
+  /* margin: 12px 0; */
+  margin-right: 15px;
+  transition: background 0.3s, border 0.3s;
+  height: 45px;
+  box-sizing: border-box;
+  border-left: none !important;
+}
+
+.label-wrapper-s:hover {
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
+
+.label-wrapper-s.active {
+  border: 1.5px solid #4a372b;
+  background-color: white;
+}
+
+.label-wrapper-s i {
+  margin-right: 12px;
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.bottom-section {
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+.sidebar-container-s.pinned .sidebar-expanded-s {
+  width: 100%;
+}
+
+.sidebar-container-s:not(.pinned):hover .sidebar-expanded-s {
+  width: 100%;
+}
+
+.sidebar-container-s:not(.pinned) .sidebar-expanded-s {
+  width: 0;
+}
+
+.toggle-btn-s {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 1001;
+  /* background: white; */
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  transition: transform 0.3s ease;
+}
+
+.sidebar-container-s.pinned .toggle-btn-s i {
+  transform: rotate(180deg);
+}
+
+/* Mobile: hide desktop sidebar (navbar handles mobile) */
+@media (max-width: 992px) {
+  .sidebar-container-s {
+    display: none;
+  }
+}
+/* ...............................sidebar code end here................................ */
+/* Buy button */
+.buy-button {
+  background-color: #6e4e37;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.buy-button .cart-icon {
+  color: white;
+}
+
+.buy-button:hover {
+  background-color: #ffffff;
+  border: 1px solid #48372d;
+  color: #6e4e37;
+}
+
+.buy-button:hover .cart-icon {
+  color: #6e4e37;
+}
+.suggested {
+  border: 1px solid #6e4e37;
+  border-left: 7px solid #6e4e37;
+  border-radius: 7px;
+}
+.suggestion {
+  position: sticky;
+  top: 5px;
+}

@@ -1,0 +1,176 @@
+import React, { useEffect, useState } from 'react';
+import getAPI from '../../../../../../api/getAPI';
+import { useNavigate } from 'react-router-dom';
+import useUserType from '../../../../urlconfig';
+
+const ViewBlogRequest = ({ userId }) => {
+  const [blogs, setBlogs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [blogsPerPage, setBlogsPerPage] = useState(10);
+  const navigate = useNavigate();
+
+  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
+  const fetchBlog = async () => {
+    try {
+      const result = await getAPI(
+        `/Blog-Post/blogs/user/${userId}`,
+        {},
+        true,
+        false
+      );
+      if (result.data) {
+        setBlogs(result.data.blogs);
+      }
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchBlog();
+    }
+  }, [userId]);
+
+  const filteredBlogs = blogs.filter(blog => 
+    blog.blogName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    blog.blogStatus?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
+  const displayedBlogs = filteredBlogs.slice(
+    (currentPage - 1) * blogsPerPage,
+    currentPage * blogsPerPage
+  );
+
+  const handlePrevious = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handleBlogsPerPageChange = (event) => {
+    setBlogsPerPage(Number(event.target.value));
+    setCurrentPage(1);
+  };
+
+  return (
+    <div className="container-fluid">
+      <div className="row clearfix">
+        <div className="col-lg-12">
+          <div className="card">
+            <div className="header d-flex justify-content-between align-items-center">
+              <div className="d-none d-md-flex align-items-center mb-2 mb-md-0">
+                <label className="mb-0 mr-2">Show</label>
+                <select
+                  className="form-control form-control-sm"
+                  value={blogsPerPage}
+                  onChange={handleBlogsPerPageChange}
+                  style={{ minWidth: '70px' }}
+                >
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <label className="mb-0 ml-2">entries</label>
+              </div>
+              <div className="w-100 w-md-auto d-flex justify-content-end">
+                <div className="input-group" style={{ maxWidth: '200px' }}>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="Search Blog"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <div className="input-group-append">
+                    <span className="input-group-text"><i className="fa fa-search"></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="body">
+              <div className="table-responsive">
+                <table className="table table-hover table-custom m-b-0">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th>#</th>
+                      <th>Blog Title</th>
+                      <th>Thumbnail</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {displayedBlogs.length > 0 ? (
+                      displayedBlogs.map((blog, index) => (
+                        <tr key={blog._id}>
+                          <td>{(currentPage - 1) * blogsPerPage + index + 1}</td>
+                          <td>
+                            <h6 className="mb-0" title={blog.blogName}>
+                              {blog.blogName.length > 30 ? blog.blogName.substring(0, 30) + '...' : blog.blogName}
+                            </h6>
+                          </td>
+                          <td>
+                            <img
+                              src={blog.blogImage ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}` : "/placeholder.jpg"}
+                              alt={blog.blogName}
+                              style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+                            />
+                          </td>
+                          <td>{new Date(blog.createdAt).toLocaleDateString('en-IN')}</td>
+                          <td>
+                            <span className={`badge ${blog.blogStatus === 'Pending' ? 'badge-warning' : blog.blogStatus === 'Approved' ? 'badge-success' : 'badge-danger'}`}>
+                              {blog.blogStatus}
+                            </span>
+                          </td>
+                          <td>
+                            <button
+                              className="btn btn-sm btn-outline-info mr-1"
+                              title="View"
+                              onClick={() => navigate(`/super-admin/artist/blogrequest/blog-details/${blog._id}`, { state: { blogData: blog } })}
+                            >
+                              <i className="fa fa-eye"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="text-center">No blogs available.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+              <div className="pagination d-flex justify-content-between mt-4">
+                <span>
+                  Showing {filteredBlogs.length > 0 ? (currentPage - 1) * blogsPerPage + 1 : 0} to {Math.min(currentPage * blogsPerPage, filteredBlogs.length)} of {filteredBlogs.length} entries
+                </span>
+                <ul className="pagination mb-0">
+                  <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={handlePrevious}>Previous</button>
+                  </li>
+                  <li className="page-item active">
+                    <button className="page-link">{currentPage}</button>
+                  </li>
+                  <li className={`page-item ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={handleNext}>Next</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ViewBlogRequest;
