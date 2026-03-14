@@ -46,53 +46,15 @@ pipeline {
                 docker stop artsays-frontend-container || true
                 docker rm artsays-frontend-container || true
 
-                  # Ensure the named volume exists
-                  docker volume create artsays-frontend-html 2>/dev/null || true
-
-                  # Run frontend on the shared network, populating the named volume
-                  # The volume is also mounted read-only by the backend container so it
-                  # can read index.html directly without any HTTP fetch.
-                  docker run -d \
-                    --name artsays-frontend-container \
-                    --network artsays-network \
-                    -v artsays-frontend-html:/usr/share/nginx/html \
-                    artsays-frontend
+                # Run frontend on the shared network
+                docker run -d \
+                  --name artsays-frontend-container \
+                  --network artsays-network \
+                  -p 3000:80 \
+                  artsays-frontend
 
                 echo "⏳ Waiting for frontend to start..."
                 sleep 5
-                '''
-            }
-        }
-
-        stage('Run Nginx Proxy Container') {
-            steps {
-                echo '🔀 Running nginx proxy container...'
-                sh '''
-                # Stop and remove existing nginx proxy container
-                docker stop artsays-nginx-proxy || true
-                docker rm artsays-nginx-proxy || true
-
-                # Free ports 80/443 — stop host nginx if still running
-                sudo systemctl stop nginx 2>/dev/null || true
-                sudo fuser -k 80/tcp 2>/dev/null || true
-                sudo fuser -k 443/tcp 2>/dev/null || true
-                sleep 1
-
-                  # Copy nginx-proxy.conf to a fixed path so the container mount is stable
-                  mkdir -p /var/lib/jenkins/nginx-proxy
-                  cp nginx-proxy.conf /var/lib/jenkins/nginx-proxy/nginx-proxy.conf
-
-                  docker run -d \
-                    --name artsays-nginx-proxy \
-                    --network artsays-network \
-                    -p 80:80 \
-                    -p 443:443 \
-                    -v /etc/letsencrypt:/etc/letsencrypt:ro \
-                    -v /var/lib/jenkins/nginx-proxy/nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro \
-                    nginx:alpine
-
-                echo "⏳ Waiting for nginx proxy to start..."
-                sleep 3
                 '''
             }
         }
