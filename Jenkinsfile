@@ -63,8 +63,10 @@ pipeline {
             steps {
                 echo 'Copying fresh index.html from container to host volume for backend prerender...'
                 sh '''
-                mkdir -p /var/www/artsays/frontend
-                docker cp artsays-frontend-container:/usr/share/nginx/html/index.html /var/www/artsays/frontend/index.html
+                sudo mkdir -p /var/www/artsays/frontend
+                sudo chown jenkins:jenkins /var/www/artsays/frontend
+                docker cp artsays-frontend-container:/usr/share/nginx/html/index.html /tmp/artsays-index.html
+                sudo cp /tmp/artsays-index.html /var/www/artsays/frontend/index.html
                 echo "Synced. Verifying placeholders:"
                 grep -c "__META_TITLE__" /var/www/artsays/frontend/index.html && echo "OK - placeholders present" || echo "WARN - no placeholders found in index.html"
                 '''
