@@ -29,7 +29,7 @@ const MembershipFailurePage = () => {
       });
     }
 
-    sessionStorage.removeItem("easebuzzPayment");
+    sessionStorage.removeItem("cashfreePayment");
   }, [location.search]);
 
   return (

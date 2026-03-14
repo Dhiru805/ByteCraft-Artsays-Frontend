@@ -30,7 +30,7 @@ const FailurePage = () => {
       });
     }
 
-    sessionStorage.removeItem("easebuzzPayment");
+    sessionStorage.removeItem("cashfreePayment");
   }, [location.search]);
 
    const handleGoBack = () => {

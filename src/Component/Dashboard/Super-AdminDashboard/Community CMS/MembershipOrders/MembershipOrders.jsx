@@ -39,9 +39,9 @@ const MembershipOrders = () => {
       (order.creatorId?.firstName || order.creatorId?.name || "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      (order.easebuzzTxnId || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+       (order.cfOrderId || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
     const effectiveStatus =
       order.status === "Paid" && order.expiresAt && new Date(order.expiresAt) < new Date()
@@ -194,9 +194,9 @@ const MembershipOrders = () => {
                         </div>
                       </td>
                       <td>
-                        <small className="text-muted" style={{ fontSize: "0.75rem" }}>
-                          {order.easebuzzTxnId || "-"}
-                        </small>
+                          <small className="text-muted" style={{ fontSize: "0.75rem" }}>
+                            {order.cfOrderId || "-"}
+                          </small>
                       </td>
                     </tr>
                   ))}

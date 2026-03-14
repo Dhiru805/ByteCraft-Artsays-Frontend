@@ -26,7 +26,7 @@ const SuccessPage = () => {
       setPaymentInfo({ txnid, orderId, amount, status });
     }
 
-    sessionStorage.removeItem("easebuzzPayment");
+    sessionStorage.removeItem("cashfreePayment");
   }, [location.search]);
 
   return (

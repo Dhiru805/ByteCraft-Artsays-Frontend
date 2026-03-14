@@ -174,10 +174,10 @@ function ViewCertification() {
                         <th>Certification Price</th>
                         <td>₹{certification.certificationPrice || "N/A"}</td>
                       </tr>
-                      <tr>
-                        <th>Transaction ID</th>
-                        <td>{certification.easebuzzTxnId || "N/A"}</td>
-                      </tr>
+                        <tr>
+                          <th>Order ID</th>
+                          <td>{certification.cfOrderId || "N/A"}</td>
+                        </tr>
                       <tr>
                         <th>Created At</th>
                         <td>

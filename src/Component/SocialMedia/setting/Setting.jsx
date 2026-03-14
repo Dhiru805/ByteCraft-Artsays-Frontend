@@ -1557,9 +1557,9 @@ const Setting = () => {
                                 : order.status}
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-xs text-gray-400 break-all">
-                            {order.easebuzzTxnId || "-"}
-                          </td>
+                            <td className="px-3 py-2 text-xs text-gray-400 break-all">
+                              {order.cfOrderId || "-"}
+                            </td>
                         </tr>
                       ))}
                     </tbody>
