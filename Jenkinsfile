@@ -46,12 +46,18 @@ pipeline {
                 docker stop artsays-frontend-container || true
                 docker rm artsays-frontend-container || true
 
-                # Run frontend on the shared network
-                docker run -d \
-                  --name artsays-frontend-container \
-                  --network artsays-network \
-                  -p 3000:80 \
-                  artsays-frontend
+                  # Ensure the named volume exists
+                  docker volume create artsays-frontend-html 2>/dev/null || true
+
+                  # Run frontend on the shared network, populating the named volume
+                  # The volume is also mounted read-only by the backend container so it
+                  # can read index.html directly without any HTTP fetch.
+                  docker run -d \
+                    --name artsays-frontend-container \
+                    --network artsays-network \
+                    -p 3000:80 \
+                    -v artsays-frontend-html:/usr/share/nginx/html \
+                    artsays-frontend
 
                 echo "⏳ Waiting for frontend to start..."
                 sleep 5
