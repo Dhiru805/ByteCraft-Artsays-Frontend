@@ -72,6 +72,12 @@ pipeline {
                 docker stop artsays-nginx-proxy || true
                 docker rm artsays-nginx-proxy || true
 
+                # Free ports 80/443 — stop host nginx if still running
+                sudo systemctl stop nginx 2>/dev/null || true
+                sudo fuser -k 80/tcp 2>/dev/null || true
+                sudo fuser -k 443/tcp 2>/dev/null || true
+                sleep 1
+
                   # Copy nginx-proxy.conf to a fixed path so the container mount is stable
                   mkdir -p /var/lib/jenkins/nginx-proxy
                   cp nginx-proxy.conf /var/lib/jenkins/nginx-proxy/nginx-proxy.conf
