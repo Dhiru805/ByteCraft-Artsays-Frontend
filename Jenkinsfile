@@ -59,14 +59,25 @@ pipeline {
             }
         }
 
+        stage('Sync index.html to host volume') {
+            steps {
+                echo 'Copying fresh index.html from container to host volume for backend prerender...'
+                sh '''
+                mkdir -p /var/www/artsays/frontend
+                docker cp artsays-frontend-container:/usr/share/nginx/html/index.html /var/www/artsays/frontend/index.html
+                echo "Synced. Verifying placeholders:"
+                grep -c "__META_TITLE__" /var/www/artsays/frontend/index.html && echo "OK - placeholders present" || echo "WARN - no placeholders found in index.html"
+                '''
+            }
+        }
+
         stage('Clear Backend Prerender Cache') {
             steps {
-                echo '🔄 Clearing backend prerender cache so new index.html is used...'
+                echo 'Clearing backend prerender cache so new index.html is picked up...'
                 sh '''
-                # Tell the backend to drop its cached index.html so it re-fetches from the new container
                 curl -s -X POST http://artsays-backend-container:3001/__prerender-cache-clear || \
                   curl -s -X POST http://localhost:3001/__prerender-cache-clear || \
-                  echo "⚠️  Cache-clear request failed (backend may not be running yet) — it will auto-refresh on next request"
+                  echo "Cache-clear request failed (backend may not be running yet) — it will auto-refresh on next request"
                 '''
             }
         }
