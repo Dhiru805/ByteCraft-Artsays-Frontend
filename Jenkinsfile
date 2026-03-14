@@ -72,13 +72,17 @@ pipeline {
                 docker stop artsays-nginx-proxy || true
                 docker rm artsays-nginx-proxy || true
 
+                # Copy nginx-proxy.conf to a fixed path so the container mount is stable
+                mkdir -p /etc/artsays
+                cp nginx-proxy.conf /etc/artsays/nginx-proxy.conf
+
                 docker run -d \
                   --name artsays-nginx-proxy \
                   --network artsays-network \
                   -p 80:80 \
                   -p 443:443 \
                   -v /etc/letsencrypt:/etc/letsencrypt:ro \
-                  -v $(pwd)/nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro \
+                  -v /etc/artsays/nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro \
                   nginx:alpine
 
                 echo "⏳ Waiting for nginx proxy to start..."
