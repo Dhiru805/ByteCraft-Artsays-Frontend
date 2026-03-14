@@ -55,12 +55,34 @@ pipeline {
                   docker run -d \
                     --name artsays-frontend-container \
                     --network artsays-network \
-                    -p 3000:80 \
                     -v artsays-frontend-html:/usr/share/nginx/html \
                     artsays-frontend
 
                 echo "⏳ Waiting for frontend to start..."
                 sleep 5
+                '''
+            }
+        }
+
+        stage('Run Nginx Proxy Container') {
+            steps {
+                echo '🔀 Running nginx proxy container...'
+                sh '''
+                # Stop and remove existing nginx proxy container
+                docker stop artsays-nginx-proxy || true
+                docker rm artsays-nginx-proxy || true
+
+                docker run -d \
+                  --name artsays-nginx-proxy \
+                  --network artsays-network \
+                  -p 80:80 \
+                  -p 443:443 \
+                  -v /etc/letsencrypt:/etc/letsencrypt:ro \
+                  -v $(pwd)/nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro \
+                  nginx:alpine
+
+                echo "⏳ Waiting for nginx proxy to start..."
+                sleep 3
                 '''
             }
         }
