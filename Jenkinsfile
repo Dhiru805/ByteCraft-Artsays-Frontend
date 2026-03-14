@@ -64,29 +64,20 @@ pipeline {
                 echo 'Copying fresh index.html from frontend container to host and into backend container...'
                 sh '''
                 # Copy index.html from frontend container to a temp path jenkins owns (no sudo needed)
-                docker cp artsays-frontend-container:/usr/share/nginx/html/index.html /tmp/artsays-index.html
+                  docker cp artsays-frontend-container:/usr/share/nginx/html/index.html /tmp/artsays-index.html
 
-                # Verify placeholders are present
-                grep -c "__META_TITLE__" /tmp/artsays-index.html && echo "OK - placeholders present" || echo "WARN - no placeholders found in index.html"
+                  # Verify placeholders are present
+                  grep -c "__META_TITLE__" /tmp/artsays-index.html && echo "OK - placeholders present" || echo "WARN - no placeholders found in index.html"
 
-                # Write to host path (jenkins must own this directory — created once by admin)
-                # Falls back gracefully if directory does not exist yet
-                if [ -d /var/www/artsays/frontend ]; then
-                    cp /tmp/artsays-index.html /var/www/artsays/frontend/index.html
-                    echo "Copied to host volume /var/www/artsays/frontend/index.html"
-                else
-                    echo "Host volume /var/www/artsays/frontend not found — skipping host copy (backend will use docker cp path)"
-                fi
-
-                # Inject directly into the running backend container (no sudo, no bind-mount needed)
-                # docker cp bypasses the :ro flag — it writes into the container overlay filesystem
-                if docker inspect artsays-backend-container >/dev/null 2>&1; then
-                    docker exec artsays-backend-container mkdir -p /var/www/artsays/frontend 2>/dev/null || true
-                    docker cp /tmp/artsays-index.html artsays-backend-container:/var/www/artsays/frontend/index.html
-                    echo "Injected index.html directly into backend container"
-                else
-                    echo "Backend container not running yet — it will pick up index.html from host volume on next start"
-                fi
+                  # Inject directly into the running backend container via docker cp
+                  # (no sudo, no host-path permissions needed)
+                  if docker inspect artsays-backend-container >/dev/null 2>&1; then
+                      docker exec artsays-backend-container mkdir -p /var/www/artsays/frontend 2>/dev/null || true
+                      docker cp /tmp/artsays-index.html artsays-backend-container:/var/www/artsays/frontend/index.html
+                      echo "Injected index.html directly into backend container"
+                  else
+                      echo "Backend container not running — skipping inject (backend will fetch via HTTP on next request)"
+                  fi
                 '''
             }
         }
