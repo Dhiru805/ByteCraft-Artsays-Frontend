@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import postAPI from "../../../../../api/postAPI";
 import getAPI from "../../../../../api/getAPI";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const WhyFromArtsaysCreate = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const WhyFromArtsaysCreate = () => {
                 image: null,
                 icon: card.icon, // Store original relative path
                 preview: normalizedIcon
-                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${normalizedIcon}`
+                  ? getImageUrl(normalizedIcon)
                   : null,
                 title: card.heading || card.title || "",
                 description: card.description || ""

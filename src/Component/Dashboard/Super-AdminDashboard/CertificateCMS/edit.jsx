@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import putAPI from "../../../../api/putAPI";
 import getAPI from "../../../../api/getAPI";
 import axiosInstance from "../../../../api/axiosConfig";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const CertificationEdit = () => {
   const navigate = useNavigate();
@@ -112,17 +113,17 @@ const CertificationEdit = () => {
 
     setSection1Previews(
       (page.section1?.cards || []).map((c) =>
-        c.image ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.image}` : null
+        c.image ? getImageUrl(c.image) : null
       )
     );
     setSection2Previews(
       (page.section2?.cards || []).map((c) =>
-        c.image ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.image}` : null
+        c.image ? getImageUrl(c.image) : null
       )
     );
     setCertificatePreview(
       page.certificateSection?.image
-        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${page.certificateSection.image}`
+        ? getImageUrl(page.certificateSection.image)
         : null
     );
 

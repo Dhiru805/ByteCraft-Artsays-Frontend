@@ -4,6 +4,7 @@ import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 const Stickers = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -99,9 +100,7 @@ const Stickers = () => {
     setPrice(mat.price);
     setImagePreview(
       mat.materialStickersImage
-        ? `${
-            process.env.REACT_APP_API_URL_FOR_IMAGE
-          }/${mat.materialStickersImage.replace(/\\/g, "/")}`
+        ? getImageUrl(mat.materialStickersImage.replace(/\\/g, "/"))
         : "/placeholder.jpg"
     );
     setEditId(mat._id);
@@ -266,13 +265,7 @@ const Stickers = () => {
                                   {viewData?.materialStickersImage && (
                                     <div className="mt-2">
                                       <img
-                                        src={`${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${viewData.materialStickersImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`}
+                                        src={getImageUrl(viewData.materialStickersImage.replace(/\\/g,"/"))}
                                         alt="Preview"
                                         className="img-thumbnail"
                                         style={{ maxHeight: "200px" }}
@@ -459,13 +452,7 @@ const Stickers = () => {
                                 <img
                                   src={
                                     mat.materialStickersImage
-                                      ? `${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${mat.materialStickersImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`
+                                      ? getImageUrl(mat.materialStickersImage.replace(/\\/g,"/"))
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"

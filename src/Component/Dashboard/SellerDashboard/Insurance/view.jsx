@@ -1,6 +1,7 @@
-import React from "react";
+﻿import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 const ViewInsurance = () => {
   const { state } = useLocation();
@@ -19,7 +20,7 @@ const ViewInsurance = () => {
     );
   }
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const formatDate = (dateString) => {
     if (!dateString) return "—";
@@ -79,7 +80,7 @@ const ViewInsurance = () => {
                     <img
                       src={
                         insurance.productId?.mainImage
-                          ? `${BASE_URL}${insurance.productId.mainImage}`
+                          ? getImageUrl(insurance.productId.mainImage)
                           : DEFAULT_PROFILE_IMAGE
                       }
                       alt="Product"

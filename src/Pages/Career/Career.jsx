@@ -8,6 +8,7 @@ import HeroImgCareer from "./hero-img/hero-img";
 import JoinArtsays from "./JoinArtsays/JoinArtsays";
 import OpenRoles from "./OpenRoles/OpenRoles";
 import LifeAtArtsays from "./LifeAtArtsays/LifeAtArtsays";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -47,7 +48,7 @@ const Career = () => {
           metaDescription: meta.metaDescription || "Join the Artsays team.",
           metaKeywords: Array.isArray(meta.metaKeywords) ? meta.metaKeywords.join(", ") : meta.metaKeywords || "careers, jobs",
           metaAuthor: meta.metaAuthor || "Artsays",
-          metaImage: meta.metaImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}` : "/default-meta-image.jpg",
+          metaImage: meta.metaImage ? getImageUrl(meta.metaImage) : "/default-meta-image.jpg",
         });
       }
     } catch (error) {

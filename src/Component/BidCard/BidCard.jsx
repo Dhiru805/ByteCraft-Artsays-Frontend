@@ -4,6 +4,7 @@ import { FiChevronRight, FiChevronLeft } from "react-icons/fi";
 import { Bell } from "lucide-react";
 import getAPI from "../../api/getAPI";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const BidGrid = ({ overrideProducts = null }) => {
   const [products, setProducts] = useState([]);
@@ -166,7 +167,7 @@ const BidGrid = ({ overrideProducts = null }) => {
                 {/* IMAGE */}
                 <div className="w-full h-40 sm:h-64 bg-gray-100 flex items-center justify-center rounded-t-2xl overflow-hidden relative">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
+                        src={getImageUrl(item.product?.mainImage)}
                       alt={item.artworkName}
                       className={`h-full object-contain transition-all duration-300 ${isEnded ? "grayscale blur-[2px]" : ""}`}
                     />
@@ -213,7 +214,7 @@ const BidGrid = ({ overrideProducts = null }) => {
                   {item.product?.badges?.map((img, i) => (
                     <img
                       key={i}
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`}
+                        src={getImageUrl(img)}
                       className="w-5 h-5 rounded-full"
                       alt=""
                     />

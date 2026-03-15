@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import putAPI from "../../../../api/putAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const UpdateExhibition = () => {
   const navigate = useNavigate();
@@ -113,9 +114,9 @@ const UpdateExhibition = () => {
         eventPromotion: exhibition.eventPromotion || "Invite",
       });
       setCoverBannerPreview(
-        exhibition.coverBanner ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${exhibition.coverBanner}` : null
+        exhibition.coverBanner ? getImageUrl(exhibition.coverBanner) : null
       );
-      setLogoPreview(exhibition.logo ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${exhibition.logo}` : null);
+      setLogoPreview(exhibition.logo ? getImageUrl(exhibition.logo) : null);
     }
   }, [exhibition, navigate]);
 

@@ -46,6 +46,7 @@ import HomeChallenges from "./HomeChallenges/HomeChallenges";
 import ArtIcon from "./ArtIcon/ArtIcon";
 import HowToSell from "./HowToSell/HowToSell";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const Homepage = () => {
   const [seoData, setSeoData] = useState({
@@ -73,7 +74,7 @@ const Homepage = () => {
               "art marketplace, buy art, sell art, online art auctions, discover artists",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

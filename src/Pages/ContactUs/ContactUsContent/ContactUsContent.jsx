@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import getAPI from "../../../api/getAPI";
 import axiosInstance from "../../../api/axiosConfig";
 import ContactUsHero from "../ContactUsHero";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const ContactUsContent = () => {
   const [pageData, setPageData] = useState(null);
@@ -180,7 +181,7 @@ const ContactUsContent = () => {
               <img
                 src={
                   pageData.bannerImage
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${pageData.bannerImage}`
+                    ? getImageUrl(pageData.bannerImage)
                     : "/herosectionimg/Contact us.svg"
                 }
                 alt="Contact Banner"

@@ -1,13 +1,13 @@
-
+﻿
 
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const OurValues = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 
   useEffect(() => {
     const fetchOurValues = async () => {
@@ -27,7 +27,7 @@ const OurValues = () => {
         if (sectionData.cards?.length) {
           sectionData.cards = sectionData.cards.map((card) => ({
             cardTitle: card.cardTitle,
-            cardImage: card.cardImage ? `${imageBaseURL}/${card.cardImage}` : null,
+            cardImage: card.cardImage ? getImageUrl(card.cardImage) : null,
           }));
         }
 

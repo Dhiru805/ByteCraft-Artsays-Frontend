@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../api/getAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 const Certification = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Certification = () => {
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedCertToDelete, setSelectedCertToDelete] = useState(null);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 const[loading,setLoading]=useState(true);
 
   const fetchCertifications = async () => {
@@ -186,7 +187,7 @@ const[loading,setLoading]=useState(true);
                           <img
                             src={
                               cert.userId?.profilePhoto && cert.userId?.profilePhoto !== "null"
-                                ? `${BASE_URL}${cert.userId.profilePhoto}`
+                                ? getImageUrl(cert.userId.profilePhoto)
                                 : ''
                             }
                             className="rounded-circle avatar"
@@ -206,7 +207,7 @@ const[loading,setLoading]=useState(true);
                           <img
                             src={
                               cert.productId?.mainImage && cert.productId?.mainImage !== "null"
-                                ? `${BASE_URL}${cert.productId.mainImage}`
+                                ? getImageUrl(cert.productId.mainImage)
                                 : ''
                             }
                             alt="Product"

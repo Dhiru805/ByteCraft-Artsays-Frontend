@@ -1,4 +1,5 @@
-import React from "react";
+﻿import React from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
@@ -74,7 +75,7 @@ const SharePost = () => {
             property="og:image"
             content={
               sharePostData.images.length > 0
-                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                ? getImageUrl(sharePostData.images[0])
                 : `${DEFAULT_PROFILE_IMAGE}`
             }
           />
@@ -86,7 +87,7 @@ const SharePost = () => {
             name="twitter:image"
             content={
               sharePostData.images.length > 0
-                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                ? getImageUrl(sharePostData.images[0])
                 : `${DEFAULT_PROFILE_IMAGE}`
             }
           />
@@ -99,7 +100,7 @@ const SharePost = () => {
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
               <img
-                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData?.user?.profilePhoto}`}
+                src={getImageUrl(sharePostData?.user?.profilePhoto)}
                 alt="profile"
                 className="h-11 w-11 rounded-full cursor-pointer"
               // onClick={() => goToProfile(sharePostData.user._id)}
@@ -116,10 +117,10 @@ const SharePost = () => {
 
                   {sharePostData?.user?.verified?.length > 0 && (
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData?.user?.verified[
+                      src={getImageUrl(sharePostData?.user?.verified[
                           sharePostData?.user?.verified.length - 1
                         ]?.badgeImage
-                        }`}
+                        )}
                       className="inline-block ml-1 w-5 h-5 object-contain"
                       alt={
                         sharePostData?.user?.verified[
@@ -191,8 +192,8 @@ const SharePost = () => {
             {sharePostData.images && sharePostData.images.length > 0 && (
               <>
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[sharePostData.activeImageIndex || 0]
-                    }`}
+                  src={getImageUrl(sharePostData.images[sharePostData.activeImageIndex || 0]
+                    )}
                   alt="Post content"
                   className="w-full h-full"
                 />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import putAPI from "../../../../../api/putAPI";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const EditVerificationBadge = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const EditVerificationBadge = () => {
       });
       setPreview(
         badge.badgeImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${badge.badgeImage}`
+          ? getImageUrl(badge.badgeImage)
           : null
       );
     }

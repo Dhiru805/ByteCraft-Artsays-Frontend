@@ -1,4 +1,4 @@
-
+﻿
 
 import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
@@ -11,6 +11,7 @@ import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import BrowserCategorySkeleton from "../../../Component/Skeleton/BrowserCategorySkeleton";
 import "../../store/products/product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -43,7 +44,6 @@ const BrowseCategories = () => {
   const navigate = useNavigate();
   const [likedProducts, setLikedProducts] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
@@ -395,7 +395,7 @@ const BrowseCategories = () => {
                   {/* Image Container */}
                   <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                     <img
-                      src={`${imageBaseURL}${product.mainImage}`}
+                      src={getImageUrl(product.mainImage)}
                       alt={product.productName}
                       className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
                     />
@@ -447,7 +447,7 @@ const BrowseCategories = () => {
                       <div className="flex -space-x-1.5">
                         {product.badges?.map((img, idx) => (
                           <div key={idx}>
-                            <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" width="16" height="16" />
+                            <img src={getImageUrl(img)} className="w-4 h-4 rounded-full" alt="Badge" width="16" height="16" />
                           </div>
                         ))}
                       </div>

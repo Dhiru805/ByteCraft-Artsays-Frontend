@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import useUserType from '../../../../urlconfig';
 import Switch from "react-switch";
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 function ViewBuyerRequest() {
     const location = useLocation();
@@ -22,7 +23,7 @@ function ViewBuyerRequest() {
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
 
     useEffect(() => {
@@ -93,7 +94,7 @@ function ViewBuyerRequest() {
                                     <div className="media-left m-r-20" style={{ width: '140px', height: '140px', overflow: 'hidden' }}>
                                         {image ? (
                                             <img
-                                                src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
+                                                src={getImageUrl(request.BuyerImage?.replace(/\\/g, '/'))}
                                                 alt="Buyer"
                                                 className="img-fluid rounded shadow w-100"
                                                 onClick={() => handleImageClick(request)}
@@ -456,7 +457,7 @@ function ViewBuyerRequest() {
                     >
                         {/* Image */}
                         <img
-                            src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                            src={getImageUrl(currentImages[currentImageIndex]?.replace(/\\/g, '/'))}
                             alt="Popup"
                             style={{
                                 width: '100%',

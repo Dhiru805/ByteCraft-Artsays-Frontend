@@ -5,8 +5,7 @@ import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
 import deleteAPI from "../../api/deleteAPI";
 import { toast } from "react-toastify";
-
-const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", maxItems }) => {
   const [products, setProducts] = useState([]);
@@ -167,7 +166,7 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
                 {/* Image Container */}
                 <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                   <img
-                    src={`${imageBaseURL}${product.mainImage}`}
+                      src={getImageUrl(product.mainImage)}
                     alt={product.productName}
                     className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
                   />
@@ -216,7 +215,7 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
                     <div className="flex -space-x-1.5">
                       {product.badges?.map((img, idx) => (
                         <div key={idx}>
-                          <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" />
+                            <img src={getImageUrl(img)} className="w-4 h-4 rounded-full" alt="Badge" />
                         </div>
                       ))}
                     </div>

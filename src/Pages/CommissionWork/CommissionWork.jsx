@@ -1,17 +1,3 @@
-// import React from 'react';
-// import HeroImgCommission from './hero-img/hero-img';
-// import CommissionContent from './commissionContent/commissionContent'
-
-// const Commission = () => {
-//   return (
-//     <div className="max-w-[1440px] mx-auto font-[poppins]">
-//         <HeroImgCommission/>
-//         <CommissionContent/>
-//     </div>
-//   );
-// };
-
-// export default Commission;
 
 
 import React, { useEffect, useState } from "react";
@@ -22,6 +8,7 @@ import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import HeroImgCommission from "./hero-img/hero-img";
 import CommissionContent from "./commissionContent/commissionContent";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const Commission = () => {
   const [seoData, setSeoData] = useState({
@@ -49,7 +36,7 @@ const Commission = () => {
               "commission art, custom artwork, hire artist, artsays commission",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

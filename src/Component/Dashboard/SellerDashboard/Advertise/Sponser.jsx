@@ -10,6 +10,7 @@ import CampaignBiddingSection from "./campaignbiddingsection"
 import postAPI from "../../../../api/postAPI"
 import { toast } from "react-toastify"
 import { useNavigate, useLocation } from "react-router-dom";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 
 function Sponser() {
@@ -111,7 +112,7 @@ function Sponser() {
   }, [campaignId, campaignFromState]);
 
   const productsPerPage = 5
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || ""
+  const BASE_URL = getImageUrl(null) || ""
 
   useEffect(() => {
     const fetchProducts = async () => {

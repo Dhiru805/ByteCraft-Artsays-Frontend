@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import HowToBuySkeleton from "../../../Component/Skeleton/HowToBuySkeleton";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const HowToBuy = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeStep, setActiveStep] = useState(null);
   const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -104,7 +104,7 @@ const HowToBuy = () => {
                       <div className="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-orange-50/50 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-75" />
                       <div className="relative w-full max-w-[220px] aspect-square flex items-center justify-center">
                         <img
-                          src={`${imageBaseURL}/${card.image}`}
+                          src={getImageUrl(card.image)}
                           alt={card.title}
                           className="w-full h-full object-contain drop-shadow-lg transform group-hover:scale-110 group-hover:-rotate-2 transition-all duration-700"
                         />
@@ -132,7 +132,7 @@ const HowToBuy = () => {
                             className="p-3 bg-gray-50 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300 group/icon"
                           >
                             <img
-                              src={`${imageBaseURL}/${icon}`}
+                              src={getImageUrl(icon)}
                               alt="payment method"
                               className="h-7 w-auto object-contain grayscale group-hover/icon:grayscale-0 transition-all duration-300"
                             />

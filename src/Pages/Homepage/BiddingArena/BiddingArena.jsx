@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import BiddingArenaSkeleton from "../../../Component/Skeleton/BiddingArenaSkeleton";
 import "../../store/products/product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const BiddingArena = () => {
   const [data, setData] = useState(null);
@@ -11,8 +12,7 @@ const BiddingArena = () => {
   const [highestLiveBid, setHighestLiveBid] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const navigate = useNavigate();
 
   /* ---------------- STATUS HELPERS ---------------- */
   const getFinalStatus = (item) => {
@@ -184,7 +184,7 @@ const BiddingArena = () => {
                 {/* Image Container */}
                 <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                   <img
-                    src={`${imageBaseURL}${item.product?.mainImage}`}
+                    src={getImageUrl(item.product?.mainImage)}
                     alt={item.artworkName}
                     className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${isEnded ? 'grayscale-[0.5] blur-[2px]' : ''}`}
                   />
@@ -228,7 +228,7 @@ const BiddingArena = () => {
                     <div className="flex -space-x-1.5">
                       {item.product?.badges?.map((img, idx) => (
                         <div key={idx}>
-                          <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                          <img src={getImageUrl(img)} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
                         </div>
                       ))}
                     </div>

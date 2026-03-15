@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const PolicyView = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const PolicyView = () => {
       });
 
       setCoverImagePreview(
-        policy.coverImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${policy.coverImage}` : null
+        policy.coverImage ? getImageUrl(policy.coverImage) : null
       );
     }
   }, [policy, navigate]);

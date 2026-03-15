@@ -130,15 +130,15 @@ const TYPE_META = {
   blog_published:          { icon: "📰", label: "New Blog Post" },
   newsletter_subscribed:   { icon: "📧", label: "Subscribed" },
   newsletter_unsubscribed: { icon: "📧", label: "Unsubscribed" },
-    platform_announcement:   { icon: "📢", label: "Announcement" },
-    policy_update:           { icon: "📜", label: "Policy Update" },
-    // Support Tickets
-    ticket_created:          { icon: "🎫", label: "Ticket Raised" },
-    ticket_status_changed:   { icon: "🔄", label: "Ticket Status" },
-    ticket_admin_reply:      { icon: "💬", label: "Support Reply" },
-    ticket_escalated:        { icon: "🚨", label: "Ticket Escalated" },
-    ticket_resolved:         { icon: "✅", label: "Ticket Resolved" },
-  };
+  platform_announcement:   { icon: "📢", label: "Announcement" },
+  policy_update:           { icon: "📜", label: "Policy Update" },
+  // Support Tickets
+  ticket_created:          { icon: "🎫", label: "Ticket Raised" },
+  ticket_status_changed:   { icon: "🔄", label: "Ticket Status" },
+  ticket_admin_reply:      { icon: "💬", label: "Support Reply" },
+  ticket_escalated:        { icon: "🚨", label: "Ticket Escalated" },
+  ticket_resolved:         { icon: "✅", label: "Ticket Resolved" },
+};
 
 const getIcon  = (type) => TYPE_META[type]?.icon  || "🔔";
 const getLabel = (type) => TYPE_META[type]?.label || "Notification";
@@ -333,7 +333,7 @@ const NotificationDropdown = ({ userId, onUnreadChange }) => {
       >
         {notif.from?.profilePhoto ? (
           <img
-            src={notif.from.profilePhoto.startsWith("http") ? notif.from.profilePhoto : `http://localhost:3001${notif.from.profilePhoto}`}
+            src={notif.from.profilePhoto}
             alt=""
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />

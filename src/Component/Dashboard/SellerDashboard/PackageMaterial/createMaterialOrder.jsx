@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const CreateMaterialOrder = () => {
   const navigate = useNavigate();
@@ -307,11 +308,7 @@ const CreateMaterialOrder = () => {
           case "material":
             selectedItem = selectedMaterial.find((s) => s._id === id);
             imageUrl = selectedItem?.materialName?.materialNameImage
-              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialName.materialNameImage.replace(
-                /\\/g,
-                "/"
-              )}`
+              ? getImageUrl(selectedItem.materialName.materialNameImage.replace(/\\/g,"/"))
               : null;
             setMaterialData({
               materialName: id || "",
@@ -330,8 +327,7 @@ const CreateMaterialOrder = () => {
           case "stamp":
             selectedItem = selectedStamp.find((s) => s._id === id);
             imageUrl = selectedItem?.materialStampImage
-              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialStampImage.replace(/\\/g, "/")}`
+              ? getImageUrl(selectedItem.materialStampImage.replace(/\\/g, "/"))
               : null;
             setStampData({ stamp: id || "", price: selectedItem?.price || "" });
             setMaterialStampImage(imageUrl);
@@ -340,8 +336,7 @@ const CreateMaterialOrder = () => {
           case "stickers":
             selectedItem = selectedStickers.find((s) => s._id === id);
             imageUrl = selectedItem?.materialStickersImage
-              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialStickersImage.replace(/\\/g, "/")}`
+              ? getImageUrl(selectedItem.materialStickersImage.replace(/\\/g, "/"))
               : null;
             setStickerData({
               sticker: id || "",
@@ -353,8 +348,7 @@ const CreateMaterialOrder = () => {
           case "vouchers":
             selectedItem = selectedVouchers.find((s) => s._id === id);
             imageUrl = selectedItem?.materialVouchersImage
-              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialVouchersImage.replace(/\\/g, "/")}`
+              ? getImageUrl(selectedItem.materialVouchersImage.replace(/\\/g, "/"))
               : null;
             setVoucherData({
               voucher: id || "",
@@ -366,8 +360,7 @@ const CreateMaterialOrder = () => {
           case "card":
             selectedItem = selectedCard.find((s) => s._id === id);
             imageUrl = selectedItem?.materialCardImage
-              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialCardImage.replace(/\\/g, "/")}`
+              ? getImageUrl(selectedItem.materialCardImage.replace(/\\/g, "/"))
               : null;
             setCardData({ card: id || "", price: selectedItem?.price || "" });
             setMaterialCardImage(imageUrl);

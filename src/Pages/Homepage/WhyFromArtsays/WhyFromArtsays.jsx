@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import WhyFromSkeleton from "../../../Component/Skeleton/WhyFromSkeleton";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const WhyFromArtsays = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hoveredCard, setHoveredCard] = useState(null);
   const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,7 +87,7 @@ const WhyFromArtsays = () => {
                   <div className="absolute -inset-4 bg-gradient-to-br from-amber-100 to-orange-50 rounded-full blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-gray-50 to-white rounded-3xl flex items-center justify-center shadow-inner border border-gray-100 group-hover:border-[#6F4D34]/20 transition-colors duration-500">
                     <img
-                      src={`${imageBaseURL}/${card.icon}`}
+                      src={getImageUrl(card.icon)}
                       alt={card.heading}
                       className="w-12 h-12 md:w-14 md:h-14 object-contain transform group-hover:scale-110 transition-transform duration-500"
                     />

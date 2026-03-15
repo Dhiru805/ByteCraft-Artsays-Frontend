@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Heart, Search, ListFilter, X, ChevronRight, ChevronLeft, Tag, SortAsc, DollarSign, Maximize, ShoppingCart, Star } from "lucide-react";
-// import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
@@ -8,6 +7,7 @@ import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
 import "./product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -31,7 +31,7 @@ const Product = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
   const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
@@ -887,7 +887,7 @@ const Product = () => {
                               onClick={() => handleAdClick(firstAd)}
                             >
                               <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
-                                <img src={`${imageBaseURL}${firstAd.mainImage}`} alt={firstAd.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                                <img src={getImageUrl(firstAd.mainImage)} alt={firstAd.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
                                 <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                                   <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
                               </div>
@@ -956,7 +956,7 @@ const Product = () => {
                                 {/* Image Container */}
                                 <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                                   <img
-                                    src={`${imageBaseURL}${adProduct.mainImage}`}
+                                    src={getImageUrl(adProduct.mainImage)}
                                     alt={adProduct.productName}
                                     className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
                                   />
@@ -1074,7 +1074,7 @@ const Product = () => {
                             {/* Image Container */}
                             <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                               <img
-                                src={`${imageBaseURL}${product.mainImage}`}
+                                src={getImageUrl(product.mainImage)}
                                 alt={product.productName}
                                 className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
                               />
@@ -1126,7 +1126,7 @@ const Product = () => {
                                 <div className="flex -space-x-1.5">
                                   {product.badges?.map((img, idx) => (
                                     <div key={idx}>
-                                      <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" />
+                                      <img src={getImageUrl(img)} className="w-4 h-4 rounded-full" alt="Badge" />
                                     </div>
                                   ))}
                                 </div>

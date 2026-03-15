@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const MeetTeam = () => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE ;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMeetTeam = async () => {
@@ -53,7 +53,7 @@ const MeetTeam = () => {
               <div className="relative">
                 <div className="w-56 h-56 md:w-64 md:h-64 rounded-full border-8 border-gray-50 overflow-hidden shadow-inner group-hover/member:border-[#6F4D34]/20 transition-all duration-500">
                   {(() => {
-                    const base = (imageBaseURL || "").replace(/\/+$/, "");
+                    const base = (getImageUrl || "").replace(/\/+$/, "");
                     const rawPath = (member.image || "").replace(/\\/g, "/");
                     const pathSansUploads = rawPath.replace(/^uploads\//, "");
                     const finalSrc = base.includes("/uploads")

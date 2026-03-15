@@ -1,14 +1,14 @@
-
+﻿
 import { useState, useEffect } from "react";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
 import getAPI from "../../../api/getAPI";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const WhatWeDo = () => {
   const [openIndex, setOpenIndex] = useState(0);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 
   const toggle = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -57,7 +57,7 @@ const WhatWeDo = () => {
           <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-gray-50 flex items-center justify-center">
             {data.image ? (
               <img
-                src={`${imageBaseURL}/${data.image}`}
+                src={getImageUrl(data.image)}
                 alt="What We Do"
                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
               />

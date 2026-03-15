@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from '../../../../ConfirmationDialog';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 import { useConfirm } from '../../../../StatusConfirm';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus }) {
@@ -21,7 +22,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
     const confirm = useConfirm();
     const navigate = useNavigate();
@@ -204,7 +205,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         <img
                                                             src={
                                                                 request?.Buyer?.id?.profilePhoto
-                                                                    ? `${BASE_URL}${request.Buyer.id.profilePhoto}`
+                                                                    ? getImageUrl(request.Buyer.id.profilePhoto)
                                                                     : DEFAULT_PROFILE_IMAGE
                                                             }
                                                             className="rounded-circle avatar"
@@ -226,7 +227,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         <img
                                                             src={
                                                                 request?.Artist?.id?.profilePhoto
-                                                                    ? `${BASE_URL}${request.Artist.id.profilePhoto}`
+                                                                    ? getImageUrl(request.Artist.id.profilePhoto)
                                                                     : DEFAULT_PROFILE_IMAGE
                                                             } className="rounded-circle avatar"
                                                             alt=""
@@ -244,7 +245,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                     </td>
                                                     <td style={{ textAlign: 'center' }}>
                                                         <img
-                                                            src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
+                                                            src={getImageUrl(request.BuyerImage?.replace(/\\/g, '/'))}
                                                             className="rounded-circle avatar"
                                                             onClick={() => handleImageClick(request)}
                                                             style={{
@@ -259,7 +260,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         {/* <img
                                                             src={
                                                                 request?.BuyerImage
-                                                                    ? `${BASE_URL}${request.BuyerImage}`
+                                                                    ? getImageUrl(request.BuyerImage)
                                                                     : DEFAULT_PROFILE_IMAGE
                                                             }
                                                             className="rounded-circle avatar"
@@ -276,7 +277,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                         {/* <img
                                                             src={
                                                                 request?.Artist?.id?.profilePhoto
-                                                                    ? `${BASE_URL}${request.Artist.id.profilePhoto}`
+                                                                    ? getImageUrl(request.Artist.id.profilePhoto)
                                                                     : DEFAULT_PROFILE_IMAGE
                                                             } className="rounded-circle avatar"
                                                             alt=""
@@ -494,7 +495,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                     >
                         {/* Image */}
                         <img
-                            src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                            src={getImageUrl(currentImages[currentImageIndex]?.replace(/\\/g, '/'))}
                             alt="Popup"
                             style={{
                                 width: '100%',

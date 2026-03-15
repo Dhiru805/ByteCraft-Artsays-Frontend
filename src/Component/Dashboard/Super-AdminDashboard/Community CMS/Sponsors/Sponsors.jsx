@@ -1,13 +1,39 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 
 const Sponsors = () => {
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const navigate = useNavigate();
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const response = await fetch("/api/export-sponsors", { method: "GET" });
+      if (!response.ok) throw new Error("Failed to export");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Sponsored_Posts_${Date.now()}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      toast.success("Sponsored posts exported successfully");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to export sponsored posts");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchSponsors = async () => {
@@ -36,9 +62,17 @@ const Sponsors = () => {
 
   return (
     <div className="container-fluid mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold">Sponsored Posts</h2>
-      </div>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="fw-bold">Sponsored Posts</h2>
+          <button
+            className="btn btn-outline-success btn-sm"
+            onClick={handleExport}
+            disabled={exporting}
+          >
+            <i className="fa fa-file-excel-o me-1"></i>
+            {exporting ? "Exporting..." : "Export"}
+          </button>
+        </div>
 
       <div className="card shadow-sm">
         <div className="card-body">
@@ -67,13 +101,14 @@ const Sponsors = () => {
                       <td>
                         <div className="d-flex align-items-center">
                           <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${s.promotedBy?.profilePhoto || "/default-avatar.png"}`}
-                            alt="Profile"
-                            className="rounded-circle me-2"
-                            width="40"
-                            height="40"
-                            style={{ objectFit: "cover" }}
-                          />
+                              src={s.promotedBy?.profilePhoto ? getImageUrl(s.promotedBy.profilePhoto) : DEFAULT_PROFILE_IMAGE}
+                              alt="Profile"
+                              className="rounded-circle me-2"
+                              width="40"
+                              height="40"
+                              style={{ objectFit: "cover" }}
+                              onError={(e) => { e.target.onerror = null; e.target.src = DEFAULT_PROFILE_IMAGE; }}
+                            />
                           <div>
                             <p className="mb-0 fw-semibold">{s.promotedBy?.username}</p>
                             <small className="text-muted">{s.promotedBy?.email}</small>

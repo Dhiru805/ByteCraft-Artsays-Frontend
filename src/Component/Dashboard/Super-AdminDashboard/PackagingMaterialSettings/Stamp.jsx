@@ -5,6 +5,7 @@ import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 const Stamp = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -108,9 +109,7 @@ const Stamp = () => {
     setPrice(mat.price);
     setImagePreview(
       mat.materialStampImage
-        ? `${
-            process.env.REACT_APP_API_URL_FOR_IMAGE
-          }/${mat.materialStampImage.replace(/\\/g, "/")}`
+        ? getImageUrl(mat.materialStampImage.replace(/\\/g, "/"))
         : "/placeholder.jpg"
     );
     setEditId(mat._id);
@@ -269,13 +268,7 @@ const Stamp = () => {
                                   {viewData?.materialStampImage && (
                                     <div className="mt-2">
                                       <img
-                                        src={`${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${viewData.materialStampImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`}
+                                        src={getImageUrl(viewData.materialStampImage.replace(/\\/g,"/"))}
                                         alt="Preview"
                                         className="img-thumbnail"
                                         style={{ maxHeight: "200px" }}
@@ -462,13 +455,7 @@ const Stamp = () => {
                                 <img
                                   src={
                                     mat.materialStampImage
-                                      ? `${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${mat.materialStampImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`
+                                      ? getImageUrl(mat.materialStampImage.replace(/\\/g,"/"))
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"

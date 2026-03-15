@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import putAPI from "../../../../../api/putAPI";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 function BlogUpdate() {
   const navigate = useNavigate();
@@ -278,7 +279,7 @@ function BlogUpdate() {
                   {(imagePreview || existingImage) && (
                     <div className="mt-2">
                       <img 
-                        src={imagePreview || `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${existingImage}`} 
+                          src={imagePreview || getImageUrl(existingImage)}
                         alt="Preview" 
                         className="img-thumbnail" 
                         style={{ maxHeight: '200px' }}

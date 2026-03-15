@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import VerifyModal from "./VerifyModal";
@@ -11,6 +11,7 @@ import { saveAs } from 'file-saver';
 
 
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 function ArtistManageTable() {
   const [artists, setArtists] = useState([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -23,7 +24,7 @@ function ArtistManageTable() {
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const navigate = useNavigate();
   const userType = useUserType();
@@ -312,21 +313,22 @@ function ArtistManageTable() {
                             </h6>
                           </td>
                           <td>
-                            <img
-                              src={
-                                artist.profilePhoto &&
-                                artist.profilePhoto !== "null"
-                                  ? `${BASE_URL}${artist.profilePhoto}`
-                                  : DEFAULT_PROFILE_IMAGE
-                              }
-                              className="rounded-circle avatar"
-                              alt=""
-                              style={{
-                                width: "30px",
-                                height: "30px",
-                                objectFit: "cover",
-                              }}
-                            />
+                              <img
+                                src={
+                                  artist.profilePhoto &&
+                                  artist.profilePhoto !== "null"
+                                    ? getImageUrl(artist.profilePhoto)
+                                    : DEFAULT_PROFILE_IMAGE
+                                }
+                                className="rounded-circle avatar"
+                                alt=""
+                                onError={(e) => { e.target.onerror = null; e.target.src = DEFAULT_PROFILE_IMAGE; }}
+                                style={{
+                                  width: "30px",
+                                  height: "30px",
+                                  objectFit: "cover",
+                                }}
+                              />
 
                             <p className="c_name">
                               {artist.name} {artist.lastName}

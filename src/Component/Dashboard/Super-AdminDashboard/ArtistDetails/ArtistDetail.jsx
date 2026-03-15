@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import toastr from 'toastr'; 
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 
 
@@ -11,7 +12,7 @@ const ArtistDetail = () => {
   const [loading, setLoading] = useState(true);
   const [pageLoading, setPageLoading] = useState(true);
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
 
   // Simulate loading effect and load scripts/styles after component mounts
@@ -104,7 +105,7 @@ const ArtistDetail = () => {
                                 <tr key={product._id}>
                                   <td>
                                     <img
-                                      src={`${BASE_URL}${product.images[0] || "uploads/products/default.jpg"}`}
+                                      src={getImageUrl(product.images[0] || "uploads/products/default.jpg")}
                                       alt="Product img"
                                       style={{ width: "60px", height: "50px" }}
                                     />

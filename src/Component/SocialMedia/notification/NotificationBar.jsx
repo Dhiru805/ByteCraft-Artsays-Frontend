@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
+﻿import React, { useState, useCallback, useEffect } from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import "./Notification.css";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
@@ -265,7 +266,7 @@ const NotificationBar = () => {
               "Someone"
               : "Artsays";
             const profilePic = actor?.profilePhoto
-              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${actor.profilePhoto}`
+              ? getImageUrl(actor.profilePhoto)
               : null;
 
             const redirectPath = getRedirectPath(notif);
@@ -314,7 +315,7 @@ const NotificationBar = () => {
                   {POST_TYPES.has(notif.type) && notif.post?.images?.[0] ? (
                     <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-gray-200" onClick={(e) => e.stopPropagation()}>
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${notif.post.images[0]}`}
+                        src={getImageUrl(notif.post.images[0])}
                         alt="post"
                         onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/48"; }}
                         className="w-full h-full object-cover"

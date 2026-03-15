@@ -1,4 +1,4 @@
-// import React, { useState, useEffect } from 'react';
+﻿// import React, { useState, useEffect } from 'react';
 // import getAPI from '../../../../../api/getAPI';
 // import { useNavigate } from 'react-router-dom';
 
@@ -152,7 +152,7 @@
 //                                                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
 //                                                     <td>
 //                                                         <img
-//                                                             src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${product.product.mainImage}`}
+//                                                             src={getImageUrl(product.product.mainImage)}
 //                                                             className="rounded-circle avatar"
 //                                                             alt=""
 //                                                             style={{
@@ -279,6 +279,7 @@
 
 
 import React, { useState, useEffect } from "react";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import getAPI from "../../../../../api/getAPI";
 import axiosInstance from "../../../../../api/axiosConfig";
 import { toast } from "react-toastify";
@@ -445,7 +446,7 @@ const SellerBiddingProducts = () => {
 
                         <td>
                           <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.product?.mainImage}`}
+                            src={getImageUrl(item.product?.mainImage)}
                             className="rounded-circle avatar"
                             style={{
                               width: "30px",

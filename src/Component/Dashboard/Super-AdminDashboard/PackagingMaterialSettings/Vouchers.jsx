@@ -5,6 +5,7 @@ import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 const Vouchers = () => {
   const [showPopUp, setShowPopUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -102,9 +103,7 @@ const Vouchers = () => {
     setPrice(mat.price);
     setImagePreview(
       mat.materialVouchersImage
-        ? `${
-            process.env.REACT_APP_API_URL_FOR_IMAGE
-          }/${mat.materialVouchersImage.replace(/\\/g, "/")}`
+        ? getImageUrl(mat.materialVouchersImage.replace(/\\/g, "/"))
         : "/placeholder.jpg"
     );
     setEditId(mat._id);
@@ -268,13 +267,7 @@ const Vouchers = () => {
                                   {viewData?.materialVouchersImage && (
                                     <div className="mt-2">
                                       <img
-                                        src={`${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${viewData.materialVouchersImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`}
+                                        src={getImageUrl(viewData.materialVouchersImage.replace(/\\/g,"/"))}
                                         alt="Preview"
                                         className="img-thumbnail"
                                         style={{ maxHeight: "200px" }}
@@ -461,13 +454,7 @@ const Vouchers = () => {
                                 <img
                                   src={
                                     mat.materialVouchersImage
-                                      ? `${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${mat.materialVouchersImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`
+                                      ? getImageUrl(mat.materialVouchersImage.replace(/\\/g,"/"))
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"

@@ -1,5 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import ReactQuill from "react-quill";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 function ViewCelebrity() {
 
@@ -100,7 +101,7 @@ function ViewCelebrity() {
                                     {celebrity?.profilePicture ? (
                                         <div>
                                             <img 
-                                                src={celebrity.profilePicture}
+                                                src={getImageUrl(celebrity.profilePicture)}
                                                 alt={celebrity.artistName || "Profile"}
                                                 style={{
                                                     width: "150px",

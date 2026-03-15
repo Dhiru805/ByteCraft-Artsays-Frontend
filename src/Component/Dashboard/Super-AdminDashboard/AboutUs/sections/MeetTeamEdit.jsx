@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import getAPI from "../../../../../api/getAPI";
 import axiosInstance from "../../../../../api/axiosConfig";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const MeetTeamEdit = () => {
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ const MeetTeamEdit = () => {
             });
             setImagePreviews((Array.isArray(s.teamMembers) ? s.teamMembers : []).map(m => {
               const relativePath = m.image ? m.image.replace(/\\/g, "/") : null;
-              return relativePath ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${relativePath}` : null;
+              return relativePath ? getImageUrl(relativePath) : null;
             }));
           } else {
           setFormData((prev) => ({ ...prev, teamMembers: [] }));

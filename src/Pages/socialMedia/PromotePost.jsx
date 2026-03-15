@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
+import { getImageUrl } from '../../utils/getImageUrl';
 import {
   RiArrowLeftLine,
   // RiArrowDownSLine,
@@ -334,7 +335,7 @@ const PromotePost = () => {
             <h3 className="font-semibold text-lg">Preview ad</h3>
             <div className="rounded ">
               <img
-                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${postImage}`}
+                src={getImageUrl(postImage)}
                 alt="Ad Preview"
                 className="rounded w-full h-[350px] object-contain bg-[#EBEBEB] rounded-md"
               />

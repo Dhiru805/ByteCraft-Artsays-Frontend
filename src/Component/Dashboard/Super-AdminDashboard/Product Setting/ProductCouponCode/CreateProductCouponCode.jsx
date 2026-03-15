@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) => {
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) =>
 
   const typeOptions = [
     { value: "Artist", label: "Artist" },
-    { value: "Seller", label: "Seller" },
+    { value: "seller", label: "seller" },
   ];
 
   useEffect(() => {
@@ -196,7 +197,7 @@ const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) =>
               </div>
               <div className="mb-3">
                 <label htmlFor="userId" className="form-label">
-                  {formData.userType || "Artist or Seller"}
+                  {formData.userType || "Artist or seller"}
                 </label>
                 <Select
                   id="userId"
@@ -204,7 +205,7 @@ const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) =>
                   options={userOptions}
                   value={userOptions.find((option) => option.value === formData.userId) || null}
                   onChange={(option) => handleChange("userId", option ? option.value : "")}
-                  placeholder={`Select ${formData.userType || "Artist or Seller"}`}
+                  placeholder={`Select ${formData.userType || "Artist or seller"}`}
                   isClearable
                   isDisabled={!formData.userType}
                 />
@@ -229,7 +230,7 @@ const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) =>
                   <label>Product Details</label>
                   <div className="d-flex align-items-center">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                        src={getImageUrl(selectedProduct.mainImage)}
                       alt={selectedProduct.productName}
                       className="img-thumbnail mr-3"
                       style={{ maxWidth: "100px", maxHeight: "100px" }}

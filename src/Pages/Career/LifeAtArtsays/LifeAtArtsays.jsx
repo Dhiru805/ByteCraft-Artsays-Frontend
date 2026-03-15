@@ -4,6 +4,7 @@ import { ChevronRight, Upload, CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const LifeAtArtsays = () => {
   const { slug } = useParams();
@@ -25,7 +26,7 @@ const LifeAtArtsays = () => {
   const [setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const base = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const base = getImageUrl(null);
 
   const fetchData = async () => {
     try {

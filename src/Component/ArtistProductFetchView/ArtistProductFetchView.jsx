@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import getAPI from "../../api/getAPI";
 import { useParams, Link } from "react-router-dom";
 import useUserType from "../Dashboard/urlconfig";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 function ArtistProductFetchView() {
     const { productId } = useParams();
@@ -11,7 +12,6 @@ function ArtistProductFetchView() {
     const [expanded, setExpanded] = useState(false);
     const [activeTab, setActiveTab] = useState("description");
     const userType = useUserType();
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -28,7 +28,7 @@ function ArtistProductFetchView() {
                 setData(info);
 
                 const mainImg = info.product?.mainImage || "";
-                setSelectedImage(mainImg ? `${BASE_URL}${mainImg}` : "");
+                setSelectedImage(mainImg ? getImageUrl(mainImg) : "");
             } catch (error) {
                 console.error("Fetch Error:", error);
             }
@@ -88,7 +88,7 @@ const mainCategoryName = product?.mainCategory || "N/A";
                         {/* IMAGE PREVIEW */}
                         <div className="col-lg-4 col-md-12">
                             <img
-                                src={selectedImage || `${BASE_URL}${product?.mainImage || ""}`}
+                                src={selectedImage || getImageUrl(product?.mainImage) || ""}
                                 alt="Main"
                                 className="img-fluid"
                                 style={{
@@ -106,7 +106,7 @@ const mainCategoryName = product?.mainCategory || "N/A";
                                     ...(product?.otherImages || [])
                                 ].filter(Boolean).map(
                                     (img, idx) => {
-                                        const imgUrl = img ? `${BASE_URL}${img}` : "";
+                                        const imgUrl = img ? getImageUrl(img) : "";
                                         return (
                                             <img
                                                 key={idx}
@@ -248,7 +248,7 @@ const mainCategoryName = product?.mainCategory || "N/A";
                                         {seller.profilePhoto && (
                                             <div className="mb-3">
                                                 <img
-                                                    src={`${BASE_URL}${seller.profilePhoto}`}
+                                                    src={getImageUrl(seller.profilePhoto)}
                                                     alt="Profile"
                                                     style={{
                                                         width: "100px",

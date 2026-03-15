@@ -1,7 +1,8 @@
-
+﻿
 
 import React, { useEffect, useRef, useState } from "react";
 import getAPI from "../../../api/getAPI";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const DeliveryProcess = () => {
   const containerRef = useRef(null);
@@ -10,8 +11,7 @@ const DeliveryProcess = () => {
   const [progressHeight, setProgressHeight] = useState(0);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -137,7 +137,7 @@ const DeliveryProcess = () => {
                     {item.image && (
                       <div className="overflow-hidden rounded-xl bg-white border border-gray-100">
                         <img
-                          src={`${imageBaseURL}/${item.image}`}
+                          src={getImageUrl(item.image)}
                           alt={item.title}
                           className="w-full h-auto object-contain transition-transform group-hover/step:scale-105"
                         />

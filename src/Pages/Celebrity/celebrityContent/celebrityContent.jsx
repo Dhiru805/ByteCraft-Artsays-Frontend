@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Heart,
@@ -21,6 +21,7 @@ import deleteAPI from "../../../api/deleteAPI";
 import SponsoredProducts from "../../../Component/Common/SponsoredProducts";
 import { toast } from "react-toastify";
 import CelebrityContentSkeleton from "../../../Component/Skeleton/products/CelebrityContentSkeleton";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const CelebrityContent = () => {
   const { slug } = useParams();
@@ -71,8 +72,7 @@ const CelebrityContent = () => {
     productSurfaceTypes: [],
     periodEras: [],
   });
-
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 
   const toggleExpand = (category) => {
     setExpandedFilters((prev) => ({
@@ -985,7 +985,7 @@ const CelebrityContent = () => {
                         {/* Image Container */}
                         <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">
                           <img
-                            src={`${imageBaseURL}${product.mainImage}`}
+                            src={getImageUrl(product.mainImage)}
                             alt={product.productName}
                             className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${!product.quantity || product.quantity === 0
                                 ? "blur-[2px]"
@@ -1035,7 +1035,7 @@ const CelebrityContent = () => {
                               {product.badges?.map((img, idx) => (
                                 <img
                                   key={idx}
-                                  src={`${imageBaseURL}${img}`}
+                                  src={getImageUrl(img)}
                                   className="w-4 h-4 rounded-full border border-white"
                                   alt="Badge"
                                 />

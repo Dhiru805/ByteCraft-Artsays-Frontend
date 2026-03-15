@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../../../Constants/index";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const fmt = (n) =>
@@ -665,9 +666,9 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 <div className="d-flex align-items-center mb-3" style={{ gap: 12, padding: "10px 12px", background: "#f8faff", borderRadius: 8 }}>
                   {socialProfile.profilePicture || socialProfile.profileImage ? (
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE || ""}${socialProfile.profilePicture || socialProfile.profileImage}`}
-                      alt="profile"
-                      style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover" }}
+                      src={getImageUrl(socialProfile.profilePicture || socialProfile.profileImage)}
+                        alt="profile"
+                        style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover" }}
                     />
                   ) : (
                     <div

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 const BuyerSoldProduct = () => {
     const { buyerId } = useParams();
@@ -14,7 +15,7 @@ const BuyerSoldProduct = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -155,7 +156,7 @@ const BuyerSoldProduct = () => {
                                         <td>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <img
-                                                    src={`${BASE_URL}${p.mainImage}`}
+                                                    src={getImageUrl(p.mainImage)}
                                                     className="rounded-circle avatar"
                                                     alt={p.productName}
                                                     style={{

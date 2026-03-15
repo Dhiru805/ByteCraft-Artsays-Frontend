@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdVerified } from "react-icons/md";
 import { Star, Heart, MapPin, ArrowRight, ShoppingCart, Zap, ChevronLeft, ChevronRight, Share2, Eye, Box, Ruler, Award, ShieldCheck, Truck, Clock, Gift, MessageCircle, FileText, Download, ExternalLink } from "lucide-react";
@@ -10,15 +10,15 @@ import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../AuthContext";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
-
-const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+import { getImageUrl } from '../../utils/getImageUrl';
+
 
 const resolveMediaUrl = (path) => {
   if (!path || typeof path !== "string") return "/images/placeholder.jpg";
   if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
   const normalized = path.replace(/\\/g, "/");
   const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
-  const base = imageBaseURL.endsWith("/") ? imageBaseURL.slice(0, -1) : imageBaseURL;
+  const base = getImageUrl.endsWith("/") ? getImageUrl.slice(0, -1) : getImageUrl;
   return `${base}${leadingSlash}`;
 };
 
@@ -347,7 +347,7 @@ const ProductDetails = () => {
               images={images}
               product={product}
               username={product.userId?.username || "Artist"}
-              imageBaseURL={imageBaseURL}
+              getImageUrl={getImageUrl}
               navigate={navigate}
               navigateToArtistProfile={navigateToArtistProfile}
               resolveMediaUrl={resolveMediaUrl}
@@ -368,7 +368,7 @@ const ProductDetails = () => {
                 reviewCount={reviewCount}
                 artistName={`${product.userId?.name || ""} ${product.userId?.lastName || ""}`.trim()}
                 username={product.userId?.username || "Artist"}
-                imageBaseURL={imageBaseURL}
+                getImageUrl={getImageUrl}
               />
 
               <PurchaseCard
@@ -450,7 +450,7 @@ const ProductDetails = () => {
               </div>
             )}
 
-            {activeTab === "details" && <DetailsGrid product={product} categoryInfo={{ mainCategoryName, categoryName, subCategoryName }} imageBaseURL={imageBaseURL} resolveMediaUrl={resolveMediaUrl} />}
+            {activeTab === "details" && <DetailsGrid product={product} categoryInfo={{ mainCategoryName, categoryName, subCategoryName }} getImageUrl={getImageUrl} resolveMediaUrl={resolveMediaUrl} />}
 
             {activeTab === "artist" && (
               <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -529,7 +529,7 @@ const ProductDetails = () => {
 
 /* --- Sub-Components --- */
 
-const ProductGallery = ({ images, product, username, imageBaseURL, navigate, navigateToArtistProfile, resolveMediaUrl, handleShare, handleWishlist, likedProducts }) => {
+const ProductGallery = ({ images, product, username, getImageUrl, navigate, navigateToArtistProfile, resolveMediaUrl, handleShare, handleWishlist, likedProducts }) => {
   const [selected, setSelected] = useState(images[0]);
   const [showRoom, setShowRoom] = useState(false);
   const [roomBg, setRoomBg] = useState("/artimages/viewintheroom.jpg");
@@ -633,7 +633,7 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
             {product.userId?.verified && <MdVerified className="text-blue-600" size={14} />}
             <div className="flex gap-1 ml-1">
               {product.badges?.map((img, i) => (
-                <img key={i} src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" />
+                <img key={i} src={getImageUrl(img)} className="w-4 h-4 rounded-full" alt="Badge" />
               ))}
             </div>
           </div>
@@ -680,7 +680,7 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
   );
 };
 
-const ProductInfo = ({ product, discountPercent, ratingValue, reviewCount, artistName, username, imageBaseURL }) => {
+const ProductInfo = ({ product, discountPercent, ratingValue, reviewCount, artistName, username, getImageUrl }) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -914,7 +914,7 @@ const OffersBlock = ({ offersData, index, setIndex }) => {
   );
 };
 
-const DetailsGrid = ({ product, categoryInfo, imageBaseURL, resolveMediaUrl }) => {
+const DetailsGrid = ({ product, categoryInfo, getImageUrl, resolveMediaUrl }) => {
   const Section = ({ title, icon: Icon, children }) => {
     // Check if any children are not null
     const hasVisibleChildren = React.Children.toArray(children).some(child => child !== null);

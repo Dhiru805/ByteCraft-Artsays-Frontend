@@ -1,4 +1,5 @@
-import React from "react";
+﻿import React from "react";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import { useLocation, useNavigate } from "react-router-dom";
 
 const ViewSponsors = () => {
@@ -45,7 +46,7 @@ const ViewSponsors = () => {
             <h5 className="fw-semibold mb-3">Promoter Information</h5>
             <div className="d-flex align-items-center">
               <img
-                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${promotedBy?.profilePhoto || "/default-avatar.png"}`}
+                src={getImageUrl(promotedBy?.profilePhoto || "/default-avatar.png")}
                 alt="User"
                 className="rounded-circle border me-3"
                 width="70"
@@ -65,7 +66,7 @@ const ViewSponsors = () => {
             <div className="text-center mb-3">
               {sponsor.images && sponsor.images.length > 0 ? (
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sponsor.images[0]}`}
+                  src={getImageUrl(sponsor.images[0])}
                   alt="Sponsored Post"
                   className="img-fluid rounded border"
                   style={{ maxHeight: "400px", objectFit: "cover" }}

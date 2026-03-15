@@ -1,12 +1,12 @@
-
+﻿
 import React, { useEffect, useState } from "react";
 import getAPI from "../../../api/getAPI";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const WhoWeAre = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 
   useEffect(() => {
     const fetchWhoWeAre = async () => {
@@ -39,7 +39,7 @@ const WhoWeAre = () => {
         <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-gray-50 flex items-center justify-center">
           {data.image1 ? (
             <img
-              src={`${imageBaseURL}/${data.image1}`}
+              src={getImageUrl(data.image1)}
               alt="Who We Are"
               className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
             />

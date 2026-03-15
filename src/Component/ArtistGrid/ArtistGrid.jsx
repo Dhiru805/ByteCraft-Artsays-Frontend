@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../ArtistGrid/constant";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
   const [artists, setArtists] = useState([]);
@@ -17,7 +18,6 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = limit;
   const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
   const userId = localStorage.getItem("userId");
 
   const normalizeIds = (arr) =>
@@ -204,7 +204,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
               >
                 <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">
                   <img
-                    src={artist.profilePhoto ? `${imageBaseURL}${artist.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+                      src={getImageUrl(artist.profilePhoto) || DEFAULT_PROFILE_IMAGE}
                     onError={(e) => { e.target.src = DEFAULT_PROFILE_IMAGE; }}
                     alt={artist.username}
                     className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
@@ -229,7 +229,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
                     <div className="flex -space-x-1.5">
                       {artist.badges?.map((img, idx) => (
                         <div key={idx}>
-                          <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                            <img src={getImageUrl(img) || ""} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
                         </div>
                       ))}
                     </div>

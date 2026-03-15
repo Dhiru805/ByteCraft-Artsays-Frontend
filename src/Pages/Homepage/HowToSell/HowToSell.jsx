@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, 
@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 import getAPI from "../../../api/getAPI";
 import HowToSellSkeleton from "../../../Component/Skeleton/HowToSellSkeleton";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const HowToSell = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -137,7 +137,7 @@ const HowToSell = () => {
                 <div className="w-24 h-24 rounded-3xl bg-white shadow-xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 overflow-hidden">
                   {card.image ? (
                     <img
-                      src={`${imageBaseURL}/${card.image}`}
+                      src={getImageUrl(card.image)}
                       alt={card.title}
                       className="w-14 h-14 object-contain group-hover:rotate-6 transition-transform"
                     />
@@ -168,7 +168,7 @@ const HowToSell = () => {
                     {card.icons.map((icon, i) => (
                       <div key={i} className="w-10 h-10 rounded-full bg-white border-2 border-gray-50 p-1.5 shadow-sm overflow-hidden hover:z-10 transition-all hover:-translate-y-1">
                         <img
-                          src={`${imageBaseURL}/${icon}`}
+                          src={getImageUrl(icon)}
                           alt="tech"
                           className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all"
                         />

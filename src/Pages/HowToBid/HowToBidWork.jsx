@@ -1,17 +1,4 @@
-// import React from 'react';
-// import HeroImgHowToBid from './hero-img/hero-img'; // Update banner image if needed
-// import HowToBidContent from './HowToBidContent/bidContent';
 
-// const HowToBid = () => {
-//   return (
-//     <div className="max-w-[1440px] mx-auto font-[poppins]">
-//         <HeroImgHowToBid />
-//         <HowToBidContent />
-//     </div>
-//   );
-// };
-
-// export default HowToBid;
 
 
 import React, { useEffect, useState } from "react";
@@ -21,6 +8,7 @@ import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const HowToBid = () => {
   const [seoData, setSeoData] = useState({
@@ -47,7 +35,7 @@ const HowToBid = () => {
             : meta.metaKeywords || "art bidding, auction guide, how to bid online",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

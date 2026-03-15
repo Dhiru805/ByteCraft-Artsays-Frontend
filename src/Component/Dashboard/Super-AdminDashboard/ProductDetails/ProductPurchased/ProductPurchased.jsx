@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import postAPI from '../../../../../api/postAPI';
@@ -7,6 +7,7 @@ import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
 import { toast } from 'react-toastify';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 const ADMIN_STATUS_LABELS = {
     "Ordered": "New Order Received",
@@ -67,7 +68,7 @@ const ProductRequest = () => {
     const [loading, setLoading] = useState(false);
     const [resellModal, setResellModal] = useState({ show: false, productId: null, orderId: null, productName: '' });
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
 
     const navigate = useNavigate();
@@ -356,7 +357,7 @@ const ProductRequest = () => {
 
                                                     <td>
                                                         <img
-                                                            src={product.isCustomOrder ? `${BASE_URL}/${product.productImage?.replace(/\\/g, "/")}` : `${BASE_URL}${product.productImage}`}
+                                                            src={product.isCustomOrder ? getImageUrl(product.productImage?.replace(/\\/g, "/")) : getImageUrl(product.productImage)}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{ width: "30px", height: "30px", marginRight: "10px", objectFit: "cover" }}

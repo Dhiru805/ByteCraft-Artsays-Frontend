@@ -5,13 +5,14 @@ import useUserType from '../urlconfig';
 import { useAuth } from '../../../AuthContext';
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 
 const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, HandletoggleDropdown }) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const userType = useUserType();
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  // getImageUrl handles both S3 full URLs and local relative paths
   const { logout } = useAuth();
   const status = localStorage.getItem("status");
 
@@ -124,17 +125,18 @@ const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, Handletoggl
         <div className="user-account">
           {/* {user && user.profilePhoto && ( */}
           <div style={{ position: "relative", display: "inline-block", width: "65px", height: "40px" }}>
-            <img
-              src={user.profilePhoto ? `${BASE_URL}${user.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
-              className="rounded-circle user-photo"
-              alt="User Profile Picture"
-              style={{
-                width: '55px',
-                height: '55px',
-                objectFit: 'cover',
-                display: 'block',
-              }}
-            />
+              <img
+                src={user?.profilePhoto ? getImageUrl(user.profilePhoto) : DEFAULT_PROFILE_IMAGE}
+                className="rounded-circle user-photo"
+                alt="User Profile Picture"
+                onError={(e) => { e.target.onerror = null; e.target.src = DEFAULT_PROFILE_IMAGE; }}
+                style={{
+                  width: '55px',
+                  height: '55px',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
             {userType?.toLowerCase() !== "super-admin" && renderVerificationBadge()}
           </div>
 

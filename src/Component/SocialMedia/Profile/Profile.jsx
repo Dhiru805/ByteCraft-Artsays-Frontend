@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { MdHistory } from "react-icons/md";
@@ -1137,7 +1138,7 @@ const Profile = ({ shareprofileid }) => {
             property="og:image"
             content={
               profile.profilePhoto
-                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                ? getImageUrl(profile?.profilePhoto)
                 : `${DEFAULT_PROFILE_IMAGE}`
             }
           />
@@ -1148,7 +1149,7 @@ const Profile = ({ shareprofileid }) => {
             name="twitter:image"
             content={
               profile.profilePhoto
-                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                ? getImageUrl(profile?.profilePhoto)
                 : `${DEFAULT_PROFILE_IMAGE}`
             }
           />
@@ -1199,7 +1200,7 @@ const Profile = ({ shareprofileid }) => {
                 {activePost.images?.length > 0 ? (
                   <>
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.images[activeImageIndex]}`}
+                      src={getImageUrl(activePost.images[activeImageIndex])}
                       alt="post"
                       className="h-full w-full object-contain"
                     />
@@ -1271,7 +1272,7 @@ const Profile = ({ shareprofileid }) => {
                       <img
                         src={
                           profile?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            ? getImageUrl(profile?.profilePhoto)
                             : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt="profile"
@@ -1283,8 +1284,8 @@ const Profile = ({ shareprofileid }) => {
 
                           {profile.verified?.length > 0 && (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
-                                }`}
+                              src={getImageUrl(profile.verified[profile.verified.length - 1]?.badgeImage
+                                )}
                               className="inline-block ml-1 w-5 h-5 object-contain"
                               alt={
                                 profile.verified[profile.verified.length - 1]?.badgeName || "badge"
@@ -1412,7 +1413,7 @@ const Profile = ({ shareprofileid }) => {
                       <img
                         src={
                           profile?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            ? getImageUrl(profile?.profilePhoto)
                             : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt="profile"
@@ -1424,8 +1425,8 @@ const Profile = ({ shareprofileid }) => {
 
                           {profile.verified?.length > 0 && (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
-                                }`}
+                              src={getImageUrl(profile.verified[profile.verified.length - 1]?.badgeImage
+                                )}
                               className="inline-block ml-1 w-5 h-5 object-contain"
                               alt={
                                 profile.verified[profile.verified.length - 1]?.badgeName || "badge"
@@ -1455,7 +1456,7 @@ const Profile = ({ shareprofileid }) => {
                         <img
                           src={
                             profile?.profilePhoto
-                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                              ? getImageUrl(profile?.profilePhoto)
                               : `${DEFAULT_PROFILE_IMAGE}`
                           }
                           alt="profile"
@@ -1468,8 +1469,8 @@ const Profile = ({ shareprofileid }) => {
 
                               {comment?.user?.verified?.length > 0 && (
                                 <img
-                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
-                                    }`}
+                                  src={getImageUrl(profile.verified[profile.verified.length - 1]?.badgeImage
+                                    )}
                                   className="inline-block ml-1 w-5 h-5 object-contain"
                                   alt={
                                     comment.user.verified[comment.user.verified.length - 1]?.badgeName ||
@@ -1591,7 +1592,7 @@ const Profile = ({ shareprofileid }) => {
                             <img
                               src={
                                 profile?.profilePhoto
-                                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                                  ? getImageUrl(profile?.profilePhoto)
                                   : `${DEFAULT_PROFILE_IMAGE}`
                               }
                               alt={user.username}
@@ -1666,7 +1667,7 @@ const Profile = ({ shareprofileid }) => {
               <img
                 src={
                   profile?.profilePhoto
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                    ? getImageUrl(profile?.profilePhoto)
                     : `${DEFAULT_PROFILE_IMAGE}`
                 }
                 alt="profile"
@@ -1693,7 +1694,7 @@ const Profile = ({ shareprofileid }) => {
                       <img
                         src={
                           profile?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            ? getImageUrl(profile?.profilePhoto)
                             : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt="profile"
@@ -1728,7 +1729,7 @@ const Profile = ({ shareprofileid }) => {
                       <img
                         src={
                           profile?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                            ? getImageUrl(profile?.profilePhoto)
                             : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt={user.username}
@@ -2121,7 +2122,7 @@ const Profile = ({ shareprofileid }) => {
                         <img
                           src={
                             profile?.profilePhoto
-                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                              ? getImageUrl(profile?.profilePhoto)
                               : `${DEFAULT_PROFILE_IMAGE}`
                           }
                           alt={profile.username}
@@ -2136,7 +2137,7 @@ const Profile = ({ shareprofileid }) => {
                   <img
                     src={
                       profile?.profilePhoto
-                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                        ? getImageUrl(profile?.profilePhoto)
                         : `${DEFAULT_PROFILE_IMAGE}`
                     }
                     alt={profile.username}
@@ -2151,9 +2152,9 @@ const Profile = ({ shareprofileid }) => {
                     {profile.username || `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'User'}
                     {profile.verified?.length > 0 && (
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
+                        src={getImageUrl(profile.verified[profile.verified.length - 1]
                           ?.badgeImage
-                          }`}
+                          )}
                         className="inline-block ml-1 w-5 h-5 object-contain"
                         alt={
                           profile.verified[profile.verified.length - 1]
@@ -2390,7 +2391,7 @@ const Profile = ({ shareprofileid }) => {
                     <img
                       src={
                         profile?.profilePhoto
-                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                          ? getImageUrl(profile?.profilePhoto)
                           : `${DEFAULT_PROFILE_IMAGE}`
                       }
                       className="w-[75px] h-[75px] rounded-full object-cover"
@@ -2404,7 +2405,7 @@ const Profile = ({ shareprofileid }) => {
                   <img
                     src={
                       profile?.profilePhoto
-                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`
+                        ? getImageUrl(profile?.profilePhoto)
                         : `${DEFAULT_PROFILE_IMAGE}`
                     }
                     className="w-[75px] h-[75px] rounded-full object-cover"
@@ -2417,9 +2418,9 @@ const Profile = ({ shareprofileid }) => {
                       {profile.username || `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'User'}
                       {profile.verified?.length > 0 && (
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]
+                          src={getImageUrl(profile.verified[profile.verified.length - 1]
                             ?.badgeImage
-                            }`}
+                            )}
                           className="inline-block ml-1 w-4 h-4 object-contain"
                         alt={
                           profile.verified[profile.verified.length - 1]
@@ -2677,7 +2678,7 @@ const Profile = ({ shareprofileid }) => {
                     <img
                       src={
                         user?.profilePhoto
-                          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
+                          ? getImageUrl(user.profilePhoto)
                           : "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
                       }
                       alt={user.username}
@@ -2840,7 +2841,7 @@ const Profile = ({ shareprofileid }) => {
                         <div className="h-[200px] bg-[#EBEBEB] rounded-b-2xl">
                           {mainImage ? (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${mainImage}`}
+                              src={getImageUrl(mainImage)}
                               alt={item.name || "Product"}
                               className="h-full w-full object-contain rounded-b-2xl"
                             />
@@ -2890,7 +2891,7 @@ const Profile = ({ shareprofileid }) => {
               >
                 {post.images?.length > 0 ? (
                   <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                    src={getImageUrl(post.images[0])}
                     alt={`post-${post._id}`}
                     className="sm:h-[210px] w-full h-[120px] rounded-md"
                   />
@@ -2930,7 +2931,7 @@ const Profile = ({ shareprofileid }) => {
                         setActiveIndex(index);
                         setActiveSection("saved");
                       }}
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                      src={getImageUrl(post.images[0])}
                       alt={`post-${index}`}
                       className="h-[120px] sm:h-[210px] w-full object-cover rounded-md cursor-pointer"
                     />
@@ -2958,7 +2959,7 @@ const Profile = ({ shareprofileid }) => {
                   {/* Image Section */}
                   <div className="h-[200px] bg-[#EBEBEB] rounded-b-2xl">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
+                      src={getImageUrl(item.mainImage)}
                       alt={item.productName}
                       className="h-full w-full object-contain rounded-b-2xl"
                     />
@@ -3045,7 +3046,7 @@ const Profile = ({ shareprofileid }) => {
                         setActiveIndex(index);
                         setActiveSection("Tags");
                       }}
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                      src={getImageUrl(post.images[0])}
                       alt={`post-${post._id}`}
                       className="sm:h-[210px] w-full h-[120px] rounded-md"
                     />
@@ -3150,7 +3151,7 @@ const Profile = ({ shareprofileid }) => {
                                 {/* User Info */}
                                 <div className="flex items-center gap-2 mb-2">
                                     <img
-                                        src={profile?.profilePhoto ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+                                        src={profile?.profilePhoto ? getImageUrl(profile.profilePhoto) : DEFAULT_PROFILE_IMAGE}
                                         alt={profile?.username}
                                         className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
                                     />
@@ -3210,7 +3211,7 @@ const Profile = ({ shareprofileid }) => {
                       <img
                         src={
                           c?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            ? getImageUrl(c.profilePhoto)
                             : DEFAULT_PROFILE_IMAGE
                         }
                         alt={c.username || "user"}
@@ -3263,7 +3264,7 @@ const Profile = ({ shareprofileid }) => {
                       <img
                         src={
                           c?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            ? getImageUrl(c.profilePhoto)
                             : DEFAULT_PROFILE_IMAGE
                         }
                         alt={c.username || "user"}

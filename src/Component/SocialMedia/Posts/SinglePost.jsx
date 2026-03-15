@@ -1,4 +1,5 @@
-import React from "react";
+﻿import React from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
@@ -425,7 +426,7 @@ const SharePost = () => {
             property="og:image"
             content={
               sharePostData.images.length > 0
-                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                ? getImageUrl(sharePostData.images[0])
                 : `${DEFAULT_PROFILE_IMAGE}`
             }
           />
@@ -437,7 +438,7 @@ const SharePost = () => {
             name="twitter:image"
             content={
               sharePostData.images.length > 0
-                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[0]}`
+                ? getImageUrl(sharePostData.images[0])
                 : `${DEFAULT_PROFILE_IMAGE}`
             }
           />
@@ -465,7 +466,7 @@ const SharePost = () => {
                           {sharePostData.images?.length > 0 ? (
                             <div className="w-full h-full relative flex items-center justify-center">
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[activeImageIndex]}`}
+                                src={getImageUrl(sharePostData.images[activeImageIndex])}
                                 alt="post"
                                 className="h-full w-full "
                               />
@@ -524,7 +525,7 @@ const SharePost = () => {
                                 <img
                                   src={
                                     sharePostData.user?.profilePhoto
-                                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user?.profilePhoto}`
+                                      ? getImageUrl(sharePostData.user?.profilePhoto)
                                       : `${DEFAULT_PROFILE_IMAGE}`
                                   }
                                   alt="profile"
@@ -536,13 +537,7 @@ const SharePost = () => {
                                     {sharePostData.user.verified?.length >
                                       0 && (
                                         <img
-                                          src={`${process.env
-                                              .REACT_APP_API_URL_FOR_IMAGE
-                                            }${sharePostData.user.verified[
-                                              sharePostData.user.verified.length -
-                                              1
-                                            ]?.badgeImage
-                                            }`}
+                                          src={getImageUrl(sharePostData.user.verified[sharePostData.user.verified.length -1]?.badgeImage)}
                                           className="inline-block ml-1 w-5 h-5 object-contain"
                                           alt={
                                             sharePostData.user.verified[
@@ -584,7 +579,7 @@ const SharePost = () => {
                                   <img
                                     src={
                                       comment?.user?.profilePhoto
-                                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                                        ? getImageUrl(comment?.user?.profilePhoto)
                                         : `${DEFAULT_PROFILE_IMAGE}`
                                     }
                                     alt="profile"
@@ -660,7 +655,7 @@ const SharePost = () => {
                                       <img
                                         src={
                                           user?.profilePhoto
-                                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                            ? getImageUrl(user?.profilePhoto)
                                             : `${DEFAULT_PROFILE_IMAGE}`
                                         }
                                         alt={user.username}
@@ -732,7 +727,7 @@ const SharePost = () => {
                                         <img
                                           src={
                                             c?.profilePhoto
-                                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                                              ? getImageUrl(c.profilePhoto)
                                               : DEFAULT_PROFILE_IMAGE
                                           }
                                           alt={c.username || "user"}
@@ -775,7 +770,7 @@ const SharePost = () => {
                           <img
                             src={
                               sharePostData.user?.profilePhoto
-                                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user?.profilePhoto}`
+                                ? getImageUrl(sharePostData.user?.profilePhoto)
                                 : `${DEFAULT_PROFILE_IMAGE}`
                             }
                             alt="profile"
@@ -786,11 +781,9 @@ const SharePost = () => {
                               {sharePostData.user?.username}
                               {sharePostData.user.verified?.length > 0 && (
                                 <img
-                                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                    }${sharePostData.user.verified[
+                                  src={getImageUrl(sharePostData.user.verified[
                                       sharePostData.user.verified.length - 1
-                                    ]?.badgeImage
-                                    }`}
+                                    ]?.badgeImage)}
                                   className="inline-block ml-1 w-6 h-6 object-contain"
                                   alt={
                                     sharePostData.user.verified[
@@ -825,7 +818,7 @@ const SharePost = () => {
                                   <img
                                     src={
                                       comment?.user?.profilePhoto
-                                        ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                                        ? getImageUrl(comment?.user?.profilePhoto)
                                         : `${DEFAULT_PROFILE_IMAGE}`
                                     }
                                     alt="profile"
@@ -864,7 +857,7 @@ const SharePost = () => {
                                 <img
                                   src={
                                     user?.profilePhoto
-                                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                      ? getImageUrl(user?.profilePhoto)
                                       : `${DEFAULT_PROFILE_IMAGE}`
                                   }
                                   alt={user.username}
@@ -1218,7 +1211,7 @@ const SharePost = () => {
                         <img
                           src={
                             sharePostData?.user?.profilePhoto
-                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData?.user?.profilePhoto}`
+                              ? getImageUrl(sharePostData?.user?.profilePhoto)
                               : `${DEFAULT_PROFILE_IMAGE}`
                           }
                           alt="profile"
@@ -1239,11 +1232,9 @@ const SharePost = () => {
 
                             {sharePostData.user.verified?.length > 0 && (
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }${sharePostData.user.verified[
+                                src={getImageUrl(sharePostData.user.verified[
                                     sharePostData.user.verified.length - 1
-                                  ]?.badgeImage
-                                  }`}
+                                  ]?.badgeImage)}
                                 className="inline-block ml-1 w-5 h-5 object-contain"
                                 alt={
                                   sharePostData.user.verified[
@@ -1467,10 +1458,10 @@ const SharePost = () => {
                         sharePostData.images.length > 0 && (
                           <>
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.images[
+                              src={getImageUrl(sharePostData.images[
                                 sharePostData.activeImageIndex || 0
                                 ]
-                                }`}
+                                )}
                               alt="Post content"
                               className="w-full h-full rounded-lg"
                             />
@@ -1599,10 +1590,10 @@ const SharePost = () => {
                           {sharePostData.user.username}{" "}
                           {sharePostData.user.verified?.length > 0 && (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${sharePostData.user.verified[
+                              src={getImageUrl(sharePostData.user.verified[
                                   sharePostData.user.verified.length - 1
                                 ]?.badgeImage
-                                }`}
+                                )}
                               className="inline-block ml-1 w-5 h-5 object-contain"
                               alt={
                                 sharePostData.user.verified[
@@ -1642,7 +1633,7 @@ const SharePost = () => {
                               <img
                                 src={
                                   user?.profilePhoto
-                                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                                    ? getImageUrl(user?.profilePhoto)
                                     : `${DEFAULT_PROFILE_IMAGE}`
                                 }
                                 alt={user.username}
@@ -1652,10 +1643,7 @@ const SharePost = () => {
                                 {user.username}
                                 {user.verified?.length > 0 && (
                                   <img
-                                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                      }${user.verified[user.verified.length - 1]
-                                        ?.badgeImage
-                                      }`}
+                                      src={getImageUrl(user.verified[user.verified.length - 1]?.badgeImage)}
                                     className="inline-block ml-1 w-6 h-6 object-contain"
                                     alt={
                                       user.verified[user.verified.length - 1]

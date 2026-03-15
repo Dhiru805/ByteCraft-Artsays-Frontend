@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import getAPI from "../../../../../api/getAPI";
 import axiosInstance from "../../../../../api/axiosConfig";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const MissionVisionEdit = () => {
   const navigate = useNavigate();
@@ -62,8 +63,8 @@ const MissionVisionEdit = () => {
             sideImage: c.sideImage || null,
             _id: c._id,
           })));
-          setIconPreviews(section.cards.map(c => c.icon ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.icon.replace(/\\/g, "/")}` : null));
-          setSideImagePreviews(section.cards.map(c => c.sideImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${c.sideImage.replace(/\\/g, "/")}` : null));
+          setIconPreviews(section.cards.map(c => c.icon ? getImageUrl(c.icon.replace(/\\/g, "/")) : null));
+          setSideImagePreviews(section.cards.map(c => c.sideImage ? getImageUrl(c.sideImage.replace(/\\/g, "/")) : null));
         }
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to fetch data");

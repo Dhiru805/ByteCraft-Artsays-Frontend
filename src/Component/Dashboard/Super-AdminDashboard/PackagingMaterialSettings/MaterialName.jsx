@@ -4,6 +4,7 @@ import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const MaterialName = () => {
   const [showPopUp, setShowPopUp] = useState(false);
@@ -101,9 +102,7 @@ const MaterialName = () => {
     setMaterialNameImage(null);
     setImagePreview(
       mat.materialNameImage
-        ? `${
-            process.env.REACT_APP_API_URL_FOR_IMAGE
-          }/${mat.materialNameImage.replace(/\\/g, "/")}`
+        ? getImageUrl(mat.materialNameImage.replace(/\\/g, "/"))
         : "/placeholder.jpg"
     );
     setEditId(mat._id);
@@ -253,13 +252,7 @@ const MaterialName = () => {
                                   {viewData?.materialNameImage && (
                                     <div className="mt-2">
                                       <img
-                                        src={`${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${viewData.materialNameImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`}
+                                        src={getImageUrl(viewData.materialNameImage.replace(/\\/g,"/"))}
                                         alt={viewData.materialName}
                                         className="img-thumbnail"
                                         style={{ maxHeight: "200px" }}
@@ -424,13 +417,7 @@ const MaterialName = () => {
                                 <img
                                   src={
                                     mat.materialNameImage
-                                      ? `${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${mat.materialNameImage.replace(
-                                          /\\/g,
-                                          "/"
-                                        )}`
+                                      ? getImageUrl(mat.materialNameImage.replace(/\\/g,"/"))
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"

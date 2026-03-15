@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import getAPI from "../../../../api/getAPI";
 import postAPI from "../../../../api/postAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 function CreateCertification() {
   const navigate = useNavigate();
@@ -123,65 +124,65 @@ function CreateCertification() {
     }
   };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-      try {
-        if (!formData.productId) {
-          toast.error("Please select a product.");
-          setLoading(false);
-          return;
-        }
-        if (formData.certifications.length === 0) {
-          toast.error("Please select a certification.");
-          setLoading(false);
-          return;
-        }
-        if (!formData.certificationProvider) {
-          toast.error("Please select a certification provider.");
-          setLoading(false);
-          return;
-        }
-
-        const certId = formData.certifications[0];
-        const cert = certifications.find((c) => c._id === certId);
-        
-        const submissionData = {
-          userType: formData.userType,
-          userId: formData.userId,
-          productId: formData.productId,
-          mainCategoryId: formData.mainCategories[0],
-          certificationId: certId,
-          certificationProvider: formData.certificationProvider,
-          estimatedDays: cert ? cert.estimatedDays : 0,
-          certificationPrice: cert?.price || 99,
-        };
-
-        const response = await postAPI(
-          "/api/create-certification",
-          submissionData,
-          {},
-          true
-        );
-
-        if (response?.data?.data?.paymentUrl) {
-          window.location.href = response.data.data.paymentUrl;
-        } else if (!response.hasError) {
-          toast.success("Certification created successfully!");
-          navigate("/artist/certification");
-        } else {
-          toast.error(`Failed to create certification: ${response.message}`);
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.message ||
-          "An error occurred while creating the certification.";
-        toast.error(errorMessage);
-      } finally {
+    try {
+      if (!formData.productId) {
+        toast.error("Please select a product.");
         setLoading(false);
+        return;
       }
-    };
+      if (formData.certifications.length === 0) {
+        toast.error("Please select a certification.");
+        setLoading(false);
+        return;
+      }
+      if (!formData.certificationProvider) {
+        toast.error("Please select a certification provider.");
+        setLoading(false);
+        return;
+      }
+
+      const certId = formData.certifications[0];
+      const cert = certifications.find((c) => c._id === certId);
+
+      const submissionData = {
+        userType: formData.userType,
+        userId: formData.userId,
+        productId: formData.productId,
+        mainCategoryId: formData.mainCategories[0],
+        certificationId: certId,
+        certificationProvider: formData.certificationProvider,
+        estimatedDays: cert ? cert.estimatedDays : 0,
+        certificationPrice: cert?.price || 99,
+      };
+
+      const response = await postAPI(
+        "/api/create-certification",
+        submissionData,
+        {},
+        true
+      );
+
+      if (response?.data?.data?.paymentUrl) {
+        window.location.href = response.data.data.paymentUrl;
+      } else if (!response.hasError) {
+        toast.success("Certification created successfully!");
+        navigate("/artist/certification");
+      } else {
+        toast.error(`Failed to create certification: ${response.message}`);
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred while creating the certification.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const selectedProduct = products.find(
     (product) => product._id === formData.productId
@@ -194,7 +195,7 @@ function CreateCertification() {
 
   const certificationOptions = certifications.map((cert) => ({
     value: cert._id,
-    label: `${cert.certificationName} ₹${cert.price ||99}`,
+    label: `${cert.certificationName} ₹${cert.price || 99}`,
   }));
 
   return (
@@ -206,7 +207,7 @@ function CreateCertification() {
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
                 <span
-                  onClick={() => navigate("/super-admin/dashboard")}
+                  onClick={() => navigate("/artist/dashboard")}
                   style={{ cursor: "pointer" }}
                 >
                   <i className="fa fa-dashboard"></i>
@@ -249,7 +250,7 @@ function CreateCertification() {
                     <label>Product Details</label>
                     <div className="d-flex align-items-center">
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                        src={getImageUrl(selectedProduct.mainImage)}
                         alt={selectedProduct.productName}
                         className="img-thumbnail mr-3"
                         style={{ maxWidth: "100px", maxHeight: "100px" }}
@@ -274,30 +275,30 @@ function CreateCertification() {
                   </div>
                 )}
                 <div className="form-group">
-                    <label htmlFor="certifications">
-                      Certification
-                    </label>
-                    <Select
-                      id="certifications"
-                      name="certifications"
-                      options={certificationOptions}
-                      value={certificationOptions.find((option) =>
+                  <label htmlFor="certifications">Certification</label>
+                  <Select
+                    id="certifications"
+                    name="certifications"
+                    options={certificationOptions}
+                    value={
+                      certificationOptions.find((option) =>
                         formData.certifications.includes(option.value)
-                      ) || null}
-                      onChange={(option) =>
-                        handleChange("certifications", option ? [option] : [])
-                      }
-                      placeholder="Select Certification"
-                      isClearable
-                      isDisabled={
-                        formData.mainCategories.length === 0 ||
-                        certifications.length === 0
-                      }
-                    />
-                    <small className="form-text text-muted">
-                      Select a certification for your product
-                    </small>
-                  </div>
+                      ) || null
+                    }
+                    onChange={(option) =>
+                      handleChange("certifications", option ? [option] : [])
+                    }
+                    placeholder="Select Certification"
+                    isClearable
+                    isDisabled={
+                      formData.mainCategories.length === 0 ||
+                      certifications.length === 0
+                    }
+                  />
+                  <small className="form-text text-muted">
+                    Select a certification for your product
+                  </small>
+                </div>
                 {formData.certifications.length > 0 && (
                   <div className="form-group">
                     <label>Selected Certifications</label>

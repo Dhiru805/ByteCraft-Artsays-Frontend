@@ -5,6 +5,7 @@ import putAPI from '../../../../api/putAPI';
 import ConfirmationDialog from '../../ConfirmationDialog';
 import { toast } from 'react-toastify';
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const Product = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Product = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [viewCampaign, setViewCampaign] = useState(null);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

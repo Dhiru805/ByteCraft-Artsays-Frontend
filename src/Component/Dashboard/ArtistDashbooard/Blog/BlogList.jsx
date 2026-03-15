@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 function BlogList() {
   const [blogs, setBlogs] = useState([]);
@@ -192,9 +193,7 @@ function BlogList() {
                             <img
                               src={
                                 blog.blogImage
-                                  ? `${
-                                      process.env.REACT_APP_API_URL_FOR_IMAGE
-                                    }/${blog.blogImage.replace(/\\/g, "/")}`
+                                  ? getImageUrl(blog.blogImage.replace(/\\/g, "/"))
                                   : "/placeholder.jpg"
                               }
                               className="rounded-circle"

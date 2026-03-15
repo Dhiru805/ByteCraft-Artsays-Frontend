@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { ChevronRight, HelpCircle, Star } from "lucide-react";
 import axiosInstance from "../../api/axiosConfig";
 import InsuranceContentSkeliton from "../../Component/Skeleton/Home/Account/InsuranceContentSkeliton";
 import "../store/products/product.css";
+import { getImageUrl } from '../../utils/getImageUrl';
 
 const InsuranceContent = () => {
     const [pageData, setPageData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const fetchPublishedPage = async () => {
@@ -131,7 +131,7 @@ const InsuranceContent = () => {
                                     {card.image && (
                                         <div className="w-full aspect-video rounded-2xl overflow-hidden mb-4">
                                             <img 
-                                                src={`${imageBaseURL}/${card.image}`} 
+                                                src={getImageUrl(card.image)} 
                                                 alt={card.title} 
                                                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                                             />

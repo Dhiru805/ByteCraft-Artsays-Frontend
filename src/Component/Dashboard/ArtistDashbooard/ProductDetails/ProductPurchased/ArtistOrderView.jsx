@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import putAPI from "../../../../../api/putAPI";
 import useUserType from "../../../urlconfig";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const STATUS_COLORS = {
   Ordered: "#17a2b8",
@@ -47,7 +48,7 @@ const ArtistOrderView = () => {
   const navigate = useNavigate();
   const rawUserType = useUserType();
   const userType = rawUserType?.toLowerCase();
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);

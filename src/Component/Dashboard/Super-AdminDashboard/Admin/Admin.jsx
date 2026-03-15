@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import AdminModal from "./AdminModal";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 function AdminManageTable() {
   const [admins, setAdmins] = useState([]);
@@ -13,7 +14,7 @@ function AdminManageTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("create"); // "create", "edit", "view"
   const [selectedAdmin, setSelectedAdmin] = useState(null);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -161,20 +162,21 @@ function AdminManageTable() {
                             <tr key={admin._id}>
                               <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                               <td>
-                                <img
-                                  src={
-                                    admin.profilePhoto
-                                      ? `${BASE_URL}${admin.profilePhoto}`
-                                      : DEFAULT_PROFILE_IMAGE
-                                  }
-                                  className="rounded-circle avatar"
-                                  alt=""
-                                  style={{
-                                    width: "30px",
-                                    height: "30px",
-                                    objectFit: "cover",
-                                  }}
-                                />
+                                  <img
+                                    src={
+                                      admin.profilePhoto
+                                        ? getImageUrl(admin.profilePhoto)
+                                        : DEFAULT_PROFILE_IMAGE
+                                    }
+                                    className="rounded-circle avatar"
+                                    alt=""
+                                    onError={(e) => { e.target.onerror = null; e.target.src = DEFAULT_PROFILE_IMAGE; }}
+                                    style={{
+                                      width: "30px",
+                                      height: "30px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
                                 <p className="c_name">
                                   {admin.name} {admin.lastName}
                                 </p>

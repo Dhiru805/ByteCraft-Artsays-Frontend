@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../../api/putAPI';
 import getAPI from '../../../../../../../api/getAPI';
+import { getImageUrl } from "../../../../../../../utils/getImageUrl";
 
 const AccountVerification = () => {
 
@@ -29,7 +30,7 @@ const AccountVerification = () => {
           if (data.documentFile) {
             const normalizedPath = data.documentFile.replace(/\\/g, '/');
 
-            setFilePreview(`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${normalizedPath}`);
+            setFilePreview(getImageUrl(normalizedPath));
             setFileType(normalizedPath.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
           }
         }

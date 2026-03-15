@@ -1,16 +1,3 @@
-// import React from 'react';
-// import ContactUsContent from './ContactUsContent/ContactUsContent'
-
-// const ContactUs = () => {
-//   return (
-//     <div className="max-w-[1440px] mx-auto font-[poppins]">
-//         <ContactUsContent/>
-//     </div>
-//   );
-// };
-
-// export default ContactUs;
-
 
 
 import React, { useEffect, useState } from "react";
@@ -20,6 +7,7 @@ import axiosInstance from "../../api/axiosConfig";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import ContactUsContent from "./ContactUsContent/ContactUsContent";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const ContactUs = () => {
   const [seoData, setSeoData] = useState({
@@ -46,7 +34,7 @@ const ContactUs = () => {
             : meta.metaKeywords || "contact artsays, support, inquiries, commission art",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

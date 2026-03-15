@@ -3,6 +3,7 @@ import getAPI from "../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const Material = () => {
 
@@ -196,7 +197,7 @@ const[loading,setLoading]=useState(true)
                             <img
                               src={
                                 mat.materialName?.materialNameImage
-                                  ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${mat.materialName?.materialNameImage.replace(/\\/g, "/")}`
+                                  ? getImageUrl(mat.materialName?.materialNameImage.replace(/\\/g, "/"))
                                   : "/placeholder.jpg"
                               }
                               className="rounded-circle"

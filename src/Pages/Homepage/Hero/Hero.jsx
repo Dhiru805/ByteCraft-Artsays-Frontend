@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import HeroSectionSkeleton from "../../../Component/Skeleton/HeroSectionSkeleton";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -28,12 +29,6 @@ const Hero = () => {
   });
   const searchRef = useRef(null);
 
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
-  const getImageUrl = (imgPath) => {
-    if (!imgPath) return "";
-    const normalized = imgPath.replace(/\\/g, "/");
-    return `${imageBaseURL}${normalized.startsWith("/") ? "" : "/"}${normalized}`;
-  };
 
   useEffect(() => {
     const fetchHero = async () => {
@@ -307,9 +302,9 @@ const Hero = () => {
                                 <img
                                   src={
                                     product.mainImage
-                                      ? `${imageBaseURL}${product.mainImage}`
+                                      ? getImageUrl(product.mainImage)
                                       : product.images?.[0]
-                                        ? `${imageBaseURL}${product.images[0]}`
+                                        ? getImageUrl(product.images[0])
                                         : "/assets/home/biditemurl.jpg"
                                   }
                                   alt={product.productName}
@@ -360,9 +355,9 @@ const Hero = () => {
                                 artist.username ||
                                 "Artist";
                               const avatar = artist.profilePhoto
-                                ? `${imageBaseURL}${artist.profilePhoto}`
+                                ? getImageUrl(artist.profilePhoto)
                                 : artist.profileImage
-                                  ? `${imageBaseURL}${artist.profileImage}`
+                                  ? getImageUrl(artist.profileImage)
                                   : DEFAULT_PROFILE_IMAGE;
                               return (
                                 <div

@@ -1,4 +1,4 @@
-import "../../store/products/product.css";
+﻿import "../../store/products/product.css";
 import React, { useState, useEffect } from "react";
 import {Search, ListFilter, X, ChevronRight, ChevronLeft, Tag, SortAsc, DollarSign, Maximize, Bell, Heart, ShoppingCart, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import postAPI from "../../../api/postAPI";
 import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -28,8 +29,7 @@ const useDebounce = (value, delay) => {
 const BidProduct = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [showFilters, setShowFilters] = useState(false);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(false);
   const [highestLiveBid, setHighestLiveBid] = useState({});
 
@@ -829,7 +829,7 @@ const BidProduct = () => {
                           onClick={() => handleAdClick(firstAd)}
                         >
                           <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
-                            <img src={`${imageBaseURL}${firstAd.mainImage}`} alt={firstAd.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                            <img src={getImageUrl(firstAd.mainImage)} alt={firstAd.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
                             <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                               <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
                             </div>
@@ -895,7 +895,7 @@ const BidProduct = () => {
                                 onClick={() => handleAdClick(adProduct)}
                               >
                                 <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
-                                  <img src={`${imageBaseURL}${adProduct.mainImage}`} alt={adProduct.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                                  <img src={getImageUrl(adProduct.mainImage)} alt={adProduct.productName} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
                                   <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                                     <div className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest">Sponsored</div>
                                   </div>
@@ -950,7 +950,7 @@ const BidProduct = () => {
                             {/* Image Container */}
                             <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                               <img
-                                src={`${imageBaseURL}${item.product?.mainImage}`}
+                                src={getImageUrl(item.product?.mainImage)}
                                 alt={item.artworkName}
                                 className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${isEnded ? 'grayscale-[0.5] blur-[2px]' : ''}`}
                               />
@@ -994,7 +994,7 @@ const BidProduct = () => {
                                 <div className="flex -space-x-1.5">
                                   {item.product?.badges?.map((img, idx) => (
                                     <div key={idx}>
-                                      <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                                      <img src={getImageUrl(img)} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
                                     </div>
                                   ))}
                                 </div>

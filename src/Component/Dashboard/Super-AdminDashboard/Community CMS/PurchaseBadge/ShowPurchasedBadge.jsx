@@ -1,4 +1,5 @@
-import React from "react";
+﻿import React from "react";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import { useLocation, useNavigate } from "react-router-dom";
 
 const ShowPurchasedBadge = () => {
@@ -37,7 +38,7 @@ const ShowPurchasedBadge = () => {
             <div className="col-md-4 col-lg-3" key={i}>
               <div className="card h-100 shadow-sm border-0">
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${badge.badgeImage}`}
+                  src={getImageUrl(badge.badgeImage)}
                   className="card-img-top p-3"
                   alt={badge.badgeName}
                   style={{ height: "180px", objectFit: "contain" }}

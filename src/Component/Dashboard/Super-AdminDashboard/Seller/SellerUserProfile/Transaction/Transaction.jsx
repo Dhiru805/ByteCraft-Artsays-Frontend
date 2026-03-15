@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
+import { getImageUrl } from "../../../../../../utils/getImageUrl";
 
 
 const Transaction = ({userId}) => {
@@ -9,7 +10,7 @@ const Transaction = ({userId}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+const BASE_URL = getImageUrl(null);
     const [searchTerm, setSearchTerm] = useState('');
 
     const navigate = useNavigate();

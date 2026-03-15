@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import { toast } from "react-toastify";
@@ -62,7 +63,7 @@ const PurchaseBadge = () => {
                       <td>
                         <div className="d-flex align-items-center">
                           <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto || "/default-avatar.png"}`}
+                            src={getImageUrl(user.profilePhoto || "/default-avatar.png")}
                             alt="Profile"
                             className="rounded-circle me-3"
                             width="45"

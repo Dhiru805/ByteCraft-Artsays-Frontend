@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { jwtDecode } from 'jwt-decode';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 const SELLER_STATUS_LABELS = {
   "Ordered": "New Order Received",
@@ -60,7 +61,7 @@ const ProductRequest = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
+    const BASE_URL = getImageUrl(null)
 
 
     const navigate = useNavigate();
@@ -275,7 +276,7 @@ useEffect(() => {
                                                         {productData ? (
                                                             <>
                                                                 <img
-                                                                    src={product.product ? `${BASE_URL}${product.product}` : 'default-image-url.jpg'}
+                                                                    src={product.product ? getImageUrl(product.product) : 'default-image-url.jpg'}
                                                                     className="rounded-circle avatar"
                                                                     alt=""
                                                                     style={{
@@ -333,7 +334,7 @@ useEffect(() => {
             {/* Product Name & Image */}
             <td>
                 <img
-                    src={item.productImage ? `${BASE_URL}${item.productImage}` : "/default.png"}
+                    src={item.productImage ? getImageUrl(item.productImage) : "/default.png"}
                     className="rounded-circle avatar"
                     alt=""
                     style={{

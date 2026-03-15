@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import putAPI from "../../../../api/putAPI";
 import getAPI from "../../../../api/getAPI";
 import axiosInstance from "../../../../api/axiosConfig";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const PartnerEdit = () => {
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ const PartnerEdit = () => {
       status: page.status || "draft",
     });
 
-    const base = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+    const base = getImageUrl(null) || "";
 
     setSection1Previews(
       (page.section1Images || []).map((img) => (img ? `${base}/${img}` : null))
@@ -318,7 +319,7 @@ const PartnerEdit = () => {
   const renderPreviewSrc = (val) => {
     if (!val) return null;
     if (typeof val === "string") {
-      const base = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+      const base = getImageUrl(null) || "";
       return `${base}/${val}`;
     }
     

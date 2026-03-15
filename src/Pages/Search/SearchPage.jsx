@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Search, Heart, ShoppingCart, Star, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "react-toastify";
@@ -7,6 +7,7 @@ import postAPI from "../../api/postAPI";
 import deleteAPI from "../../api/deleteAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../Constants/ConstantsVariables";
 import "../store/products/product.css";
+import { getImageUrl } from '../../utils/getImageUrl';
 
 // ─── helpers ────────────────────────────────────────────────
 const slugify = (t = "") => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
@@ -36,7 +37,7 @@ const matches = (q, ...fields) => {
 };
 
 // ─── PRODUCT CARD (exact store page card) ────────────────────
-const ProductCard = ({ product, imageBaseURL, likedProducts, onWishlist, onCart, cartItems, navigate, index = 0 }) => {
+const ProductCard = ({ product, getImageUrl, likedProducts, onWishlist, onCart, cartItems, navigate, index = 0 }) => {
   const displayPrice = product.finalPrice ?? 0;
   const hasDiscount = displayPrice < product.marketPrice;
   const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
@@ -58,7 +59,7 @@ const ProductCard = ({ product, imageBaseURL, likedProducts, onWishlist, onCart,
       {/* Image */}
       <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
         <img
-          src={`${imageBaseURL}${product.mainImage}`}
+          src={getImageUrl(product.mainImage)}
           alt={product.productName}
           className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${soldOut ? "blur-[2px]" : ""}`}
           onError={(e) => { e.target.src = "/assets/home/biditemurl.jpg"; }}
@@ -102,7 +103,7 @@ const ProductCard = ({ product, imageBaseURL, likedProducts, onWishlist, onCart,
           <div className="flex -space-x-1.5">
             {product.badges?.map((img, idx) => (
               <div key={idx}>
-                <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" />
+                <img src={getImageUrl(img)} className="w-4 h-4 rounded-full" alt="Badge" />
               </div>
             ))}
           </div>
@@ -185,7 +186,7 @@ const ProductCard = ({ product, imageBaseURL, likedProducts, onWishlist, onCart,
 };
 
 // ─── BID CARD ────────────────────────────────────────────────
-const BidCard = ({ item, imageBaseURL, navigate }) => {
+const BidCard = ({ item, getImageUrl, navigate }) => {
   const p = item.product || {};
   const name = item.artworkName || p.productName || "Untitled";
   const startingPrice = item.startingBidPrice ?? p.finalPrice ?? 0;
@@ -198,7 +199,7 @@ const BidCard = ({ item, imageBaseURL, navigate }) => {
     >
       <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">
         <img
-          src={`${imageBaseURL}${p.mainImage}`}
+          src={getImageUrl(p.mainImage)}
           alt={name}
           className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
           onError={(e) => { e.target.src = "/assets/home/biditemurl.jpg"; }}
@@ -231,8 +232,8 @@ const BidCard = ({ item, imageBaseURL, navigate }) => {
 };
 
 // ─── ARTIST CARD ─────────────────────────────────────────────
-const ArtistCard = ({ artist, imageBaseURL, navigate }) => {
-  const avatar = artist.profilePhoto ? `${imageBaseURL}${artist.profilePhoto}` : DEFAULT_PROFILE_IMAGE;
+const ArtistCard = ({ artist, getImageUrl, navigate }) => {
+  const avatar = artist.profilePhoto ? getImageUrl(artist.profilePhoto) : DEFAULT_PROFILE_IMAGE;
   const name = `${artist.name || ""}${artist.lastName ? " " + artist.lastName : ""}`.trim() || "Artist";
   const username = artist.username || artist._id;
 
@@ -285,8 +286,7 @@ const SkeletonCard = () => (
 // ─── MAIN PAGE ───────────────────────────────────────────────
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+  const navigate = useNavigate();
 
   const [inputVal, setInputVal] = useState(searchParams.get("q") || "");
   const [query, setQuery] = useState(searchParams.get("q") || "");
@@ -522,9 +522,9 @@ const SearchPage = () => {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                 {paged.map(({ type, data }, index) => {
-                  if (type === "store") return <ProductCard key={`store-${data._id}`} product={data} imageBaseURL={imageBaseURL} likedProducts={likedProducts} onWishlist={handleWishlist} onCart={handleCart} cartItems={cartItems} navigate={navigate} index={index} />;
-                if (type === "bid") return <BidCard key={`bid-${data._id}`} item={data} imageBaseURL={imageBaseURL} navigate={navigate} />;
-                return <ArtistCard key={`artist-${data._id}`} artist={data} imageBaseURL={imageBaseURL} navigate={navigate} />;
+                  if (type === "store") return <ProductCard key={`store-${data._id}`} product={data} getImageUrl={getImageUrl} likedProducts={likedProducts} onWishlist={handleWishlist} onCart={handleCart} cartItems={cartItems} navigate={navigate} index={index} />;
+                if (type === "bid") return <BidCard key={`bid-${data._id}`} item={data} getImageUrl={getImageUrl} navigate={navigate} />;
+                return <ArtistCard key={`artist-${data._id}`} artist={data} getImageUrl={getImageUrl} navigate={navigate} />;
               })}
             </div>
 

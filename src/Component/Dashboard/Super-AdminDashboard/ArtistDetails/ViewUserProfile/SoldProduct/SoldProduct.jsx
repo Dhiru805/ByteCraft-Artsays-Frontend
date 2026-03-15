@@ -1,8 +1,9 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import useUserType from "../../../../urlconfig";
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 const SoldProduct = ({ userId }) => {
     const [products, setProducts] = useState([]);
@@ -10,7 +11,7 @@ const SoldProduct = ({ userId }) => {
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
     const navigate = useNavigate();
     // const userType = useUserType();
 
@@ -165,7 +166,7 @@ const SoldProduct = ({ userId }) => {
 
                                         {/* <td>
                                             <img
-                                                src={`${BASE_URL}${p.mainImage}`}
+                                                src={getImageUrl(p.mainImage)}
                                                 alt={p.productName}
                                                 className="rounded-circle avatar"
                                                 style={{
@@ -180,7 +181,7 @@ const SoldProduct = ({ userId }) => {
 <td>
     <div style={{ display: "flex", alignItems: "center" }}>
         <img
-            src={`${BASE_URL}${p.mainImage}`}
+            src={getImageUrl(p.mainImage)}
             className="rounded-circle avatar"
             alt={p.productName}
             style={{

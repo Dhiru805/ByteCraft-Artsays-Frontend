@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationDialog from '../../../../ConfirmationDialog';
 import useUserType from '../../../../urlconfig';
 import { useLocation } from 'react-router-dom';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 const Blogs = ({ userId: propUserId, profileData, previewImage }) => {
   const userType = useUserType();
@@ -74,7 +75,7 @@ const Blogs = ({ userId: propUserId, profileData, previewImage }) => {
   }, []);
 
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const handleDeleteCancel = () => {
     setIsDeleteDialogOpen(false);
@@ -131,7 +132,7 @@ const Blogs = ({ userId: propUserId, profileData, previewImage }) => {
                           className="d-block img-fluid rounded"
                           src={
                             blog.blogImage
-                              ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}`
+                              ? getImageUrl(blog.blogImage.replace(/\\/g, "/"))
                               : "/placeholder.jpg"
                           }
                           alt={blog.blogName}

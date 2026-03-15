@@ -6,10 +6,11 @@ import { DEFAULT_PROFILE_IMAGE } from './constant';
 import MyOrderView from './MyOrderView';
 import { useNavigate } from 'react-router-dom';
 import { MyOrderSkeleton } from '../../../../../../../Component/Skeleton/Home/Account/MyOrderSkeleton';
+import { getImageUrl } from '../../../../../../../utils/getImageUrl';
+
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const [showPopup, setShowPopup] = useState(false);
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -93,64 +94,57 @@ const MyOrders = () => {
     mergeOrderProducts();
   }, [orders.length]);
 
-  // const openImagePopup = (images = [], startIndex = 0) => {
-  //   setCurrentImages(images);
-  //   setCurrentImageIndex(startIndex);
-  //   setShowPopup(true);
-  // };
-
   const closeImagePopup = () => {
     setShowPopup(false);
     setCurrentImages([]);
     setCurrentImageIndex(0);
   };
 
-    const cancelOrderInstant = async (orderIdParam) => {
-      const id = orderIdParam || cancelOrderId;
-      if (!id) return;
-      if (!cancelReason) {
-        alert("Please select a cancellation reason.");
-        return;
-      }
-      if (!cancelComment.trim()) {
-        alert("Please enter cancellation remarks.");
-        return;
-      }
+  const cancelOrderInstant = async (orderIdParam) => {
+    const id = orderIdParam || cancelOrderId;
+    if (!id) return;
+    if (!cancelReason) {
+      alert("Please select a cancellation reason.");
+      return;
+    }
+    if (!cancelComment.trim()) {
+      alert("Please enter cancellation remarks.");
+      return;
+    }
 
-      try {
-        await putAPI(`/api/buyer-order-list/cancel/${id}`, {
-          cancelReason,
-          cancelComment,
-        });
+    try {
+      await putAPI(`/api/buyer-order-list/cancel/${id}`, {
+        cancelReason,
+        cancelComment,
+      });
 
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
+        )
+      );
+
+      setShowCancelModal(false);
+      setCancelReason("");
+      setCancelComment("");
+    } catch (err) {
+      console.error("Cancel Error:", err);
+      const msg = err?.response?.data?.message || "";
+      if (msg.toLowerCase().includes("already cancelled")) {
         setOrders((prev) =>
           prev.map((o) =>
             o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
           )
         );
-
         setShowCancelModal(false);
         setCancelReason("");
         setCancelComment("");
-      } catch (err) {
-        console.error("Cancel Error:", err);
-        const msg = err?.response?.data?.message || "";
-        if (msg.toLowerCase().includes("already cancelled")) {
-          // Order was already cancelled by admin/seller — sync local state
-          setOrders((prev) =>
-            prev.map((o) =>
-              o.orderId === id ? { ...o, orderStatus: "Cancelled" } : o
-            )
-          );
-          setShowCancelModal(false);
-          setCancelReason("");
-          setCancelComment("");
-          alert("This order has already been cancelled.");
-        } else {
-          alert(msg || "Failed to cancel order. Please try again.");
-        }
+        alert("This order has already been cancelled.");
+      } else {
+        alert(msg || "Failed to cancel order. Please try again.");
       }
-    };
+    }
+  };
 
   const handleViewOrder = (order) => {
     navigate("/my-account/my-orders/view", { state: { order } });
@@ -163,7 +157,6 @@ const MyOrders = () => {
     });
   };
 
-  // Buyer-friendly labels: map internal statuses to what the buyer should see
   const BUYER_STATUS_LABELS = {
     "Ordered": "Ordered",
     "Payment Pending": "Payment Pending",
@@ -197,7 +190,6 @@ const MyOrders = () => {
     }
   };
 
-  // Infinite scroll: IntersectionObserver to load more orders
   const hasMore = visibleCount < orders.length;
 
   useEffect(() => {
@@ -255,7 +247,7 @@ const MyOrders = () => {
           </div>
         </div>
 
-          {orders.length === 0 ? (
+        {orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-6">
               <FaShoppingBag className="text-gray-300 text-3xl" />
@@ -278,33 +270,32 @@ const MyOrders = () => {
               const createdStr = createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
               const firstItem = order.items && order.items.length > 0 ? order.items[0] : null;
               
-                let firstImage = null;
-                const isCustomOrder = firstItem?.customProduct != null;
-                  if (isCustomOrder && firstItem?.customProduct?.BuyerImage) {
-                    const img = firstItem.customProduct.BuyerImage;
-                    firstImage = `${BASE_URL}${img.startsWith('/') ? '' : '/'}${img}`;
-                  } else if (firstItem?.fullProduct?.mainImage) {
-                    firstImage = `${BASE_URL}${firstItem.fullProduct.mainImage}`;
-                  }
+              let firstImage = null;
+              const isCustomOrder = firstItem?.customProduct != null;
+              if (isCustomOrder && firstItem?.customProduct?.BuyerImage) {
+                const img = firstItem.customProduct.BuyerImage;
+                firstImage = getImageUrl(img);
+              } else if (firstItem?.fullProduct?.mainImage) {
+                firstImage = getImageUrl(firstItem.fullProduct.mainImage);
+              }
 
-                const isCancelled = ["Cancelled", "Refund Approved", "Refund Initiated", "Refund Successful"].includes(order.orderStatus);
-                const isDelivered = ["Delivered", "Completed"].includes(order.orderStatus);
-                const statusInfo = getStatusInfo(order.orderStatus);
+              const isCancelled = ["Cancelled", "Refund Approved", "Refund Initiated", "Refund Successful"].includes(order.orderStatus);
+              const isDelivered = ["Delivered", "Completed"].includes(order.orderStatus);
+              const statusInfo = getStatusInfo(order.orderStatus);
 
-                const deliveryDate = createdDate;
-                const currentDate = new Date();
-                const diffInDays = Math.floor((currentDate - deliveryDate) / (1000 * 60 * 60 * 24));
-                const returnPolicyDays = 10;
+              const deliveryDate = createdDate;
+              const currentDate = new Date();
+              const diffInDays = Math.floor((currentDate - deliveryDate) / (1000 * 60 * 60 * 24));
+              const returnPolicyDays = 10;
 
-                // Check if any item in the order has a returnable product
-                const isReturnable = order.items?.some(
-                  (item) => item.fullProduct?.returnPolicy === "Returnable"
-                );
-                
-                let actionType = "";
-                if (!isDelivered && !isCancelled) actionType = "cancel";
-                else if (isDelivered && diffInDays <= returnPolicyDays && isReturnable) actionType = "return";
-                else actionType = "chat";
+              const isReturnable = order.items?.some(
+                (item) => item.fullProduct?.returnPolicy === "Returnable"
+              );
+              
+              let actionType = "";
+              if (!isDelivered && !isCancelled) actionType = "cancel";
+              else if (isDelivered && diffInDays <= returnPolicyDays && isReturnable) actionType = "return";
+              else actionType = "chat";
 
               return (
                 <div
@@ -360,17 +351,17 @@ const MyOrders = () => {
                           )}
                         </div>
 
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-lg font-bold text-gray-900 truncate">
-                                {firstItem?.name || firstItem?.productId?.productName || "Untitled Product"}
-                              </h4>
-                              {isCustomOrder && (
-                                <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded-md">
-                                  Custom Order
-                                </span>
-                              )}
-                            </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-lg font-bold text-gray-900 truncate">
+                              {firstItem?.name || firstItem?.productId?.productName || "Untitled Product"}
+                            </h4>
+                            {isCustomOrder && (
+                              <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded-md">
+                                Custom Order
+                              </span>
+                            )}
+                          </div>
                           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                             <p className="text-sm font-medium text-gray-500">
                               By <span className="text-gray-700">{order.Artist?.name ? `${order.Artist.name} ${order.Artist?.lastName || ""}` : "Unknown Artist"}</span>
@@ -410,26 +401,26 @@ const MyOrders = () => {
                             Rate & Review
                           </button>
                         )}
-                          <button
-                            className="flex items-center gap-2 text-nowrap text-[#6F4D34] text-sm font-bold bg-[#6F4D34]/5 px-4 py-2.5 rounded-xl hover:bg-[#6F4D34]/10 transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleViewOrder(order);
-                            }}
-                          >
-                            <FaEye className="text-xs" /> View Details
-                          </button>
-                              <button
-                                className="flex items-center gap-2 text-nowrap text-amber-600 text-sm font-bold bg-amber-50 px-4 py-2.5 rounded-xl hover:bg-amber-100 transition-colors border border-amber-100"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedSupportOrder(order);
-                                    setShowSupportModal(true);
-                                  }}
-                              >
-                                <FaExclamationCircle className="text-xs" /> Help?
-                              </button>
-                        </div>
+                        <button
+                          className="flex items-center gap-2 text-nowrap text-[#6F4D34] text-sm font-bold bg-[#6F4D34]/5 px-4 py-2.5 rounded-xl hover:bg-[#6F4D34]/10 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewOrder(order);
+                          }}
+                        >
+                          <FaEye className="text-xs" /> View Details
+                        </button>
+                        <button
+                          className="flex items-center gap-2 text-nowrap text-amber-600 text-sm font-bold bg-amber-50 px-4 py-2.5 rounded-xl hover:bg-amber-100 transition-colors border border-amber-100"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSupportOrder(order);
+                            setShowSupportModal(true);
+                          }}
+                        >
+                          <FaExclamationCircle className="text-xs" /> Help?
+                        </button>
+                      </div>
 
                       <div>
                         {isCancelled ? (
@@ -464,26 +455,26 @@ const MyOrders = () => {
                   </div>
                 </div>
               );
-              })}
+            })}
 
-              {/* Infinite scroll sentinel */}
-              {!selectedOrder && hasMore && (
-                <div ref={loadMoreRef} className="flex justify-center py-8">
-                  {loadingMore ? (
-                    <div className="flex items-center gap-3 text-gray-500">
-                      <div className="w-6 h-6 border-2 border-gray-300 border-t-[#6F4D34] rounded-full animate-spin"></div>
-                      <span className="text-sm font-medium">Loading more orders...</span>
-                    </div>
-                  ) : (
-                    <div className="h-4" />
-                  )}
-                </div>
-              )}
+            {/* Infinite scroll sentinel */}
+            {!selectedOrder && hasMore && (
+              <div ref={loadMoreRef} className="flex justify-center py-8">
+                {loadingMore ? (
+                  <div className="flex items-center gap-3 text-gray-500">
+                    <div className="w-6 h-6 border-2 border-gray-300 border-t-[#6F4D34] rounded-full animate-spin"></div>
+                    <span className="text-sm font-medium">Loading more orders...</span>
+                  </div>
+                ) : (
+                  <div className="h-4" />
+                )}
+              </div>
+            )}
 
-              {!selectedOrder && !hasMore && orders.length > ORDERS_PER_PAGE && (
-                <p className="text-center text-sm text-gray-400 font-medium py-4">You've reached the end of your orders</p>
-              )}
-            </div>
+            {!selectedOrder && !hasMore && orders.length > ORDERS_PER_PAGE && (
+              <p className="text-center text-sm text-gray-400 font-medium py-4">You've reached the end of your orders</p>
+            )}
+          </div>
         )}
 
         {selectedOrder && (

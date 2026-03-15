@@ -1,17 +1,3 @@
-// import React from 'react';
-// import HeroImgAffiliateProgram from './hero-img/hero-img';
-// import AffiliateContent from './AffiliateBrandPartnerContent/AffiliateBrandPartnerContent';
-
-// const AffiliateProgramPage = () => {
-//   return (
-//     <div className="max-w-[1440px] mx-auto font-[poppins]">
-//       <HeroImgAffiliateProgram />
-//       <AffiliateContent />
-//     </div>
-//   );
-// };
-
-// export default AffiliateProgramPage;
 
 
 import React, { useEffect, useState } from "react";
@@ -22,6 +8,7 @@ import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import HeroImgAffiliateProgram from './hero-img/hero-img';
 import AffiliateContent from './AffiliateBrandPartnerContent/AffiliateBrandPartnerContent';
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const AffiliateProgramPage = () => {
   const [seoData, setSeoData] = useState({
@@ -48,7 +35,7 @@ const AffiliateProgramPage = () => {
             : meta.metaKeywords || "artsays affiliate, earn with artsays, refer artists",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

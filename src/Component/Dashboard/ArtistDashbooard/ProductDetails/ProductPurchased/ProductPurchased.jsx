@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
 import putAPI from "../../../../../api/putAPI";
 import { useNavigate } from "react-router-dom";
 import useUserType from "../../../urlconfig";
 import { jwtDecode } from "jwt-decode";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 // Artist (Seller) view labels for order status
 const ARTIST_STATUS_LABELS = {
@@ -66,7 +67,7 @@ const ProductRequest = () => {
   const [loading, setLoading] = useState(true);
   const [cancelPopup, setCancelPopup] = useState({ show: false, orderId: null, index: null });
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const navigate = useNavigate();
   const userType = useUserType();
@@ -323,7 +324,7 @@ const ProductRequest = () => {
                         <td>{product.artistName || "N/A"}</td>
                         <td>
                           <img
-                            src={product.isCustomOrder ? `${BASE_URL}/${product.productImage?.replace(/\\/g, "/")}` : `${BASE_URL}${product.productImage}`}
+                            src={product.isCustomOrder ? getImageUrl(product.productImage?.replace(/\\/g, "/")) : getImageUrl(product.productImage)}
                             alt=""
                             style={{
                               width: "30px",

@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { DEFAULT_PROFILE_IMAGE } from './MyAccountPage/MyAccountPageComponent/Pages/Account/constant';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import getAPI from '../../../api/getAPI';
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 export const NavUserState = () => {
   return (
@@ -54,9 +55,9 @@ export const NavGuestState = () => {
         const response = await getAPI(`/auth/userid/${storedUserId}`, {}, true, false);
         console.log('Profile API response:', response.data);
         const profileData = response.data.user;
-          const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || process.env.REACT_APP_API_URL;
+          const BASE_URL = getImageUrl(null) || process.env.REACT_APP_API_URL;
         const profilePhotoUrl = profileData?.profilePhoto
-          ? `${BASE_URL}${profileData.profilePhoto}`
+          ? getImageUrl(profileData.profilePhoto)
           : DEFAULT_PROFILE_IMAGE;
         setProfileImage(profilePhotoUrl);
         localStorage.setItem('profilePhoto', profilePhotoUrl); // Ensure localStorage is updated

@@ -315,7 +315,7 @@ const CelebrityCard = () => {
 
                     <div className="relative aspect-square overflow-hidden bg-gray-50 border-y border-gray-100">
                       <img
-                        src={celebrity.profilePicture || "/herosectionimg/1.jpg"}
+                        
                         alt={celebrity.artistName}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import Settings from './UserInfo/BasicInformation';
 import putAPI from '../../../../../api/putAPI';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 
 const AdminUserProfileForm = () => {
@@ -58,8 +59,8 @@ const AdminUserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : DEFAULT_PROFILE_IMAGE;
+        const BASE_URL = getImageUrl(null);
+        const profilePhotoUrl = result.data.user.profilePhoto ? getImageUrl(result.data.user.profilePhoto) : DEFAULT_PROFILE_IMAGE;
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {

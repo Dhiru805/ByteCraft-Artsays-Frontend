@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+﻿import React, { useEffect, useRef, useState, useCallback } from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
@@ -379,7 +380,7 @@ const SearchBar = () => {
                       onClick={() => handleUserClick(user)}
                     >
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
+                        src={getImageUrl(user?.profilePhoto)}
                         alt={user?.username}
                         className="w-12 h-12 rounded-full object-cover border"
                       />
@@ -468,7 +469,7 @@ const SearchBar = () => {
           >
             <div className="flex items-center gap-3 w-full">
               <img
-                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`}
+                src={getImageUrl(user?.profilePhoto)}
                 alt={user?.username}
                 onClick={() => handleUserClick(user)}
                 className="w-14 h-14 rounded-full border object-cover cursor-pointer"
@@ -633,7 +634,7 @@ const SearchBar = () => {
             <Link to={`/artsays-community/single-post/${post._id}`}>
               <div key={post._id} className="relative">
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                  src={getImageUrl(post.images[0])}
                   alt="post"
                   className="w-full h-40 sm:h-52 object-cover rounded-lg"
                 />

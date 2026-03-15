@@ -1,5 +1,6 @@
-
+﻿
 import React, { useEffect, useState } from 'react';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import { useLocation } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
@@ -49,7 +50,7 @@ function ArtistBlogDetails() {
           {blogs[0].blogImage && (
             <meta
               property="og:image"
-              content={`${process.env.REACT_APP_API_URL}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+              content={getImageUrl(blogs[0].blogImage.replace(/\\/g, "/"))}
             />
           )}
 
@@ -60,7 +61,7 @@ function ArtistBlogDetails() {
           {blogs[0].blogImage && (
             <meta
               name="twitter:image"
-              content={`${process.env.REACT_APP_API_URL}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+              content={getImageUrl(blogs[0].blogImage.replace(/\\/g, "/"))}
             />
           )}
         </Helmet>
@@ -110,7 +111,7 @@ function ArtistBlogDetails() {
                   <div className="img-post mb-4">
                     <img
                       className="img-fluid rounded"
-                      src={`${process.env.REACT_APP_API_URL}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+                      src={getImageUrl(blogs[0].blogImage.replace(/\\/g, "/"))}
                       alt={blogs[0].blogName}
                       style={{ maxHeight: '500px', objectFit: 'cover', width: '100%' }}
                     />
@@ -174,7 +175,7 @@ function ArtistBlogDetails() {
               <img
                 src={
                   blogs[0]?.uploadedBy?.id?.profilePhoto
-                    ? `${process.env.REACT_APP_API_URL}${blogs[0].uploadedBy.id.profilePhoto.replace(/\\/g, "/")}`
+                    ? getImageUrl(blogs[0].uploadedBy.id.profilePhoto.replace(/\\/g, "/"))
                     : "/default-profile.jpg"
                 }
                 alt="Author"

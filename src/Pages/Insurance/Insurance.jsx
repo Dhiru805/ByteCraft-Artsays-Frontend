@@ -6,6 +6,7 @@ import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import HeroImgInsurance from './hero-img/hero-img';
 import InsuranceContent from './InsuranceContent';
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const Insurance = () => {
   const [seoData, setSeoData] = useState({
@@ -33,7 +34,7 @@ const Insurance = () => {
               "art insurance, protect artwork, artsays insurance, artwork coverage",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

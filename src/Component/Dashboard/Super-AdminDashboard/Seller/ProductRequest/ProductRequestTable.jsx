@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useConfirm } from '../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../api/getAPI';
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 
 const ProductRequest = () => {
@@ -15,7 +16,7 @@ const ProductRequest = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
     const [loadingIds, setLoadingIds] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
@@ -234,7 +235,7 @@ if(loading)return <ProductRequestSkeleton/>
                                                     <img
                                                         src={
                                                             product.userId.profilePhoto
-                                                                ? `${BASE_URL}${product.userId.profilePhoto}`
+                                                                ? getImageUrl(product.userId.profilePhoto)
                                                                 : DEFAULT_PROFILE_IMAGE
                                                         }
                                                         className="rounded-circle avatar"
@@ -249,7 +250,7 @@ if(loading)return <ProductRequestSkeleton/>
                                                     {product.userId.name} {product.userId.lastName}</td>
                                                 <td>
                                                     <img
-                                                        src={`${BASE_URL}${product.mainImage}`}
+                                                        src={getImageUrl(product.mainImage)}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         onClick={() => handleImageClick(product)}
@@ -435,7 +436,7 @@ if(loading)return <ProductRequestSkeleton/>
 
                         {/* Image */}
                         <img
-                            src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+                            src={getImageUrl(currentImages[currentImageIndex])}
                             alt="Popup"
                             style={{
                                 width: '100%',

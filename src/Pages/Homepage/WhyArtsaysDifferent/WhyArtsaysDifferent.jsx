@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import WhyArtsaysDiffSkeleton from "../../../Component/Skeleton/WhyArtsaysDiffSkeleton";
 import { ChevronRight } from "lucide-react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const WhyArtsaysDifferent = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,7 +79,7 @@ const WhyArtsaysDifferent = () => {
                 >
                   {/* Inner Glass Glow */}
                   <img 
-                    src={`${imageBaseURL}/${card.icon}`} 
+                    src={getImageUrl(card.icon)} 
                     alt={card.title} 
                     className="w-12 h-12 relative z-20" 
                   />

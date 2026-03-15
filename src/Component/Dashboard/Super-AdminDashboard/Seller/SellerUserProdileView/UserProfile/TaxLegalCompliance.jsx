@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../../api/getAPI';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 const TaxLegalCompliance = ({ userId }) => {
     const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const TaxLegalCompliance = ({ userId }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
 
     useEffect(() => {
@@ -63,18 +64,18 @@ const TaxLegalCompliance = ({ userId }) => {
         if (typeof fileOrUrl === 'string') {
             if (fileOrUrl.includes('.pdf')) {
                 return (
-                    <a href={`${BASE_URL}${fileOrUrl}`} target="_blank" rel="noopener noreferrer" className="btn btn-info">
+                    <a href={getImageUrl(fileOrUrl)} target="_blank" rel="noopener noreferrer" className="btn btn-info">
                         View PDF
                     </a>
                 );
             } else {
                 return (
                     <img
-                        src={`${BASE_URL}${fileOrUrl}`}
+                        src={getImageUrl(fileOrUrl)}
                         alt="Uploaded Document"
                         className="img-thumbnail"
                         width="100"
-                        onClick={() => openModal(`${BASE_URL}${fileOrUrl}`)}
+                        onClick={() => openModal(getImageUrl(fileOrUrl))}
                         style={{ cursor: 'pointer' }}
                     />
                 );

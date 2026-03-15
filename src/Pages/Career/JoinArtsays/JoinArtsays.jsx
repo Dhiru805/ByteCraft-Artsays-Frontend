@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import getAPI from "../../../api/getAPI"; 
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const JoinArtsays = () => {
   const [page, setPage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const base = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const base = getImageUrl(null);
 
   useEffect(() => {
     const fetchData = async () => {

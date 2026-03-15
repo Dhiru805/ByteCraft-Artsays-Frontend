@@ -5,6 +5,7 @@ import getAPI from "../../../../api/getAPI";
 import axiosInstance from "../../../../api/axiosConfig";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const CertificationTable = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const CertificationTable = () => {
   const [pagesPerPage, setPagesPerPage] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState(null);
-const[loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true);
 
   const fetchPages = async () => {
     try {
@@ -30,8 +31,8 @@ const[loading,setLoading]=useState(true);
         err.response?.data?.message || "Failed to fetch certification pages"
       );
       setPages([]);
-    }finally{
-setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,7 +86,7 @@ setLoading(false)
     }
   };
 
-  if(loading)return <ProductRequestSkeleton/>
+  if (loading) return <ProductRequestSkeleton />;
   return (
     <div className="container-fluid">
       <div className="block-header">
@@ -163,9 +164,9 @@ setLoading(false)
                         <td>{page.section1?.cards?.length || 0}</td>
                         <td>{page.section2?.cards?.length || 0}</td>
                         <td>
-                          {page.certificateSection?.image ? (
+                          {page.certificatesection?.image ? (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${page.certificateSection.image}`}
+                                src={getImageUrl(page.certificatesection.image)}
                               alt="cert"
                               style={{
                                 width: 60,

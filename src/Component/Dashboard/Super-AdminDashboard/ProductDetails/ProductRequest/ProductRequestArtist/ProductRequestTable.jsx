@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
@@ -120,7 +121,7 @@ const ProductRequest = () => {
                                                 <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                                                 <td>
                                                     <img
-                                                        src={product.userId.profilePhoto ? `${BASE_URL}${product.userId.profilePhoto}` : 'DashboardAssets/assets/images/user.png'}
+                                                        src={product.userId.profilePhoto ? getImageUrl(product.userId.profilePhoto) : 'DashboardAssets/assets/images/user.png'}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         style={{ width: '30px', height: '30px', objectFit: 'cover', marginRight: '10px' }}

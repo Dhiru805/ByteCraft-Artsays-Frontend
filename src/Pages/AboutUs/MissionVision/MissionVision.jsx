@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const MissionVision = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || `${window.location.origin}/uploads`;
+
 
   useEffect(() => {
     const fetchMissionVision = async () => {
@@ -39,7 +39,7 @@ const MissionVision = () => {
       {data.cards?.map((card, index) => {
         const isImageLeft = index % 2 === 0; // Alternating with WhoWeAre (img left) and WhatWeDo (img right)
 
-        const base = (imageBaseURL || "").replace(/\/+$/, "");
+        const base = (getImageUrl || "").replace(/\/+$/, "");
         const normalize = (p) => (p || "").replace(/\\/g, "/");
         const stripUploads = (p) => p.replace(/^uploads\//, "");
         const buildUrl = (p) => {
