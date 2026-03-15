@@ -55,43 +55,39 @@ pipeline {
             }
         }
 
-        stage('Sync index.html to backend') {
+        stage('Sync index.html to host volume') {
             steps {
-                echo 'Copying fresh index.html (with new JS hash) from frontend container into backend container...'
+                echo 'Copying fresh index.html from frontend container to HOST path /var/www/artsays/frontend/index.html...'
                 sh '''
-                # Extract the freshly built index.html from the new container
+                # Extract the freshly built index.html from the new nginx container
                 docker cp artsays-frontend-container:/usr/share/nginx/html/index.html /tmp/artsays-index.html
 
-                # Verify SEO placeholders are present
-                grep -c "__META_TITLE__" /tmp/artsays-index.html && echo "OK - placeholders present" || {
-                    echo "ERROR - __META_TITLE__ placeholder missing from index.html!"
-                    echo "First 300 chars:"
-                    head -c 300 /tmp/artsays-index.html
+                # Verify SEO placeholders are present — fail loudly if missing
+                grep -q "__META_TITLE__" /tmp/artsays-index.html && echo "OK - placeholders present" || {
+                    echo "ERROR - __META_TITLE__ placeholder missing from index.html! Aborting."
+                    head -c 500 /tmp/artsays-index.html
                     exit 1
                 }
 
-                # Inject into the running backend container
-                if docker inspect artsays-backend-container >/dev/null 2>&1; then
-                    docker exec artsays-backend-container mkdir -p /var/www/artsays/frontend 2>/dev/null || true
-                    docker cp /tmp/artsays-index.html artsays-backend-container:/var/www/artsays/frontend/index.html
-                    echo "Injected fresh index.html into backend container"
-                else
-                    echo "Backend container not running — skipping inject"
-                fi
+                # Write to the HOST directory that the backend container volume-mounts.
+                # The backend Jenkinsfile mounts  -v /var/www/artsays/frontend:/var/www/artsays/frontend:ro
+                # so writing here is the ONLY way the backend sees the new index.html.
+                mkdir -p /var/www/artsays/frontend
+                cp /tmp/artsays-index.html /var/www/artsays/frontend/index.html
+                echo "Wrote new index.html to host path /var/www/artsays/frontend/index.html"
+                cat /var/www/artsays/frontend/index.html | grep -o "main\.[a-f0-9]*\.js" | head -1 || true
                 '''
             }
         }
 
         stage('Clear Backend Prerender Cache') {
             steps {
-                echo 'Clearing backend prerender cache so new index.html (with new JS hash) is picked up immediately...'
+                echo 'Clearing in-memory prerender cache so backend picks up the new index.html immediately...'
                 sh '''
-                # Run curl from inside the frontend container (which is on artsays-network)
-                # so it can reach the backend container by its Docker hostname.
-                docker exec artsays-frontend-container \
-                  wget -qO- --post-data="" http://artsays-backend-container:3001/__prerender-cache-clear \
+                # Use curl from the Jenkins host — backend is bound to 127.0.0.1:3001 on the host
+                curl -s -X POST http://127.0.0.1:3001/__prerender-cache-clear \
                   && echo "Cache cleared successfully" \
-                  || echo "Cache-clear request failed — backend may still be starting up. Next request will reload index.html from disk."
+                  || echo "Cache-clear failed (backend may be restarting) — will auto-reload on next request"
                 '''
             }
         }
