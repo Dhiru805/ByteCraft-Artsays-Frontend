@@ -8,11 +8,13 @@ import Settings from './UserInfo/BasicInformation';
 import putAPI from '../../../../api/putAPI';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import { getImageUrl } from '../../../../utils/getImageUrl';
+import { useAuth } from '../../../../AuthContext';
 
 
 const UserProfileForm = () => {
   const location = useLocation();
-  const userId = location.state?._id;
+  const { userId: authUserId } = useAuth();
+  const userId = location.state?._id || authUserId || localStorage.getItem('userId');
   const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
