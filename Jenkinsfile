@@ -69,12 +69,13 @@ pipeline {
                     exit 1
                 }
 
-                # Write to the HOST directory that the backend container volume-mounts.
-                # The backend Jenkinsfile mounts  -v /var/www/artsays/frontend:/var/www/artsays/frontend:ro
-                # so writing here is the ONLY way the backend sees the new index.html.
-                mkdir -p /var/www/artsays/frontend
-                cp /tmp/artsays-index.html /var/www/artsays/frontend/index.html
-                echo "Wrote new index.html to host path /var/www/artsays/frontend/index.html"
+                  # Write to the HOST directory that the backend container volume-mounts.
+                  # The backend Jenkinsfile mounts  -v /var/www/artsays/frontend:/var/www/artsays/frontend:ro
+                  # so writing here is the ONLY way the backend sees the new index.html.
+                  sudo mkdir -p /var/www/artsays/frontend
+                  sudo cp /tmp/artsays-index.html /var/www/artsays/frontend/index.html
+                  sudo chown jenkins:jenkins /var/www/artsays/frontend/index.html
+                  echo "Wrote new index.html to host path /var/www/artsays/frontend/index.html"
                   grep -o 'main[.][a-f0-9]*[.]js' /var/www/artsays/frontend/index.html | head -1 || true
                 '''
             }
