@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import ChatBox from "./ChatBox";
 import axios from "axios";
 
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:3001";
+
 const ChatIcon = () => {
   const [open, setOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(() => {
@@ -29,7 +31,7 @@ const ChatIcon = () => {
 
     const fetchHistory = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:3001/api/gemini/session/${sid}`);
+          const { data } = await axios.get(`${API_BASE}/api/gemini/session/${sid}`);
         if (data?.messages?.length > 0) {
           const formatted = data.messages.map(m => ({
             sender: m.role === 'arty' ? 'bot' : 'user',
@@ -54,7 +56,7 @@ const ChatIcon = () => {
     try {
       const sid = sessionId || localStorage.getItem("arty_session_id");
       if (sid) {
-        await axios.post("http://localhost:3001/api/gemini/close-session", { sessionId: sid });
+          await axios.post(`${API_BASE}/api/gemini/close-session`, { sessionId: sid });
       }
     } catch (e) {
       console.warn("ChatIcon: Failed to close session —", e.message);
@@ -138,7 +140,7 @@ const ChatIcon = () => {
           if (userId) {
             try {
               const sid = sessionId || localStorage.getItem("arty_session_id");
-              await axios.post("http://localhost:3001/api/gemini/save-message", {
+                await axios.post(`${API_BASE}/api/gemini/save-message`, {
                 sessionId: sid,
                 role: "arty",
                 text: reminder,

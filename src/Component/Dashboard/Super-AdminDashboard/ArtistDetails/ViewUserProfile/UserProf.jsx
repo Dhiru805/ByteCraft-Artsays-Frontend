@@ -38,7 +38,7 @@ const UserProfileForm = () => {
     }
   }, [artist, userId, navigate]);
 
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState('/DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
     lastName: '',
@@ -77,7 +77,7 @@ const UserProfileForm = () => {
 
         const BASE_URL = getImageUrl(null)
 
-        const profilePhotoUrl = result.data.user.profilePhoto ? getImageUrl(result.data.user.profilePhoto) : 'DashboardAssets/assets/images/user.png';
+        const profilePhotoUrl = result.data.user.profilePhoto ? getImageUrl(result.data.user.profilePhoto) : '/DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {

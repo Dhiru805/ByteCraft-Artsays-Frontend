@@ -15,7 +15,7 @@ const ViewAdminProfileForm = () => {
   const location = useLocation();
   const adminData = location.state?.admin; 
   const navigate = useNavigate(); 
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState('/DashboardAssets/assets/images/user.png');
   const [profileData, setProfileData] = useState({
     name: '',
     lastName: '',

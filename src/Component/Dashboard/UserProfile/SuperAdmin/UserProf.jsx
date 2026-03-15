@@ -17,7 +17,7 @@ const UserProfileForm = () => {
   const userId = location.state?._id || authUserId || localStorage.getItem('userId');
   const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState('/DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -57,7 +57,7 @@ const UserProfileForm = () => {
         });
 
         const BASE_URL = getImageUrl(null);
-        const profilePhotoUrl = result.data.user.profilePhoto ? getImageUrl(result.data.user.profilePhoto) : 'DashboardAssets/assets/images/user.png';
+        const profilePhotoUrl = result.data.user.profilePhoto ? getImageUrl(result.data.user.profilePhoto) : '/DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {

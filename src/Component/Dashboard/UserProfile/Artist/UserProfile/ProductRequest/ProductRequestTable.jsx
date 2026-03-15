@@ -145,7 +145,7 @@ const ProductRequest = ({userId}) => {
                                                         src={
                                                             product.userId.profilePhoto
                                                                 ? getImageUrl(product.userId.profilePhoto)
-                                                                : 'DashboardAssets/assets/images/user.png'
+                                                                  : '/DashboardAssets/assets/images/user.png'
                                                         }
                                                         className="rounded-circle avatar"
                                                         alt=""
