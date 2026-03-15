@@ -75,7 +75,7 @@ pipeline {
                 mkdir -p /var/www/artsays/frontend
                 cp /tmp/artsays-index.html /var/www/artsays/frontend/index.html
                 echo "Wrote new index.html to host path /var/www/artsays/frontend/index.html"
-                cat /var/www/artsays/frontend/index.html | grep -o "main\.[a-f0-9]*\.js" | head -1 || true
+                  grep -o 'main[.][a-f0-9]*[.]js' /var/www/artsays/frontend/index.html | head -1 || true
                 '''
             }
         }
