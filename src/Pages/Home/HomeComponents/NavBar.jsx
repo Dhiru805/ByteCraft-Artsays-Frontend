@@ -687,7 +687,7 @@ const NavBar = () => {
       console.warn("Backend logout failed", e);
     }
     logout();
-    window.location.href = "/";
+    navigate("/login", { replace: true });
   };
 
   const [megaLeft, setMegaLeft] = useState(0);

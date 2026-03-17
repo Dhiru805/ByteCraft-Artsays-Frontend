@@ -18,18 +18,19 @@ const HowToSell = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) return;
 
-        const sectionRes = await getAPI(
-          `/api/homepage-sections/how-to-sell/${homepage._id}`
-        );
-        if (!sectionRes.data.success) throw new Error("How To Sell not found");
+          const sectionRes = await getAPI(
+            `/api/homepage-sections/how-to-sell/${homepage._id}`
+          );
+          if (!sectionRes?.data?.success) return;
 
-        setData(sectionRes.data.data);
-      } catch (err) {
+          setData(sectionRes.data.data);
+        } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);

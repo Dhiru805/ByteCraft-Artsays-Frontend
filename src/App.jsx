@@ -14,72 +14,72 @@ import FeedbackPopup from "./Component/FeedbackPopup/FeedbackPopup";
 import { HelmetProvider } from "react-helmet-async";
 import { io } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
+import { onSessionRevoked } from "./auth/SessionOrchestrator";
+import SessionBanner from "./Component/SessionBanner/SessionBanner";
 
 const AppContent = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+    if (!isAuthenticated) return;
 
-      try {
-        const decoded = jwtDecode(token);
-        const sessionId = decoded.sessionId;
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-        if (sessionId) {
-          const socket = io(process.env.REACT_APP_API_URL || "http://localhost:3001");
+    let socket;
+    try {
+      const decoded = jwtDecode(token);
+      const sessionId = decoded.sessionId;
 
-          socket.on("connect", () => {
-            socket.emit("joinSessionRoom", sessionId);
+      if (sessionId) {
+        socket = io(process.env.REACT_APP_API_URL || "http://localhost:3001");
+
+        socket.on("connect", () => {
+          socket.emit("joinSessionRoom", sessionId);
+        });
+
+        socket.on("sessionRevoked", (data) => {
+          console.warn("[Socket] Session revoked:", data.message);
+
+          // Notify the orchestrator — it handles storage clearing + state transition
+          onSessionRevoked();
+
+          toast.error(data.message || "Your session has been revoked. Logging out...", {
+            autoClose: 3000,
           });
-
-          socket.on("sessionRevoked", (data) => {
-            console.warn("Session revoked via Socket.IO:", data.message);
-            
-            // Clear data and state using the safe logout function
-            logout(); 
-
-            toast.error(data.message || "Your session has been revoked. Logging out...", {
-              autoClose: 3000,
-            });
-            
-            setTimeout(() => {
-              window.location.href = "/login";
-            }, 1500);
-          });
-
-          return () => {
-            socket.disconnect();
-          };
-        }
-      } catch (error) {
-        console.error("Error setting up session socket:", error);
+        });
       }
+    } catch (error) {
+      console.error("Error setting up session socket:", error);
     }
-  }, [isAuthenticated, logout]);
+
+    return () => {
+      if (socket) socket.disconnect();
+    };
+  }, [isAuthenticated]);
 
   return (
-      <div className="App">
-          <Routes />
-            <ToastContainer
-              position="top-right"
-              autoClose={4000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-              limit={5}
-            />
+    <div className="App">
+      <SessionBanner />
+      <Routes />
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        limit={5}
+      />
       <CookieConsent />
       <ChatIcon />
       <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />
-        <FeedbackPopup />
+      <FeedbackPopup />
     </div>
   );
 };
@@ -89,7 +89,7 @@ function App() {
     <React.StrictMode>
       <HelmetProvider>
         <BrowserRouter>
-         <ScrollToTop />
+          <ScrollToTop />
           <AuthProvider>
             <CookiesProvider>
               <AppContent />

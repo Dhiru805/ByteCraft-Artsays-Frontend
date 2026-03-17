@@ -561,19 +561,19 @@ const DiscoverArtist = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) return;
 
-        const sectionRes = await getAPI(
-          `/api/homepage-sections/discover-artist/${homepage._id}`
-        );
-        if (!sectionRes.data.success || !sectionRes.data.data)
-          throw new Error("Discover Artist section not found");
+          const sectionRes = await getAPI(
+            `/api/homepage-sections/discover-artist/${homepage._id}`
+          );
+          if (!sectionRes?.data?.success || !sectionRes?.data?.data) return;
 
-        setData(sectionRes.data.data);
-      } catch (err) {
+          setData(sectionRes.data.data);
+        } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);

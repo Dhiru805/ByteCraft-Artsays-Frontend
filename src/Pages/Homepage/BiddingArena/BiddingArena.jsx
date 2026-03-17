@@ -12,7 +12,7 @@ const BiddingArena = () => {
   const [highestLiveBid, setHighestLiveBid] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate();
 
   /* ---------------- STATUS HELPERS ---------------- */
   const getFinalStatus = (item) => {
@@ -47,17 +47,19 @@ const BiddingArena = () => {
   /* ---------------- FETCH HOME + BIDS ---------------- */
   useEffect(() => {
     const fetchAll = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) return;
 
-        const [arenaRes, bidRes, badgeRes] = await Promise.all([
-          getAPI(`/api/homepage-sections/bidding-arena/${homepage._id}`),
-          getAPI("/api/bidding/products/all", {}, true, false),
-          getAPI(`/api/products/approved-with-badges`, {}, true, false),
-        ]);
+          const [arenaRes, bidRes, badgeRes] = await Promise.all([
+            getAPI(`/api/homepage-sections/bidding-arena/${homepage._id}`),
+            getAPI("/api/bidding/products/all", {}, true, false),
+            getAPI(`/api/products/approved-with-badges`, {}, true, false),
+          ]);
 
-        setData(arenaRes.data.data);
+          if (arenaRes?.data?.data) setData(arenaRes.data.data);
 
         const list = Array.isArray(bidRes?.data) ? bidRes.data : [];
         const badgeData = badgeRes?.data?.data || [];

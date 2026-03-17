@@ -30,7 +30,7 @@ const useDebounce = (value, delay) => {
   return debouncedValue;
 };
 
-const BrowseCategories = () => {
+const BrowseCategories = ({ homepageId: homepageIdProp }) => {
   const [data, setData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -147,13 +147,19 @@ const BrowseCategories = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
+        // Use homepageId from parent if available, otherwise fetch it
+        let id = homepageIdProp;
+        if (!id) {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          id = pageRes?.data?.data?._id;
+        }
+        if (!id) return;
 
-        const sectionRes = await getAPI(
-          `/api/homepage-sections/browse-categories/${homepage._id}`
-        );
-        setData(sectionRes.data.data || {});
+          const sectionRes = await getAPI(
+            `/api/homepage-sections/browse-categories/${id}`
+          );
+          setData(sectionRes?.data?.data || {});
 
         const [res1, res2, ratingRes, badgeRes] = await Promise.all([
           getAPI("/api/getstatusapprovedproduct", {}, true, false),
@@ -198,8 +204,8 @@ const BrowseCategories = () => {
 
         setAllProducts(finalProducts);
 
-        const catRes = await getAPI("/api/all");
-        const allCats = catRes.data.data || [];
+          const catRes = await getAPI("/api/all");
+          const allCats = catRes?.data?.data || [];
 
         const usedIds = new Set(
           finalProducts.map((p) => p.category?.toString())
@@ -228,8 +234,10 @@ const BrowseCategories = () => {
       }
     };
 
-    fetchData();
-  }, []);
+    // Wait for homepageId from parent before fetching
+    if (homepageIdProp !== undefined && homepageIdProp === null) return;
+      fetchData();
+    }, [homepageIdProp]);
 
   const ensureBuyer = () => {
     if (userType !== "Buyer") {
@@ -300,7 +308,7 @@ const BrowseCategories = () => {
     fetchWishlist();
   }, [userId]);
 
-  if (loading) return <div><BrowserCategorySkeleton /></div>;
+  if (loading) return <BrowserCategorySkeleton />;
   if (!data) return null;
 
   return (

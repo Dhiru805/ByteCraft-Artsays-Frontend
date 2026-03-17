@@ -1,156 +1,103 @@
-// src/AuthContext.js
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
-import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
-import Axios from "./api/axiosConfig";
+// src/AuthContext.jsx
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import {
+  SESSION_STATE,
+  subscribe,
+  getState,
+  onLoginSuccess,
+  onLogout,
+  initSession,
+} from "./auth/SessionOrchestrator";
 
 const AuthContext = createContext();
 
-const baseURL = process.env.REACT_APP_API_URL || "http://localhost:3001";
-const apiBase = baseURL.endsWith("/api") ? baseURL : `${baseURL}/api`;
-
 export const AuthProvider = ({ children }) => {
-  const [userType, setUserType] = useState(
-    () => localStorage.getItem("userType") || null
-  );
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => !!localStorage.getItem("token")
-  );
-  const [status, setStatus] = useState(
-    () => localStorage.getItem("status") || null
-  );
-  const [userrole, setUserrole] = useState(
-    () => localStorage.getItem("userrole") || null
-  );
-  const [userId, setUserId] = useState(
-    () => localStorage.getItem("userId") || null
-  );
+  const [sessionState, setSessionState] = useState(() => getState());
 
-  // Refresh lock — prevents simultaneous refresh calls
-  const isRefreshingRef = useRef(false);
-  // Timer ref — so we can always clear the previous timer before setting a new one
-  const refreshTimerRef = useRef(null);
+  // Derive isAuthenticated from the state machine.
+  // REAUTH_REQUIRED is intentionally included — it means the session refresh
+  // is failing but the user has NOT explicitly logged out. Keep them in the
+  // app so the orchestrator can keep retrying silently.
+  // Only LOGGED_OUT (explicit user action) removes authenticated status.
+  const isAuthenticated = sessionState === SESSION_STATE.AUTHENTICATED ||
+                          sessionState === SESSION_STATE.REFRESHING    ||
+                          sessionState === SESSION_STATE.SOFT_EXPIRED  ||
+                          sessionState === SESSION_STATE.REAUTH_REQUIRED;
 
+  // These stay in state so consumers can derive UI from them
+  const [userType,  setUserType]  = useState(() => localStorage.getItem("userType") || null);
+  const [status,    setStatus]    = useState(() => localStorage.getItem("status")   || null);
+  const [userrole,  setUserrole]  = useState(() => localStorage.getItem("userrole") || null);
+  const [userId,    setUserId]    = useState(() => localStorage.getItem("userId")   || null);
+
+  // ── Subscribe to SessionOrchestrator state changes ─────────────────────────
+  useEffect(() => {
+    const unsub = subscribe(({ state }) => {
+      setSessionState(state);
+    });
+    // Boot: restore session from localStorage
+    initSession();
+    return unsub;
+  }, []);
+
+  // ── login ───────────────────────────────────────────────────────────────────
+  const login = useCallback((
+    token, type, userStatus, username, firstName, lastName,
+    uid, role, refreshTokenValue
+  ) => {
+    localStorage.setItem("token",     token);
+    localStorage.setItem("userType",  type);
+    localStorage.setItem("status",    userStatus);
+    localStorage.setItem("username",  username);
+    localStorage.setItem("firstName", firstName);
+    localStorage.setItem("lastName",  lastName);
+    localStorage.setItem("userId",    uid);
+    localStorage.setItem("userrole",  role);
+    if (refreshTokenValue) localStorage.setItem("refreshToken", refreshTokenValue);
+
+    setUserType(type);
+    setStatus(userStatus);
+    setUserrole(role);
+    setUserId(uid);
+
+    // Hand control to the orchestrator
+    onLoginSuccess(token, refreshTokenValue);
+  }, []);
+
+  // ── logout ──────────────────────────────────────────────────────────────────
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userType");
-    localStorage.removeItem("email");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("rememberMe");
-    localStorage.removeItem("rememberedEmailOrPhone");
-    localStorage.removeItem("rememberedPassword");
-    localStorage.removeItem("status");
-    localStorage.removeItem("userrole");
-    localStorage.removeItem("username");
-    localStorage.removeItem("firstName");
-    localStorage.removeItem("lastName");
-
     setUserType(null);
     setStatus(null);
     setUserrole(null);
     setUserId(null);
-    setIsAuthenticated(false);
+    // Orchestrator clears localStorage and transitions state
+    onLogout();
   }, []);
 
-  const refreshToken = useCallback(async () => {
-    // Prevent double refresh calls
-    if (isRefreshingRef.current) return null;
-    isRefreshingRef.current = true;
-
-    try {
-      const storedRefreshToken = localStorage.getItem("refreshToken");
-      const refreshRes = await Axios.post(
-        `${apiBase}/user/refresh`,
-        storedRefreshToken ? { refreshToken: storedRefreshToken } : {},
-        { withCredentials: true, headers: { "X-Requested-With": "XMLHttpRequest" } }
-      );
-      const { accessToken, refreshToken: newRefreshToken } = refreshRes.data;
-      localStorage.setItem("token", accessToken);
-      if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
-
-      // DO NOT call setIsAuthenticated(true) here — it would re-trigger the useEffect timer
-      // Schedule next refresh based on the new token
-      scheduleTokenRefresh(accessToken);
-
-      return accessToken;
-    } catch (error) {
-      console.error("Failed to refresh token", error?.response?.data || error?.message || error);
-      logout();
-      return null;
-    } finally {
-      isRefreshingRef.current = false;
-    }
-  }, [logout]);
-
-  // Schedules (or re-schedules) the silent refresh timer for a given token
-  const scheduleTokenRefresh = useCallback((token) => {
-    // Always clear any existing timer first
-    if (refreshTimerRef.current) {
-      clearTimeout(refreshTimerRef.current);
-      refreshTimerRef.current = null;
-    }
-
-    if (!token) return;
-
-    try {
-      const decoded = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
-      const expiresIn = decoded.exp - currentTime;
-
-      if (expiresIn <= 0) {
-        // Token already expired — refresh immediately
-        refreshToken();
-        return;
-      }
-
-      // Refresh 60s before expiry, minimum 0ms delay
-      const delay = Math.max((expiresIn - 60) * 1000, 0);
-      refreshTimerRef.current = setTimeout(() => {
-        refreshToken();
-      }, delay);
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      logout();
-    }
-  }, [refreshToken, logout]);
-
-  // Run once on mount — set up timer based on whatever token is in storage
+  // ── Keep local state in sync when storage changes (multi-tab) ──────────────
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      scheduleTokenRefresh(token);
-    }
-
-    return () => {
-      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    const onStorage = () => {
+      setUserType(localStorage.getItem("userType") || null);
+      setStatus(localStorage.getItem("status")     || null);
+      setUserrole(localStorage.getItem("userrole") || null);
+      setUserId(localStorage.getItem("userId")     || null);
     };
-  }, []); // ← empty deps: runs only once on mount, never re-triggered by state changes
-
-  const login = (token, type, userStatus, username, firstName, lastName, userId, userrole, refreshTokenValue) => {
-    localStorage.setItem("token", token);
-    if (refreshTokenValue) localStorage.setItem("refreshToken", refreshTokenValue);
-    localStorage.setItem("userType", type);
-    localStorage.setItem("status", userStatus);
-    localStorage.setItem("username", username);
-    localStorage.setItem("firstName", firstName);
-    localStorage.setItem("lastName", lastName);
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("userrole", userrole);
-
-    setIsAuthenticated(true);
-    setUserType(type);
-    setStatus(userStatus);
-    setUserrole(userrole);
-    setUserId(userId);
-
-    // Schedule refresh timer for the new token
-    scheduleTokenRefresh(token);
-  };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, userType, status, userrole, userId, login, logout, refreshToken }}
+      value={{
+        isAuthenticated,
+        sessionState,
+        userType,
+        status,
+        userrole,
+        userId,
+        login,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

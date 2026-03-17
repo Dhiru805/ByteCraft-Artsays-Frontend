@@ -24,36 +24,43 @@ const HomeChallenges = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+      const fetchAllData = async () => {
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) {
+            setLoading(false);
+            return;
+          }
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) {
+            setLoading(false);
+            return;
+          }
 
-        const challengesRes = await getAPI(
-          `/api/homepage-sections/challenges/${homepage._id}`
-        );
-        if (challengesRes.data.success && challengesRes.data.data) {
-          setHomepageChallenges(challengesRes.data.data);
-        }
+          const challengesRes = await getAPI(
+            `/api/homepage-sections/challenges/${homepage._id}`
+          );
+          if (challengesRes?.data?.success && challengesRes?.data?.data) {
+            setHomepageChallenges(challengesRes.data.data);
+          }
 
-        const detailedRes = await getAPI("/api/getchallengedata");
-        if (detailedRes?.hasError === false && detailedRes?.data?.data?.challenges) {
-          const allChallenges = detailedRes?.data?.data?.challenges || [];
-          const liveChallenges = allChallenges.filter(challenge => challenge.status === "live");
-          const sortedChallenges = liveChallenges.sort((a, b) => {
-            const dateA = new Date(a.createdAt);
-            const dateB = new Date(b.createdAt);
-            return dateB - dateA;
-          });
-          setDetailedChallenges(sortedChallenges.length > 0 ? [sortedChallenges[0]] : []);
+          const detailedRes = await getAPI("/api/getchallengedata");
+          if (detailedRes?.hasError === false && detailedRes?.data?.data?.challenges) {
+            const allChallenges = detailedRes?.data?.data?.challenges || [];
+            const liveChallenges = allChallenges.filter(challenge => challenge.status === "live");
+            const sortedChallenges = liveChallenges.sort((a, b) => {
+              const dateA = new Date(a.createdAt);
+              const dateB = new Date(b.createdAt);
+              return dateB - dateA;
+            });
+            setDetailedChallenges(sortedChallenges.length > 0 ? [sortedChallenges[0]] : []);
+          }
+        } catch (err) {
+          console.error("Error fetching HomeChallenges data:", err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error fetching HomeChallenges data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
     fetchAllData();
   }, []);

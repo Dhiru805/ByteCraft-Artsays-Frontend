@@ -6,7 +6,7 @@ import HeroSectionSkeleton from "../../../Component/Skeleton/HeroSectionSkeleton
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import { getImageUrl } from '../../../utils/getImageUrl';
 
-const Hero = () => {
+const Hero = ({ homepageId: homepageIdProp, onReady }) => {
   const navigate = useNavigate();
   const [heroData, setHeroData] = useState(null);
   const [tags, setTags] = useState([]);
@@ -32,31 +32,39 @@ const Hero = () => {
 
   useEffect(() => {
     const fetchHero = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+        try {
+          // Use the homepageId passed from parent if available, otherwise fetch it
+          let id = homepageIdProp;
+          if (!id) {
+            const pageRes = await getAPI("/api/homepage/published");
+            if (!pageRes) return;
+            id = pageRes?.data?.data?._id;
+          }
+          if (!id) return;
 
-        const heroRes = await getAPI(
-          `/api/homepage-sections/hero/${homepage._id}`
-        );
-        if (!heroRes.data.success || !heroRes.data.data)
-          throw new Error("Hero section not found");
+          const heroRes = await getAPI(
+            `/api/homepage-sections/hero/${id}`
+          );
+          if (!heroRes?.data?.success || !heroRes?.data?.data) return;
 
-        setHeroData(heroRes.data.data);
+          setHeroData(heroRes.data.data);
 
-        const tagsRes = await getAPI(
-          `/api/homepage-sections/hero-browse-categories/getTags/${homepage._id}`
-        );
-        if (tagsRes.data.success) setTags(tagsRes.data.data);
-      } catch (err) {
+          const tagsRes = await getAPI(
+            `/api/homepage-sections/hero-browse-categories/getTags/${id}`
+          );
+          if (tagsRes?.data?.success) setTags(tagsRes.data.data);
+        } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
+        onReady?.();
       }
     };
+    // If homepageIdProp is explicitly passed (even null initially), wait for it
+    // Only skip waiting if it's already a valid ID or we have no prop at all
+    if (homepageIdProp !== undefined && homepageIdProp === null) return;
     fetchHero();
-  }, []);
+  }, [homepageIdProp]);
 
   useEffect(() => {
     if (!heroData?.recurrentTitles?.length) return;
@@ -188,7 +196,7 @@ const Hero = () => {
 
   if (loading)
     return (
-      <div className="h-[600px] flex items-center justify-center">
+      <div className="flex items-center justify-center">
         <HeroSectionSkeleton />
       </div>
     );

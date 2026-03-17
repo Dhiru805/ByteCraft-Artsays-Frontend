@@ -1,0 +1,226 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@400;500;600&display=swap');
+
+/* ── Shared banner base ───────────────────────────────────────────────── */
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 13px 24px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── Yellow / Reconnecting banner ────────────────────────────────────── */
+.bannerYellow {
+  background: linear-gradient(135deg, #92600a 0%, #b8860b 50%, #8b6914 100%);
+  border-bottom: 1px solid rgba(255, 220, 100, 0.3);
+  box-shadow:
+    0 4px 24px rgba(139, 105, 20, 0.35),
+    0 1px 0 rgba(255, 220, 100, 0.15) inset;
+  color: #fff9ed;
+}
+
+/* ── Red / Reauth banner ─────────────────────────────────────────────── */
+.bannerRed {
+  background: linear-gradient(135deg, #6b1a1a 0%, #9b2222 50%, #7f1d1d 100%);
+  border-bottom: 1px solid rgba(255, 180, 180, 0.2);
+  box-shadow:
+    0 4px 24px rgba(154, 28, 28, 0.4),
+    0 1px 0 rgba(255, 180, 180, 0.1) inset;
+  color: #fff5f5;
+}
+
+/* ── Left ornament line ──────────────────────────────────────────────── */
+.banner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+}
+
+.bannerYellow::before {
+  background: linear-gradient(180deg, #ffd700, #f59e0b);
+}
+
+.bannerRed::before {
+  background: linear-gradient(180deg, #fca5a5, #ef4444);
+}
+
+/* ── Spinner icon ────────────────────────────────────────────────────── */
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 249, 237, 0.3);
+  border-top-color: #ffd700;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Alert icon ──────────────────────────────────────────────────────── */
+.alertIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 245, 245, 0.4);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fca5a5;
+  flex-shrink: 0;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.7; transform: scale(1.1); }
+}
+
+/* ── Message text ────────────────────────────────────────────────────── */
+.message {
+  line-height: 1.4;
+}
+
+.messageStrong {
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.messageSub {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-left: 4px;
+}
+
+/* ── Countdown dots ──────────────────────────────────────────────────── */
+.dots span {
+  display: inline-block;
+  animation: dotBounce 1.4s ease-in-out infinite both;
+  font-size: 16px;
+  line-height: 1;
+}
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40%           { opacity: 1;   transform: translateY(-3px); }
+}
+
+/* ── Sign-in button ──────────────────────────────────────────────────── */
+.signInBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 18px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.signInBtn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.signInBtn:active {
+  transform: translateY(0);
+}
+
+/* ── Progress bar (red banner countdown) ────────────────────────────── */
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #fca5a5, #f87171);
+  animation: countdown 2.5s linear forwards;
+  border-radius: 0 2px 2px 0;
+}
+
+@keyframes countdown {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* ── Shimmer overlay ─────────────────────────────────────────────────── */
+.banner::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; right: 0; bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  animation: shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0%   { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .banner {
+    padding: 11px 16px;
+    font-size: 13px;
+    gap: 8px;
+  }
+  .messageSub {
+    display: none;
+  }
+  .signInBtn {
+    padding: 5px 14px;
+    font-size: 12px;
+  }
+}

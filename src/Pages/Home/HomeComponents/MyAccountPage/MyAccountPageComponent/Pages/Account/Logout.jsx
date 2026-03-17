@@ -1,15 +1,20 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../../../../AuthContext";
+import axiosInstance from "../../../../../../../api/axiosConfig";
 
 const Logout = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userType");
-    localStorage.removeItem("email");
-    localStorage.removeItem("username");
-    localStorage.removeItem("firstName");
-    localStorage.removeItem("lastName");
-    window.location.href = "/";
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/user/logout");
+    } catch (e) {
+      console.warn("Backend logout failed", e);
+    }
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
