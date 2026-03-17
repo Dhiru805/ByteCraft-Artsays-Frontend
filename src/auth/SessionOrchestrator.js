@@ -226,6 +226,12 @@ async function _handleRefreshError(err) {
   // The refresh cookie is gone, malformed, or the session was deleted from DB.
   // There is nothing to recover — retrying will only get 401 again forever.
   // Go to LOGGED_OUT so the login page is shown.
+  //
+  // Race-condition guard: if a manual login() completed while this refresh
+  // was in-flight, state is already AUTHENTICATED — don't override it.
+  if (_state === SESSION_STATE.AUTHENTICATED) {
+    throw err;
+  }
   _clearStorage();
   _setState(SESSION_STATE.LOGGED_OUT);
   throw err;
@@ -281,18 +287,26 @@ export function initSession() {
   if (_sessionInitialized) return;
   _sessionInitialized = true;
 
-  const token = localStorage.getItem("token");
+  const token        = localStorage.getItem("token");
+  const refreshToken = localStorage.getItem("refreshToken");
+
   if (!token) {
-    // No access token in storage — but a valid refresh cookie may still exist
-    // (e.g. after an auto-logout or a previous logout that didn't clear the cookie).
-    // Attempt a silent refresh; if it fails the error handler will retry or
-    // eventually settle at SOFT_EXPIRED (which still keeps isAuthenticated true).
-    _setState(SESSION_STATE.SOFT_EXPIRED);
-    doRefresh().catch(() => {
-      // If refresh also fails (no cookie, network error, etc.), go LOGGED_OUT
-      // so the UI correctly shows the login prompt.
+    if (!refreshToken) {
+      // Neither access token nor refresh token in storage — the user is
+      // genuinely logged out (either first visit or after a proper logout
+      // which calls _clearStorage()).  Do NOT hit the refresh endpoint:
+      // that would silently re-authenticate via a lingering HTTP-only
+      // cookie the user didn't ask to use.
       _setState(SESSION_STATE.LOGGED_OUT);
-    });
+      return;
+    }
+
+    // Access token is missing but a refresh token is present in storage,
+    // meaning a real session was active (e.g. token was cleared mid-session
+    // or the tab was closed before the proactive refresh ran).
+    // Attempt a silent refresh; if it fails go LOGGED_OUT.
+    _setState(SESSION_STATE.SOFT_EXPIRED);
+    doRefresh().catch(() => { _setState(SESSION_STATE.LOGGED_OUT); });
     return;
   }
   try {

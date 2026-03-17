@@ -11,6 +11,7 @@ import WebsiteLayout from "../Layouts/WebsiteLayout";
 import PostLive from "../Pages/socialMedia/PostLive";
 import LiveHistory from "../Pages/socialMedia/LiveHistory";
 import { useAuth } from "../AuthContext";
+import { SESSION_STATE } from "../auth/SessionOrchestrator";
 import PreloaderAnimation from "../Pages/Animation/PreloaderAnimation";
 import DeliveryRoutes from "./DeliveryRoutes"
 
@@ -658,9 +659,14 @@ const PrivateRoute = ({ allowedRoles, blockCreatedAdmins, children }) => {
 };
 
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, userType, status: userStatus } = useAuth();
+  const { sessionState, userType, status: userStatus } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Only redirect away from auth pages when the session is fully established.
+  // SOFT_EXPIRED / REFRESHING mean a background refresh is in-flight — the
+  // user may be intentionally visiting /login and should not be bounced away.
+  const fullyAuthenticated = sessionState === SESSION_STATE.AUTHENTICATED;
 
   useEffect(() => {
     const authPages = [
@@ -669,7 +675,7 @@ const PublicRoute = ({ children }) => {
       "/artist-seller-register",
       "/forgotpassword",
     ];
-    if (isAuthenticated && authPages.includes(location.pathname)) {
+    if (fullyAuthenticated && authPages.includes(location.pathname)) {
       if (
         (userType === "Artist" || userType === "Seller") &&
         (userStatus === "Unverified" || userStatus === "Rejected") &&
@@ -682,7 +688,7 @@ const PublicRoute = ({ children }) => {
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [isAuthenticated, userType, userStatus, location.pathname, navigate]);
+  }, [fullyAuthenticated, userType, userStatus, location.pathname, navigate]);
 
   return children ? children : <Outlet />;
 };

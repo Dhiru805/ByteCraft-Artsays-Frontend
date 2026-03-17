@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./LoginStyles.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../AuthContext";
+import { SESSION_STATE } from "../../auth/SessionOrchestrator";
 import postAPI from "../../api/postAPI";
 import VerificationPopup from "./VerificationPopup";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -20,7 +21,7 @@ const Login = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [googlePassword, setGooglePassword] = useState("");
   const navigate = useNavigate();
-  const { login, userType, status: userStatus } = useAuth();
+  const { login, userType, status: userStatus, sessionState } = useAuth();
 
   const normalizeUserType = (userType) => {
     const userTypeMap = {
@@ -38,17 +39,21 @@ const Login = () => {
     return userTypeMap[userType.toLowerCase()] || userType;
   };
 
+  // Load remembered credentials once on mount — no session dependency needed.
   useEffect(() => {
-    console.log("Login component mounted. Initial state:", {
-      userType,
-      userStatus,
-      localStorage: {
-        token: localStorage.getItem("token"),
-        userType: localStorage.getItem("userType"),
-        status: localStorage.getItem("status"),
-        username: localStorage.getItem("username"),
-      },
-    });
+    const savedRememberMe = localStorage.getItem("rememberMe") === "true";
+    if (savedRememberMe) {
+      setRememberMe(true);
+      setInput(localStorage.getItem("rememberedEmailOrPhone") || "");
+      setPassword(localStorage.getItem("rememberedPassword") || "");
+    }
+  }, []);
+
+  // Redirect away from /login only once the session is fully confirmed.
+  // Guarding on SESSION_STATE.AUTHENTICATED prevents premature redirects while
+  // the orchestrator is still refreshing an expired token (SOFT_EXPIRED / REFRESHING).
+  useEffect(() => {
+    if (sessionState !== SESSION_STATE.AUTHENTICATED) return;
 
     const token = localStorage.getItem("token");
     const storedUserType = localStorage.getItem("userType");
@@ -61,26 +66,12 @@ const Login = () => {
       ) {
         setShowPopup(true);
       } else if (storedUserType === "Buyer") {
-        console.log("Navigating to / for Buyer");
-        navigate("/");
-        window.location.reload();
+        navigate("/buyer/dashboard");
       } else {
-        console.log(
-          "Navigating to dashboard:",
-          `/${storedUserType.toLowerCase()}/dashboard`
-        );
         navigate(`/${storedUserType.toLowerCase()}/dashboard`);
-        window.location.reload();
       }
     }
-
-    const savedRememberMe = localStorage.getItem("rememberMe") === "true";
-    if (savedRememberMe) {
-      setRememberMe(true);
-      setInput(localStorage.getItem("rememberedEmailOrPhone") || "");
-      setPassword(localStorage.getItem("rememberedPassword") || "");
-    }
-  }, [navigate, userType, userStatus]);
+  }, [sessionState, navigate]);
 
   useEffect(() => {
     console.log("AuthContext updated:", { userType, userStatus });
@@ -156,8 +147,17 @@ const Login = () => {
         }
 
         toast.success("Login Successful!");
-        navigate("/");
-        window.location.reload();
+
+        if (normalizedUserType === "Buyer") {
+          navigate("/");
+        } else if (
+          (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
+          (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
+        ) {
+          setShowPopup(true);
+        } else {
+          navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
+        }
       } catch (error) {
         console.error("Google Login Failed", error);
         toast.error(error?.response?.data?.message || "Google Login Failed");
@@ -232,8 +232,7 @@ const Login = () => {
       toast.success("Login Successful!");
 
       if (normalizedUserType === "Buyer") {
-        navigate("/");
-        window.location.reload();
+        navigate("/buyer/dashboard");
       } else if (
         (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
         (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
@@ -241,7 +240,6 @@ const Login = () => {
         setShowPopup(true);
       } else {
         navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
-        window.location.reload();
       }
     } catch (error) {
       const message =

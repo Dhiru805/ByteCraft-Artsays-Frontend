@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
 import getAPI from "../../api/getAPI";
 
@@ -49,9 +48,14 @@ const Homepage = () => {
     getAPI("/api/homepage/published")
       .then((res) => {
         const id = res?.data?.data?._id;
-        if (id) setHomepageId(id);
+        // If id found, pass it down. If not, set to undefined so children
+        // know the fetch is done and stop waiting (null = still loading).
+        setHomepageId(id || undefined);
       })
-      .catch(() => {});
+      .catch(() => {
+        // Fetch failed — signal children to stop waiting
+        setHomepageId(undefined);
+      });
   }, []);
 
   const fetchSEOMetadata = async () => {
