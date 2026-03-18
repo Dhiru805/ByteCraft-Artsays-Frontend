@@ -53,7 +53,29 @@ const REFRESH_LOCK_TTL_MS = 10000;
 const REFRESH_COOLDOWN_MS = 5000; // if refreshed within 5 s, return cached token
 
 // ─── Internal State ───────────────────────────────────────────────────────────
-let _state              = SESSION_STATE.LOGGED_OUT;
+// Synchronously peek at localStorage so the very first getState() call
+// (used by AuthProvider's useState initializer) already returns the right state.
+// This prevents PrivateRoute from flashing /login on refresh before initSession()
+// runs its useEffect.
+function _peekInitialState() {
+  try {
+    const token = localStorage.getItem("token");
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!token && !refreshToken) return SESSION_STATE.LOGGED_OUT;
+    if (!token) return SESSION_STATE.SOFT_EXPIRED; // refresh token present, access token missing
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp - Date.now() / 1000 > 0) return SESSION_STATE.AUTHENTICATED;
+      return SESSION_STATE.SOFT_EXPIRED;
+    } catch {
+      return SESSION_STATE.SOFT_EXPIRED;
+    }
+  } catch {
+    return SESSION_STATE.LOGGED_OUT;
+  }
+}
+
+let _state              = _peekInitialState();
 let _refreshPromise     = null;
 let _lastRefreshAt      = 0;
 let _retryCount         = 0;        // consecutive transient failure count
