@@ -20,19 +20,25 @@ async function deleteAPI(url, config = {}, isPrivate = true) {
       requestConfig.params = config.params;
     }
 
-    const response = await axiosInstance.delete(url, requestConfig);
+      const response = await axiosInstance.delete(url, requestConfig);
 
-    if (response.status === 200) {
       return {
         message: response.data.message,
-        hasError: response.data.hasError,
+        hasError: response.data.hasError ?? (response.status !== 200),
         data: response.data,
       };
+    } catch (error) {
+      console.error("Error during API request:", error);
+      const errData = error?.response?.data;
+      if (errData) {
+        return {
+          message: errData.message || "Request failed.",
+          hasError: true,
+          data: errData,
+        };
+      }
+      throw error;
     }
-  } catch (error) {
-    console.error("Error during API request:", error);
-    throw error;
-  }
 }
 
 export default deleteAPI;

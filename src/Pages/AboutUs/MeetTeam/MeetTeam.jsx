@@ -4,12 +4,13 @@ import { getImageUrl } from "../../../utils/getImageUrl";
 
 const MeetTeam = () => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMeetTeam = async () => {
       try {
         const pageRes = await getAPI("/api/about-us/published");
+        if (!pageRes) throw new Error("No published About Us page found");
         const aboutUsPage = pageRes.data.data;
 
         if (!aboutUsPage?._id) throw new Error("No published About Us page found");
@@ -18,7 +19,7 @@ const MeetTeam = () => {
         const sectionRes = await getAPI(
           `/api/about-us-sections/meet-team/${aboutUsPage._id}`
         );
-        if (!sectionRes.data.success) throw new Error("Meet Team section not found");
+        if (!sectionRes || !sectionRes.data.success) throw new Error("Meet Team section not found");
 
         setData(sectionRes.data.data);
       } catch (err) {
@@ -52,21 +53,16 @@ const MeetTeam = () => {
             <div key={member._id} className="flex flex-col items-center max-w-xs group/member">
               <div className="relative">
                 <div className="w-56 h-56 md:w-64 md:h-64 rounded-full border-8 border-gray-50 overflow-hidden shadow-inner group-hover/member:border-[#6F4D34]/20 transition-all duration-500">
-                  {(() => {
-                    const base = (getImageUrl || "").replace(/\/+$/, "");
-                    const rawPath = (member.image || "").replace(/\\/g, "/");
-                    const pathSansUploads = rawPath.replace(/^uploads\//, "");
-                    const finalSrc = base.includes("/uploads")
-                      ? `${base}/${pathSansUploads}`
-                      : `${base}/${rawPath}`;
-                    return (
-                      <img
-                        src={finalSrc}
-                        alt={member.name}
-                        className="w-full h-full object-cover group-hover/member:scale-110 transition-transform duration-700"
-                      />
-                    );
-                  })()}
+                    {(() => {
+                      const finalSrc = getImageUrl(member.image);
+                      return (
+                        <img
+                          src={finalSrc}
+                          alt={member.name}
+                          className="w-full h-full object-cover group-hover/member:scale-110 transition-transform duration-700"
+                        />
+                      );
+                    })()}
                 </div>
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-[#6F4D34] text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">
                   Founder

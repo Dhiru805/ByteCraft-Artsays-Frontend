@@ -7,13 +7,14 @@ import { getImageUrl } from '../../../utils/getImageUrl';
 const OurValues = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+
 
   useEffect(() => {
     const fetchOurValues = async () => {
       try {
      
         const pageRes = await getAPI("/api/about-us/published");
+        if (!pageRes) throw new Error("No published About Us page found");
         const aboutUsPage = pageRes.data.data;
 
         if (!aboutUsPage?._id) throw new Error("No published About Us page found");
@@ -21,7 +22,7 @@ const OurValues = () => {
         const sectionRes = await getAPI(
           `/api/about-us-sections/our-values/${aboutUsPage._id}`
         );
-        if (!sectionRes.data.success) throw new Error("Our Values section not found");
+        if (!sectionRes || !sectionRes.data.success) throw new Error("Our Values section not found");
 
         const sectionData = sectionRes.data.data;
         if (sectionData.cards?.length) {

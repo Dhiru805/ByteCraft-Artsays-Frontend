@@ -87,10 +87,11 @@ const CertificationTable = ({
     formData.append("file", file);
 
     try {
-      const response = await fetch(      "/api/import-certifications", {
-        method: "POST",
-        body: formData,
-      });
+        const response = await fetch(      "/api/import-certifications", {
+          method: "POST",
+          headers: { "x-requested-with": "XMLHttpRequest" },
+          body: formData,
+        });
 
       const result = await response.json();
 

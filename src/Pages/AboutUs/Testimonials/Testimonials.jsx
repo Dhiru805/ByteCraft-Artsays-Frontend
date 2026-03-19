@@ -9,8 +9,9 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const pageRes = await getAPI("/api/about-us/published");
-        const aboutUsPage = pageRes.data.data;
+          const pageRes = await getAPI("/api/about-us/published");
+          if (!pageRes) throw new Error("No published About Us page found");
+          const aboutUsPage = pageRes.data.data;
 
         if (!aboutUsPage?._id)
           throw new Error("No published About Us page found");
@@ -19,8 +20,8 @@ const Testimonials = () => {
           `/api/about-us-sections/testimonials/${aboutUsPage._id}`
         );
 
-        if (!sectionRes.data.success)
-          throw new Error("Testimonials section not found");
+        if (!sectionRes || !sectionRes.data.success)
+            throw new Error("Testimonials section not found");
 
         setData(sectionRes.data.data);
       } catch (err) {

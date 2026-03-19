@@ -98,7 +98,7 @@ const HomeChallenges = () => {
               <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
                 {homepageChallenges.heading}
               </h1>
-              <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+              <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
                 {homepageChallenges.description}
               </p>
             </div>

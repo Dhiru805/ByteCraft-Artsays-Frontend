@@ -7,18 +7,19 @@ import { getImageUrl } from "../../../utils/getImageUrl";
 const MissionVision = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+
 
   useEffect(() => {
     const fetchMissionVision = async () => {
       try {
         const pageRes = await getAPI("/api/about-us/published");
+        if (!pageRes) throw new Error("No published About Us page found");
         const aboutUsPage = pageRes.data.data;
 
         if (!aboutUsPage?._id) throw new Error("No published About Us page found");
 
         const sectionRes = await getAPI(`/api/about-us-sections/mission-vision/${aboutUsPage._id}`);
-        if (!sectionRes.data.success) throw new Error("Mission & Vision section not found");
+        if (!sectionRes || !sectionRes.data.success) throw new Error("Mission & Vision section not found");
 
         setData(sectionRes.data.data);
       } catch (err) {
@@ -39,17 +40,8 @@ const MissionVision = () => {
       {data.cards?.map((card, index) => {
         const isImageLeft = index % 2 === 0; // Alternating with WhoWeAre (img left) and WhatWeDo (img right)
 
-        const base = (getImageUrl || "").replace(/\/+$/, "");
-        const normalize = (p) => (p || "").replace(/\\/g, "/");
-        const stripUploads = (p) => p.replace(/^uploads\//, "");
-        const buildUrl = (p) => {
-          const normalized = normalize(p);
-          const withoutUploads = stripUploads(normalized);
-          return base.includes("/uploads") ? `${base}/${withoutUploads}` : `${base}/${normalized}`;
-        };
-
-        const sideImageURL = card.sideImage ? buildUrl(card.sideImage) : null;
-        const iconURL = card.icon ? buildUrl(card.icon) : null;
+          const sideImageURL = card.sideImage ? getImageUrl(card.sideImage) : null;
+          const iconURL = card.icon ? getImageUrl(card.icon) : null;
 
         return (
           <div

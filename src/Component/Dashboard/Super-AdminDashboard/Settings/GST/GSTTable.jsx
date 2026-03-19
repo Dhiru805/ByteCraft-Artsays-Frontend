@@ -85,10 +85,11 @@ const GSTTable = ({
       formData.append("file", selectedFile);
 
       try {
-        const response = await fetch("/api/import-gst", {
-          method: "POST",
-          body: formData,
-        });
+          const response = await fetch("/api/import-gst", {
+            method: "POST",
+            headers: { "x-requested-with": "XMLHttpRequest" },
+            body: formData,
+          });
 
         if (!response.ok) throw new Error("Failed to import GST settings");
 

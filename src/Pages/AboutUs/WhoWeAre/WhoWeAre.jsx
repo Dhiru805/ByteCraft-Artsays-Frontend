@@ -6,18 +6,19 @@ import { getImageUrl } from '../../../utils/getImageUrl';
 const WhoWeAre = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+
 
   useEffect(() => {
     const fetchWhoWeAre = async () => {
       try {
         const pageRes = await getAPI("/api/about-us/published");
+        if (!pageRes) throw new Error("No published About Us page found");
         const aboutUsPage = pageRes.data.data;
 
         if (!aboutUsPage?._id) throw new Error("No published About Us page found");
 
         const sectionRes = await getAPI(`/api/about-us-sections/who-we-are/${aboutUsPage._id}`);
-        if (!sectionRes.data.success) throw new Error("Who We Are section not found");
+        if (!sectionRes || !sectionRes.data.success) throw new Error("Who We Are section not found");
 
         setData(sectionRes.data.data);
       } catch (err) {

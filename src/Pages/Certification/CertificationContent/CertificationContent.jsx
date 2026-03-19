@@ -10,7 +10,6 @@ const CertificationContent = () => {
     const [certifications, setCertifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const getImageUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const fetchData = async () => {

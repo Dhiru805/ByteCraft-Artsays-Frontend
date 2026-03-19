@@ -8,7 +8,7 @@ const WhatWeDo = () => {
   const [openIndex, setOpenIndex] = useState(0);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+
 
   const toggle = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -18,6 +18,7 @@ const WhatWeDo = () => {
     const fetchWhatWeDo = async () => {
       try {
         const pageRes = await getAPI("/api/about-us/published");
+        if (!pageRes) throw new Error("No published About Us page found");
         const aboutUsPage = pageRes.data.data;
 
         if (!aboutUsPage?._id) throw new Error("No published About Us page found");
@@ -25,7 +26,7 @@ const WhatWeDo = () => {
         const sectionRes = await getAPI(
           `/api/about-us-sections/what-we-do/${aboutUsPage._id}`
         );
-        if (!sectionRes.data.success) throw new Error("What We Do section not found");
+        if (!sectionRes || !sectionRes.data.success) throw new Error("What We Do section not found");
 
         setData(sectionRes.data.data);
       } catch (err) {

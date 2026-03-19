@@ -146,7 +146,7 @@ const BiddingArena = () => {
             <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
               {data.heading || "Bidding Arena"}
             </h1>
-            <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+            <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
               {data.description || "Bid on exclusive masterpieces and secure your favorite artworks."}
             </p>
           </div>

@@ -11,20 +11,21 @@ const DeliveryProcess = () => {
   const [progressHeight, setProgressHeight] = useState(0);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
        
         const pageRes = await getAPI("/api/about-us/published");
+        if (!pageRes) throw new Error("No published About Us page found");
         const aboutUsPage = pageRes.data.data;
         if (!aboutUsPage?._id) throw new Error("No published About Us page found");
 
         const sectionRes = await getAPI(
           `/api/about-us-sections/delivery-process/${aboutUsPage._id}`
         );
-        if (!sectionRes.data.success) throw new Error("Delivery Process section not found");
+        if (!sectionRes || !sectionRes.data.success) throw new Error("Delivery Process section not found");
 
         const fetchedData = sectionRes.data.data;
 
