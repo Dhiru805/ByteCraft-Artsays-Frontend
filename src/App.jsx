@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Routes from "./Routes/Routes";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,7 +20,13 @@ import SessionBanner from "./Component/SessionBanner/SessionBanner";
 
 const AppContent = () => {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
   const userId = localStorage.getItem("userId");
+
+  const isDashboard =
+    location.pathname.startsWith("/super-admin") ||
+    location.pathname.startsWith("/artist") ||
+    location.pathname.startsWith("/seller");
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -76,9 +83,9 @@ const AppContent = () => {
         theme="light"
         limit={5}
       />
-      <CookieConsent />
-      <ChatIcon />
-      <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />
+       <CookieConsent />
+       {!isDashboard && <ChatIcon />}
+       <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />
       <FeedbackPopup />
     </div>
   );

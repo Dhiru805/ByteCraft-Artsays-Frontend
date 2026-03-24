@@ -16,9 +16,10 @@ function Root() {
     fetch(`${API_URL}/api/get-google-settings`)
       .then((res) => res.json())
       .then((data) => {
-        if (data?.googleClientId) {
-          setGoogleClientId(data.googleClientId);
-        }
+        const clientId = data?.data?.googleClientId || data?.googleClientId;
+          if (clientId) {
+            setGoogleClientId(clientId);
+          }
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
