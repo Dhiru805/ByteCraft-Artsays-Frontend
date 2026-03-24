@@ -712,21 +712,6 @@ const Sidebar = () => {
         subTabs: [],
       },
     ],
-    // ----------------------------------------------Buyer-----------------------------------------------------//
-      Buyer: [
-        {
-          label: "Dashboard",
-          icon: "fa-dashboard",
-          path: "/buyer/dashboard",
-          subTabs: [],
-        },
-        {
-          label: "Support",
-          icon: "fa-ticket",
-          path: "/buyer/support",
-          subTabs: [],
-        },
-      ],
     // ----------------------------------------------Seller-----------------------------------------------------//
       Seller: [
         {

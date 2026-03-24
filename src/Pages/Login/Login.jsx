@@ -66,7 +66,7 @@ const Login = () => {
       ) {
         setShowPopup(true);
       } else if (storedUserType === "Buyer") {
-        navigate("/buyer/dashboard");
+        navigate("/");
       } else {
         navigate(`/${storedUserType.toLowerCase()}/dashboard`);
       }
@@ -232,7 +232,7 @@ const Login = () => {
       toast.success("Login Successful!");
 
       if (normalizedUserType === "Buyer") {
-        navigate("/buyer/dashboard");
+        navigate("/");
       } else if (
         (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
         (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")

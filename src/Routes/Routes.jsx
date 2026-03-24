@@ -1817,13 +1817,13 @@ const AppRoutes = () => {
                     <span className="inline-block px-3 py-1 bg-white text-[#000000] backdrop-blur-md rounded-full text-[10px] md:text-sm font-bold tracking-widest uppercase mb-4 animate-fade-in">
                       Order Tracking
                     </span>
-                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 md:mb-6 text-white leading-tight drop-shadow-lg">
+                    <h1 className="mb-4 text-3xl font-extrabold leading-tight text-white sm:text-4xl md:text-6xl md:mb-6 drop-shadow-lg">
                       Track Your Order
                     </h1>
-                    <p className="text-sm sm:text-lg md:text-xl font-medium text-white leading-relaxed opacity-90 flex items-center gap-2">
-                      <a href="/" className="text-white/80 hover:text-white transition-colors">Home</a>
+                    <p className="flex items-center gap-2 text-sm font-medium leading-relaxed text-white sm:text-lg md:text-xl opacity-90">
+                      <a href="/" className="transition-colors text-white/80 hover:text-white">Home</a>
                       <span className="text-white/60">/</span>
-                      <span className="text-amber-300 font-medium">Track Your Order</span>
+                      <span className="font-medium text-amber-300">Track Your Order</span>
                     </p>
                   </div>
                 </div>
@@ -1915,7 +1915,7 @@ const AppRoutes = () => {
                 replace
               />
             ) : userType === "Buyer" ? (
-              <Navigate to="/buyer/dashboard" replace />
+              <Navigate to="/" replace />
             ) : userType === "Seller" ? (
               <Navigate
                 to={
