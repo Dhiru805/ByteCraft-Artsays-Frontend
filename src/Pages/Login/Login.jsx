@@ -10,6 +10,17 @@ import postAPI from "../../api/postAPI";
 import VerificationPopup from "./VerificationPopup";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
+import { useGoogleClientId } from "../../GoogleClientIdContext";
+
+const GoogleLoginButton = ({ onSuccess, onError }) => {
+  const loginWithGoogle = useGoogleLogin({ flow: "auth-code", onSuccess, onError });
+  return (
+    <button type="button" className="login-google-btn" onClick={() => loginWithGoogle()}>
+      <FaGoogle size={20} />
+      Login with Google
+    </button>
+  );
+};
 
 const Login = () => {
   const [input, setInput] = useState("");
@@ -22,6 +33,7 @@ const Login = () => {
   const [googlePassword, setGooglePassword] = useState("");
   const navigate = useNavigate();
   const { login, userType, status: userStatus, sessionState } = useAuth();
+  const googleClientId = useGoogleClientId();
 
   const normalizeUserType = (userType) => {
     const userTypeMap = {
@@ -85,86 +97,48 @@ const Login = () => {
     }
   }, [userType, userStatus]);
 
-  const loginWithGoogle = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: async (codeResponse) => {
-      console.log("Google login response", codeResponse);
-
-      try {
-        const { code } = codeResponse;
-        const res = await postAPI("/auth/googlelogin", { code }, true);
-        console.log("google login api response", res);
-
-          const {
-            token,
-            refreshToken,
-            userType,
-            email,
-            userId,
-            status,
-            userrole,
-            username,
-            firstName,
-            lastName,
-          } = res.data;
-          if (!token || !userType) {
-            throw new Error("Invalid response from server");
-          }
-
-          const normalizedUserType = normalizeUserType(userType);
-          const normalizedStatus = status
-            ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
-            : null;
-
-          login(
-            token,
-            normalizedUserType,
-            normalizedStatus,
-            username,
-            firstName,
-            lastName,
-            userId,
-            userrole,
-            refreshToken
-          );
-
-        localStorage.setItem("email", email);
-
-        console.log("localStorage after login:", {
-          token: localStorage.getItem("token"),
-          userType: localStorage.getItem("userType"),
-          status: localStorage.getItem("status"),
-        });
-
-        if (rememberMe) {
-          localStorage.setItem("rememberedEmailOrPhone", input);
-          localStorage.setItem("rememberedPassword", password);
-          localStorage.setItem("rememberMe", "true");
-        } else {
-          localStorage.removeItem("rememberedEmailOrPhone");
-          localStorage.removeItem("rememberedPassword");
-          localStorage.setItem("rememberMe", "false");
-        }
-
-        toast.success("Login Successful!");
-
-        if (normalizedUserType === "Buyer") {
-          navigate("/");
-        } else if (
-          (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
-          (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
-        ) {
-          setShowPopup(true);
-        } else {
-          navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
-        }
-      } catch (error) {
-        console.error("Google Login Failed", error);
-        toast.error(error?.response?.data?.message || "Google Login Failed");
+  const handleGoogleSuccess = async (codeResponse) => {
+    console.log("Google login response", codeResponse);
+    try {
+      const { code } = codeResponse;
+      const res = await postAPI("/auth/googlelogin", { code }, true);
+      console.log("google login api response", res);
+      const {
+        token, refreshToken, userType, email, userId,
+        status, userrole, username, firstName, lastName,
+      } = res.data;
+      if (!token || !userType) throw new Error("Invalid response from server");
+      const normalizedUserType = normalizeUserType(userType);
+      const normalizedStatus = status
+        ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+        : null;
+      login(token, normalizedUserType, normalizedStatus, username, firstName, lastName, userId, userrole, refreshToken);
+      localStorage.setItem("email", email);
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmailOrPhone", input);
+        localStorage.setItem("rememberedPassword", password);
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("rememberedEmailOrPhone");
+        localStorage.removeItem("rememberedPassword");
+        localStorage.setItem("rememberMe", "false");
       }
-    },
-    onError: () => toast.error("Google Login Failed"),
-  });
+      toast.success("Login Successful!");
+      if (normalizedUserType === "Buyer") {
+        navigate("/");
+      } else if (
+        (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
+        (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
+      ) {
+        setShowPopup(true);
+      } else {
+        navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
+      }
+    } catch (error) {
+      console.error("Google Login Failed", error);
+      toast.error(error?.response?.data?.message || "Google Login Failed");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -342,14 +316,17 @@ const Login = () => {
                 <span className="login-divider-line"></span>
               </div>
 
-              <button
-                type="button"
-                className="login-google-btn"
-                onClick={() => loginWithGoogle()}
-              >
-                <FaGoogle size={20} />
-                Login with Google
-              </button>
+                {googleClientId ? (
+                  <GoogleLoginButton
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => toast.error("Google Login Failed")}
+                  />
+                ) : (
+                  <button type="button" className="login-google-btn" disabled>
+                    <FaGoogle size={20} />
+                    Login with Google
+                  </button>
+                )}
             </form>
           </div>
         </div>
