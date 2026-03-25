@@ -457,6 +457,7 @@ import BlogCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/B
 import ProductCategory from "../Component/Dashboard/Super-AdminDashboard/Settings/Productcategory/Category";
 import CertificationSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/Certification/Certifiaction";
 import WebsiteModeSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/WebsiteMode/WebsiteModeSetting";
+import SystemLogs from "../Component/Dashboard/Super-AdminDashboard/Settings/Logs/SystemLogs";
 
 //----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
@@ -1174,6 +1175,7 @@ const AppRoutes = () => {
           <Route path="settings/feedback-form" element={<FeedbackFormBuilder />} />
           <Route path="settings/feedback-responses" element={<FeedbackResponses />} />
           <Route path="settings/website-mode" element={<WebsiteModeSetting />} />
+          <Route path="settings/logs" element={<SystemLogs />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />

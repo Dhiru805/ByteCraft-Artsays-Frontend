@@ -30,24 +30,24 @@ const Sidebar = () => {
       },
       ...(userType?.toLowerCase() === "super-admin"
         ? [
-            {
-              label: "Wallet Management",
-              icon: "bi-wallet-fill",
-              path: `/${userType.toLowerCase()}/wallet-management`,
-              state: { _id: userId },
-              subTabs: [],
-            },
-          ]
-        : []),
-
           {
-            label: "Support",
-            icon: "fa-ticket",
-            path: "/super-admin/support",
+            label: "Wallet Management",
+            icon: "bi-wallet-fill",
+            path: `/${userType.toLowerCase()}/wallet-management`,
+            state: { _id: userId },
             subTabs: [],
           },
-        {
-          label: "Admin",
+        ]
+        : []),
+
+      {
+        label: "Support",
+        icon: "fa-ticket",
+        path: "/super-admin/support",
+        subTabs: [],
+      },
+      {
+        label: "Admin",
 
         tabId: "adn1",
         icon: "fas fa-user",
@@ -289,20 +289,20 @@ const Sidebar = () => {
           },
         ],
       },
-        {
-          label: "Enquiry",
-          icon: "fa fa-mail-forward",
-          path: `/super-admin/enquiry`,
-          basePath: "/super-admin/enquiry",
-          subTabs: [],
-        },
-        {
-          label: "Newsletter",
-          icon: "fa fa-envelope",
-          path: `/super-admin/newsletter`,
-          basePath: "/super-admin/newsletter",
-          subTabs: [],
-        },
+      {
+        label: "Enquiry",
+        icon: "fa fa-mail-forward",
+        path: `/super-admin/enquiry`,
+        basePath: "/super-admin/enquiry",
+        subTabs: [],
+      },
+      {
+        label: "Newsletter",
+        icon: "fa fa-envelope",
+        path: `/super-admin/newsletter`,
+        basePath: "/super-admin/newsletter",
+        subTabs: [],
+      },
       {
         label: "Art Gallery",
         icon: "fa fa-image",
@@ -485,18 +485,18 @@ const Sidebar = () => {
             subtabId: "stg12",
             path: `/super-admin/settings/blog-category`,
           },
-            {
-              label: "Email Setting",
-              subtabId: "stg13",
-              path: `/super-admin/settings/email-setting`,
-            },
-            {
-              label: "Storage Setting",
-              subtabId: "stg17",
-              path: `/super-admin/settings/storage-setting`,
-            },
-            {
-              label: "Payment Gateway",
+          {
+            label: "Email Setting",
+            subtabId: "stg13",
+            path: `/super-admin/settings/email-setting`,
+          },
+          {
+            label: "Storage Setting",
+            subtabId: "stg17",
+            path: `/super-admin/settings/storage-setting`,
+          },
+          {
+            label: "Payment Gateway",
             path: `/super-admin/settings/payment-getway`,
           },
           {
@@ -515,28 +515,33 @@ const Sidebar = () => {
           },
           { label: "GST", path: `/super-admin/settings/GST` },
           { label: "Insurance", path: `/super-admin/settings/insurance` },
-           { label: "Exhibition setting", path: `/super-admin/settings/exhibition` },
-           { label: "Sidebar Visibility", subtabId: "stg16", path: `/super-admin/settings/sidebar-visibility` },
-         
-             {
-               label: "Default Auto Targeting",
-               path: `/super-admin/settings/auto-targeting`,
-             },
-            {
-              label: "Google OAuth",
-              path: `/super-admin/settings/google-oauth`,
-            },
-            {
-              label: "Feedback Form",
-              path: `/super-admin/settings/feedback-form`,
-            },
-            {
-              label: "Website Mode",
-              subtabId: "stg18",
-              path: `/super-admin/settings/website-mode`,
-            },
-         ],
-        },
+          { label: "Exhibition setting", path: `/super-admin/settings/exhibition` },
+          { label: "Sidebar Visibility", subtabId: "stg16", path: `/super-admin/settings/sidebar-visibility` },
+
+          {
+            label: "Default Auto Targeting",
+            path: `/super-admin/settings/auto-targeting`,
+          },
+          {
+            label: "Google OAuth",
+            path: `/super-admin/settings/google-oauth`,
+          },
+          {
+            label: "Feedback Form",
+            path: `/super-admin/settings/feedback-form`,
+          },
+          {
+            label: "Website Mode",
+            subtabId: "stg18",
+            path: `/super-admin/settings/website-mode`,
+          },
+          {
+            label: "System Logs",
+            subtabId: "stg19",
+            path: `/super-admin/settings/logs`,
+          },
+        ],
+      },
       {
         label: "SMS Settings",
         tabId: "sms1",
@@ -566,14 +571,14 @@ const Sidebar = () => {
           },
           { label: "Reports", path: `/super-admin/community-cms/reports` },
           { label: "Sponsors", path: `/super-admin/community-cms/sponsors` },
-            {
-              label: "Purchase Badge",
-              path: `/super-admin/community-cms/purchase-badge`,
-            },
-            {
-              label: "Membership Orders",
-              path: `/super-admin/community-cms/membership-orders`,
-            },
+          {
+            label: "Purchase Badge",
+            path: `/super-admin/community-cms/purchase-badge`,
+          },
+          {
+            label: "Membership Orders",
+            path: `/super-admin/community-cms/membership-orders`,
+          },
         ],
       },
 
@@ -628,25 +633,25 @@ const Sidebar = () => {
       },
     ],
     // ----------------------------------------------Artist-----------------------------------------------------//
-      Artist: [
-        {
-          label: "Dashboard",
-          icon: "fa-dashboard",
-          path: "/artist/dashboard",
-          subTabs: [],
-        },
-        {
-          label: "Support",
-          icon: "fa-ticket",
-          path: "/artist/support",
-          subTabs: [],
-        },
-        {
-          label: "Blogs",
-          icon: "fa fa-newspaper",
-          path: "/artist/bloglist",
-          subTabs: [],
-        },
+    Artist: [
+      {
+        label: "Dashboard",
+        icon: "fa-dashboard",
+        path: "/artist/dashboard",
+        subTabs: [],
+      },
+      {
+        label: "Support",
+        icon: "fa-ticket",
+        path: "/artist/support",
+        subTabs: [],
+      },
+      {
+        label: "Blogs",
+        icon: "fa fa-newspaper",
+        path: "/artist/bloglist",
+        subTabs: [],
+      },
       {
         label: "Product",
         icon: "fa fa-cart-plus",
@@ -713,25 +718,25 @@ const Sidebar = () => {
       },
     ],
     // ----------------------------------------------Seller-----------------------------------------------------//
-      Seller: [
-        {
-          label: "Dashboard",
-          icon: "fa-dashboard",
-          path: "/seller/dashboard",
-          subTabs: [],
-        },
-        {
-          label: "Support",
-          icon: "fa-ticket",
-          path: "/seller/support",
-          subTabs: [],
-        },
-        {
-          label: "Product",
-          icon: "fa fa-cart-plus",
-          path: "/seller/product-details",
-          subTabs: [],
-        },
+    Seller: [
+      {
+        label: "Dashboard",
+        icon: "fa-dashboard",
+        path: "/seller/dashboard",
+        subTabs: [],
+      },
+      {
+        label: "Support",
+        icon: "fa-ticket",
+        path: "/seller/support",
+        subTabs: [],
+      },
+      {
+        label: "Product",
+        icon: "fa fa-cart-plus",
+        path: "/seller/product-details",
+        subTabs: [],
+      },
       {
         label: "Product Purchased",
         icon: "fa fa-cart-plus",
@@ -896,8 +901,8 @@ const Sidebar = () => {
           roleKey === "Artist"
             ? "artistTabs"
             : roleKey === "Seller"
-            ? "sellerTabs"
-            : null;
+              ? "sellerTabs"
+              : null;
         const savedTabs = visibilityKey ? globalVisibility[visibilityKey] : null;
 
         if (savedTabs && savedTabs.length > 0) {
@@ -977,7 +982,7 @@ const Sidebar = () => {
     }
   }, []);
 
-    // Derive active tab/subtab purely from the current URL so page-reload works
+  // Derive active tab/subtab purely from the current URL so page-reload works
   useEffect(() => {
     const path = location.pathname;
 
@@ -985,16 +990,16 @@ const Sidebar = () => {
     let matchedSubPath = null;
 
     for (const item of fetchedTabs) {
-        if (item.subTabs && item.subTabs.length > 0) {
-          // Exact match first, then prefix match — ensures more specific paths win
-          const matchedSub =
-            item.subTabs.find((sub) => path === sub.path) ||
-            item.subTabs.find((sub) => path.startsWith(sub.path + "/"));
-          if (matchedSub) {
-            matchedParent = item.label;
-            matchedSubPath = matchedSub.path;
-            break;
-          }
+      if (item.subTabs && item.subTabs.length > 0) {
+        // Exact match first, then prefix match — ensures more specific paths win
+        const matchedSub =
+          item.subTabs.find((sub) => path === sub.path) ||
+          item.subTabs.find((sub) => path.startsWith(sub.path + "/"));
+        if (matchedSub) {
+          matchedParent = item.label;
+          matchedSubPath = matchedSub.path;
+          break;
+        }
       } else {
         // Leaf tab — exact match or basePath prefix
         if (
@@ -1046,31 +1051,30 @@ const Sidebar = () => {
               className={`menu-item ${isActive[item.label] ? "active" : ""}`}
             >
               <Link
-                  to={item.path}
-                  onClick={() => handleTabToggle(item.label, item.subTabs.length > 0)}
-                  className={item.subTabs.length ? "has-arrow" : ""}
-                >
-                  <i className={`fa ${item.icon}`}></i>
-                  <span>{item.label}</span>
-                </Link>
-                {item.subTabs.length > 0 && (
-                  <ul
-                    className={`collapse ${
-                      expandedTab === item.label ? "in" : ""
+                to={item.path}
+                onClick={() => handleTabToggle(item.label, item.subTabs.length > 0)}
+                className={item.subTabs.length ? "has-arrow" : ""}
+              >
+                <i className={`fa ${item.icon}`}></i>
+                <span>{item.label}</span>
+              </Link>
+              {item.subTabs.length > 0 && (
+                <ul
+                  className={`collapse ${expandedTab === item.label ? "in" : ""
                     }`}
-                  >
-                    {item.subTabs.map((subTab, subIndex) => (
-                      <li
-                        key={subIndex}
-                        className={activeSubTab === subTab.path ? "active" : ""}
-                      >
-                        <Link to={subTab.path}>
-                          {subTab.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                >
+                  {item.subTabs.map((subTab, subIndex) => (
+                    <li
+                      key={subIndex}
+                      className={activeSubTab === subTab.path ? "active" : ""}
+                    >
+                      <Link to={subTab.path}>
+                        {subTab.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           )
         )}

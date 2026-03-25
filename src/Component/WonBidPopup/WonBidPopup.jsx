@@ -7,9 +7,10 @@ const WonBidPopup = ({ userId, isAuthenticated }) => {
   const [currentBidIndex, setCurrentBidIndex] = useState(0);
 
     useEffect(() => {
-      if (!isAuthenticated || !userId) {
-        return;
-      }
+        const userType = localStorage.getItem("userType");
+        if (!isAuthenticated || !userId || userType === "Super-Admin") {
+          return;
+        }
   
       const fetchWonBids = async () => {
         try {
