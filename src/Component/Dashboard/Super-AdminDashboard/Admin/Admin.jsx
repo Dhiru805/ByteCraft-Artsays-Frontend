@@ -14,7 +14,6 @@ function AdminManageTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("create"); // "create", "edit", "view"
   const [selectedAdmin, setSelectedAdmin] = useState(null);
-  const BASE_URL = getImageUrl(null);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -85,10 +84,10 @@ function AdminManageTable() {
               </ul>
             </div>
             <div className="col-lg-6 col-md-6 col-sm-12">
-              <div className="d-flex flex-row-reverse">
+              <div className="flex-row-reverse d-flex">
                   <button
                     type="button"
-                    className="btn btn-secondary mr-2"
+                    className="mr-2 btn btn-secondary"
                     onClick={() => {
                       setModalMode("create");
                       setSelectedAdmin(null);
@@ -103,7 +102,7 @@ function AdminManageTable() {
           </div>
         </div>
 
-        <div className="row clearfix">
+        <div className="clearfix row">
           <div className="col-lg-12">
             <div className="card">
               <div className="header d-flex justify-content-between align-items-center">
@@ -186,10 +185,10 @@ function AdminManageTable() {
                               {/* <td>{admin.phone}</td> */}
                               <td>{admin.phone}</td>
                                   <td>
-                                    <div className="d-flex flex-wrap">
+                                    <div className="flex-wrap d-flex">
                                       <button
                                         type="button"
-                                        className="btn btn-outline-primary btn-sm mr-2 mb-1 d-flex align-items-center justify-content-center"
+                                        className="mb-1 mr-2 btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center"
                                         style={{ width: "32px", height: "32px", borderRadius: "50%" }}
                                         title="View"
                                         onClick={() => {
@@ -202,7 +201,7 @@ function AdminManageTable() {
                                       </button>
                                       <button
                                         type="button"
-                                        className="btn btn-outline-info btn-sm mr-2 mb-1 d-flex align-items-center justify-content-center"
+                                        className="mb-1 mr-2 btn btn-outline-info btn-sm d-flex align-items-center justify-content-center"
                                         style={{ width: "32px", height: "32px", borderRadius: "50%" }}
                                         title="Edit"
                                         onClick={() => {
@@ -215,7 +214,7 @@ function AdminManageTable() {
                                       </button>
                                       <button
                                         type="button"
-                                        className="btn btn-outline-danger btn-sm mb-1 d-flex align-items-center justify-content-center"
+                                        className="mb-1 btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center"
                                         style={{ width: "32px", height: "32px", borderRadius: "50%" }}
                                         title="Delete"
                                         onClick={() => openDeleteDialog(admin)}
@@ -231,7 +230,7 @@ function AdminManageTable() {
                     </tbody>
                   </table>
                 </div>
-                <div className="pagination d-flex justify-content-end mt-4">
+                <div className="mt-4 pagination d-flex justify-content-end">
                   <ul className="pagination">
                     <li
                       className={`paginate_button page-item ${

@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import "./Side-post-sugg.css";
 import { Link, useLocation } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
-import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import MediaSideBarSkele from "../../Skeleton/Home/Account/MediaSideBarSkele";
 
 const Sidebar = () => {
   const location = useLocation();
   const isActive = (link) => location.pathname === link;
   const [isPinned, setIsPinned] = useState(false);
-  const [user, setUser] = useState({});
+  const [setUser] = useState({});
   const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username");
   const firstName = localStorage.getItem("firstName");
@@ -70,12 +69,12 @@ const Sidebar = () => {
       label: "Create",
       link: "/artsays-community/create-post",
     },
-    {
-      key: "live",
-      icon: "broadcast-pin",
-      label: "Live",
-      link: "/artsays-community/create-live",
-    },
+    // {
+    //   key: "live",
+    //   icon: "broadcast-pin",
+    //   label: "Live",
+    //   link: "/artsays-community/create-live",
+    // },
     {
       key: "profile",
       icon: "person",
@@ -134,7 +133,7 @@ const Sidebar = () => {
       <div
         className={`sidebar-container-s ${isPinned ? "pinned" : ""} w-full col-span-3 mx-auto px-2 py-4 justify-content-center`}
       >
-        <div className="sidebar-icons-s justify-content-between pb-4">
+        <div className="pb-4 sidebar-icons-s justify-content-between">
           {items.map((item, idx) => (
             <Link to={`${item.link}`} key={item.key}>
               <div className={`icon-wrapper-s ${isActive(item.link) ? "active" : ""}`}>
@@ -151,7 +150,7 @@ const Sidebar = () => {
           ))}
         </div>
 
-        <div className="sidebar-expanded-s justify-content-between pb-4">
+        <div className="pb-4 sidebar-expanded-s justify-content-between">
           <div className="toggle-btn-s" onClick={() => setIsPinned(!isPinned)}>
             <i className="bi-square-half"></i>
           </div>

@@ -30,14 +30,14 @@ const Sidebar = () => {
       },
       ...(userType?.toLowerCase() === "super-admin"
         ? [
-          {
-            label: "Wallet Management",
-            icon: "bi-wallet-fill",
-            path: `/${userType.toLowerCase()}/wallet-management`,
-            state: { _id: userId },
-            subTabs: [],
-          },
-        ]
+            {
+              label: "Wallet Management",
+              icon: "bi-wallet-fill",
+              path: `/${userType.toLowerCase()}/wallet-management`,
+              state: { _id: userId },
+              subTabs: [],
+            },
+          ]
         : []),
 
       {
@@ -101,35 +101,6 @@ const Sidebar = () => {
         ],
       },
       {
-        label: "Buyer",
-        tabId: "byr1",
-        icon: "fa-handshake",
-        path: `#Buyer-management`,
-        basePath: "/super-admin/buyer",
-        subTabs: [
-          {
-            label: "Management",
-            subtabId: "byr11",
-            path: `/super-admin/buyer/management`,
-          },
-          {
-            label: "Product Purchased",
-            subtabId: "byr12",
-            path: `/super-admin/buyer/productpurchased`,
-          },
-          {
-            label: "Resell Product Request",
-            subtabId: "byr13",
-            path: `/super-admin/buyer/resellproduct`,
-          },
-          {
-            label: "Sold Product",
-            subtabId: "byr14",
-            path: `/super-admin/buyer/soldproduct`,
-          },
-        ],
-      },
-      {
         label: "Seller",
         tabId: "slr1",
         icon: "fa fa-tag",
@@ -159,10 +130,46 @@ const Sidebar = () => {
         ],
       },
       {
+        label: "Buyer",
+        tabId: "byr1",
+        icon: "fa-handshake",
+        path: `#Buyer-management`,
+        basePath: "/super-admin/buyer",
+        subTabs: [
+          {
+            label: "Management",
+            subtabId: "byr11",
+            path: `/super-admin/buyer/management`,
+          },
+          {
+            label: "Product Purchased",
+            subtabId: "byr12",
+            path: `/super-admin/buyer/productpurchased`,
+          },
+          {
+            label: "Resell Product Request",
+            subtabId: "byr13",
+            path: `/super-admin/buyer/resellproduct`,
+          },
+          {
+            label: "Sold Product",
+            subtabId: "byr14",
+            path: `/super-admin/buyer/soldproduct`,
+          },
+        ],
+      },
+      {
         label: "Celebrities",
         tabId: "cls1",
         icon: "fas fa-user",
         path: "/super-admin/celebrities",
+        subTabs: [],
+      },
+      {
+        label: "Art Gallery",
+        icon: "fa fa-image",
+        path: `/super-admin/art-gallery`,
+        basePath: "/super-admin/art-gallery",
         subTabs: [],
       },
       {
@@ -304,13 +311,6 @@ const Sidebar = () => {
         subTabs: [],
       },
       {
-        label: "Art Gallery",
-        icon: "fa fa-image",
-        path: `/super-admin/art-gallery`,
-        basePath: "/super-admin/art-gallery",
-        subTabs: [],
-      },
-      {
         label: "Product Settings",
         icon: "fa fa-cog",
         path: `#product-settings`,
@@ -337,10 +337,6 @@ const Sidebar = () => {
             path: `/super-admin/product-settings/product-surface-type`,
           },
           {
-            label: "Product Coupon Code",
-            path: `/super-admin/product-settings/product-coupon-code`,
-          },
-          {
             label: "Product Packaging Type",
             path: `/super-admin/product-settings/product-packaging-type`,
           },
@@ -359,6 +355,10 @@ const Sidebar = () => {
           {
             label: "Token Standard",
             path: `/super-admin/product-settings/token-standard`,
+          },
+          {
+            label: "Product Coupon Code",
+            path: `/super-admin/product-settings/product-coupon-code`,
           },
         ],
       },
@@ -470,7 +470,6 @@ const Sidebar = () => {
       {
         label: "Settings",
         tabId: "stg1",
-        label: "Settings",
         icon: "fa fa-cog",
         path: `#settings`,
         basePath: "/super-admin/settings",
@@ -515,9 +514,15 @@ const Sidebar = () => {
           },
           { label: "GST", path: `/super-admin/settings/GST` },
           { label: "Insurance", path: `/super-admin/settings/insurance` },
-          { label: "Exhibition setting", path: `/super-admin/settings/exhibition` },
-          { label: "Sidebar Visibility", subtabId: "stg16", path: `/super-admin/settings/sidebar-visibility` },
-
+          {
+            label: "Exhibition setting",
+            path: `/super-admin/settings/exhibition`,
+          },
+          {
+            label: "Sidebar Visibility",
+            subtabId: "stg16",
+            path: `/super-admin/settings/sidebar-visibility`,
+          },
           {
             label: "Default Auto Targeting",
             path: `/super-admin/settings/auto-targeting`,
@@ -545,7 +550,6 @@ const Sidebar = () => {
       {
         label: "SMS Settings",
         tabId: "sms1",
-        label: "SMS Settings",
         icon: "fa fa-cog",
         path: `#sms-settings`,
         basePath: "/super-admin/sms-settings",
@@ -716,6 +720,17 @@ const Sidebar = () => {
         path: "/artist/wallet",
         subTabs: [],
       },
+      {
+        label: "Product Settings",
+        icon: "fa fa-cog",
+        path: `#Settings`,
+        subTabs: [
+          {
+            label: "Product Coupon Code",
+            path: `/artist/product-coupon-codes`,
+          },
+        ],
+      },
     ],
     // ----------------------------------------------Seller-----------------------------------------------------//
     Seller: [
@@ -762,7 +777,6 @@ const Sidebar = () => {
       {
         label: "Certification Services",
         icon: "fa fa-certificate",
-        path: `#`,
         path: `/seller/certification`,
         subTabs: [],
       },
@@ -868,7 +882,7 @@ const Sidebar = () => {
         const filteredTabs = roleData.tabs
           .map((apiTab) => {
             const matchingConfigTab = roleMenu.find(
-              (cfgTab) => cfgTab.tabId === apiTab.tabId
+              (cfgTab) => cfgTab.tabId === apiTab.tabId,
             );
             if (!matchingConfigTab) return null;
 
@@ -876,7 +890,7 @@ const Sidebar = () => {
               .filter((sub) => sub.permissions?.view)
               .map((apiSub) => {
                 const matchConfigSub = matchingConfigTab.subTabs?.find(
-                  (s) => s.subtabId === apiSub.subtabId
+                  (s) => s.subtabId === apiSub.subtabId,
                 );
                 return matchConfigSub || null;
               })
@@ -903,12 +917,16 @@ const Sidebar = () => {
             : roleKey === "Seller"
               ? "sellerTabs"
               : null;
-        const savedTabs = visibilityKey ? globalVisibility[visibilityKey] : null;
+        const savedTabs = visibilityKey
+          ? globalVisibility[visibilityKey]
+          : null;
 
         if (savedTabs && savedTabs.length > 0) {
           // Build a flat map: original label -> menuTab (for parent tabs)
           const parentByLabel = {};
-          roleMenu.forEach((t) => { parentByLabel[t.label] = t; });
+          roleMenu.forEach((t) => {
+            parentByLabel[t.label] = t;
+          });
 
           // Build a flat map: original subtab label -> { path, parentIcon }
           // so promoted subtabs can find their route
@@ -933,7 +951,7 @@ const Sidebar = () => {
                   savedTab.subTabs.forEach((savedSub) => {
                     if (savedSub.visible === false) return;
                     const match = menuTab.subTabs.find(
-                      (ms) => ms.label === savedSub.label
+                      (ms) => ms.label === savedSub.label,
                     );
                     if (match) {
                       resolvedSubTabs.push({
@@ -1033,18 +1051,13 @@ const Sidebar = () => {
     }
   };
 
-  const handleSubTabClick = () => {
-    // Active state will update via the location useEffect on navigation
-  };
-
-
   return (
     <nav id="left-sidebar-nav" className="sidebar-nav">
       <ul id="main-menu" className="metismenu">
         {fetchedTabs.map(
           (
             item,
-            index // Changed: Use fetchedTabs instead of menuItems
+            index, // Changed: Use fetchedTabs instead of menuItems
           ) => (
             <li
               key={index}
@@ -1052,7 +1065,9 @@ const Sidebar = () => {
             >
               <Link
                 to={item.path}
-                onClick={() => handleTabToggle(item.label, item.subTabs.length > 0)}
+                onClick={() =>
+                  handleTabToggle(item.label, item.subTabs.length > 0)
+                }
                 className={item.subTabs.length ? "has-arrow" : ""}
               >
                 <i className={`fa ${item.icon}`}></i>
@@ -1060,23 +1075,22 @@ const Sidebar = () => {
               </Link>
               {item.subTabs.length > 0 && (
                 <ul
-                  className={`collapse ${expandedTab === item.label ? "in" : ""
-                    }`}
+                  className={`collapse ${
+                    expandedTab === item.label ? "in" : ""
+                  }`}
                 >
                   {item.subTabs.map((subTab, subIndex) => (
                     <li
                       key={subIndex}
                       className={activeSubTab === subTab.path ? "active" : ""}
                     >
-                      <Link to={subTab.path}>
-                        {subTab.label}
-                      </Link>
+                      <Link to={subTab.path}>{subTab.label}</Link>
                     </li>
                   ))}
                 </ul>
               )}
             </li>
-          )
+          ),
         )}
       </ul>
     </nav>
