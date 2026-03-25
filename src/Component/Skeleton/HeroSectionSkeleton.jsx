@@ -5,16 +5,22 @@ const HeroSectionSkeleton = () => {
     <div className="w-full">
       {/* ── Hero Banner ── */}
       <div className="relative w-full min-h-[420px] sm:min-h-[480px] md:min-h-[640px] overflow-hidden bg-[#1a1210]">
-        {/* shimmer sweep across the dark bg */}
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            background:
-              "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%)",
-            backgroundSize: "200% 100%",
-            animation: "heroShimmer 2s linear infinite",
-          }}
-        />
+          {/* shimmer sweep — uses translateX so it runs on the compositor thread */}
+          <div
+            className="absolute inset-0 overflow-hidden opacity-20"
+            style={{ willChange: "transform" }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%)",
+                animation: "heroShimmer 2s linear infinite",
+                willChange: "transform",
+              }}
+            />
+          </div>
 
         {/* gradient overlay matching the real hero */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/90 via-[#000000]/60 to-transparent" />
@@ -83,11 +89,11 @@ const HeroSectionSkeleton = () => {
         </div>
       </div>
 
-      {/* keyframe + wave styles injected once */}
+      {/* keyframe + wave styles — compositor-only animations (no background-position) */}
       <style>{`
         @keyframes heroShimmer {
-          0%   { background-position: -200% 0; }
-          100% { background-position:  200% 0; }
+          0%   { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
         @keyframes skeletonWave {
           0%   { opacity: 1; }

@@ -122,9 +122,11 @@ const UserAccount = () => {
   useEffect(() => {
     const fontLinks = ["font-nunito", "font-ubuntu", "font-raleway", "font-IBMplex"];
     fontLinks.forEach((font) => {
-      document.getElementById(font).disabled = true;
+      const el = document.getElementById(font);
+      if (el) el.disabled = true;
     });
-    document.getElementById(selectedFont).disabled = false;
+    const activeEl = document.getElementById(selectedFont);
+    if (activeEl) activeEl.disabled = false;
     document.body.className = selectedFont;
   }, [selectedFont]);
 

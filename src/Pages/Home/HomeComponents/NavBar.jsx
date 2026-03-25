@@ -40,7 +40,7 @@ const STATIC_ADS_FALLBACK = [
   { image: "/assets/home/biditemurl.jpg", badge: "Featured", badgeColor: "#7c3aed", tag: "Sponsored", title: "Discover Amazing Art", sub: "Artsays Collection", price: "", cta: "Explore", href: "/art-gallery" },
   { image: "/assets/home/biditemurl.jpg", badge: "New", badgeColor: "#0ea5e9", tag: "Sponsored", title: "Bid on Rare Pieces", sub: "Live Auctions", price: "", cta: "Bid Now", href: "/bid" },
 ];
-
+
 
 // Shared cache so all 5 mega menus don't each fire separate requests
 let _megaAdsCache = null;
@@ -989,7 +989,7 @@ const NavBar = () => {
               <a href="/art-gallery" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Art Gallery</a>
               <a href="/bid" className="mob-item" onClick={() => setShowSidebar(false)}><RiAuctionFill className="mob-icon" /> Bid</a>
               <a href="/store" className="mob-item" onClick={() => setShowSidebar(false)}><PiHandbagBold className="mob-icon" /> Store</a>
-              <a href="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</a>
+              <a href="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18, height: 18 }} /> Community</a>
               <a href="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><Star size={18} className="mob-icon" /> Blog</a>
               <div className="mob-sep" />
               <a href="/login" className="mob-item mob-item-login" onClick={() => setShowSidebar(false)}><FaUser className="mob-icon" /> Login / Sign Up</a>
@@ -1016,25 +1016,39 @@ const NavBar = () => {
               <Link to="my-account/security-agreements" className="mob-item" onClick={() => setShowSidebar(false)}><RiLockPasswordLine className="mob-icon" /> Security & Agreements</Link>
               <div className="mob-sep" />
               <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
-                <img src={artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
-                Switch to Community
-              </Link>
-              <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
-            </>)}
+                  <img src={artLogo} style={{ width: 18, height: 18, marginRight: 10 }} alt="" />
+                  Switch to Community
+                </Link>
+                <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+              </>)}
 
-            {/* Artist / Seller */}
-            {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (<>
-              <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
-              <Link to="/artsays-community/create-post" className="mob-item" onClick={() => setShowSidebar(false)}><Plus size={18} className="mob-icon" /> Create Post</Link>
-              <Link to={Usertype === "Artist" ? "/artist/product/product-upload" : "/seller/product/product-upload"} className="mob-item" onClick={() => setShowSidebar(false)}><ShoppingCart size={18} className="mob-icon" /> Upload Product</Link>
-              <Link to="/artsays-community/create-live" className="mob-item" onClick={() => setShowSidebar(false)}><FaVideo size={18} className="mob-icon" /> Go Live</Link>
-              <Link to="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18 }} /> Community</Link>
-              <Link to="/artsays-community/explore" className="mob-item" onClick={() => setShowSidebar(false)}><Compass size={18} className="mob-icon" /> Explore Creators</Link>
-              <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
-              <div className="mob-sep" />
-              {!isSuperAdminSub && (
-                <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
-                  <img src={artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
+              {/* Artist / Seller */}
+              {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (<>
+                <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
+                <Link to="/artsays-community/create-post" className="mob-item" onClick={() => setShowSidebar(false)}><Plus size={18} className="mob-icon" /> Create Post</Link>
+                <Link to={Usertype === "Artist" ? "/artist/product/product-upload" : "/seller/product/product-upload"} className="mob-item" onClick={() => setShowSidebar(false)}><ShoppingCart size={18} className="mob-icon" /> Upload Product</Link>
+                <Link to="/artsays-community/create-live" className="mob-item" onClick={() => setShowSidebar(false)}><FaVideo size={18} className="mob-icon" /> Go Live</Link>
+                  <Link to="/artsays-community" className="mob-item" onClick={() => setShowSidebar(false)}><img src={artLogo} className="mob-icon" alt="" style={{ width: 18, height: 18 }} /> Community</Link>
+                <Link to="/artsays-community/explore" className="mob-item" onClick={() => setShowSidebar(false)}><Compass size={18} className="mob-icon" /> Explore Creators</Link>
+                <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
+                <div className="mob-sep" />
+                {!isSuperAdminSub && (
+                  <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                    <img src={artLogo} style={{ width: 18, height: 18, marginRight: 10 }} alt="" />
+                    Switch to Community
+                  </Link>
+                )}
+                <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+              </>)}
+
+              {/* Super-Admin */}
+              {isLoggedIn && Usertype === "Super-Admin" && (<>
+                <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
+                <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
+                <div className="mob-sep" />
+                {!isSuperAdminSub && (
+                  <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
+                    <img src={artLogo} style={{ width: 18, height: 18, marginRight: 10 }} alt="" />
                   Switch to Community
                 </Link>
               )}
@@ -1048,13 +1062,13 @@ const NavBar = () => {
               <div className="mob-sep" />
               {!isSuperAdminSub && (
                 <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
-                  <img src={artLogo} style={{ width: 18, marginRight: 10 }} alt="" />
-                  Switch to Community
-                </Link>
-              )}
-              <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+                    <img src={artLogo} style={{ width: 18, height: 18, marginRight: 10 }} alt="" />
+                    Switch to Community
+                  </Link>
+                )}
+                <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
+              </>)}
             </>)}
-          </>)}
         </div>
       </div>
 

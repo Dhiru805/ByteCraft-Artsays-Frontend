@@ -93,25 +93,34 @@ const BrowserCategorySkeleton = () => {
         </div>
       </div>
 
-      {/* Shimmer keyframes */}
+      {/* Shimmer keyframes — uses transform:translateX so the browser runs it
+          on the compositor thread (no layout/paint = no CLS contribution) */}
       <style>{`
         @keyframes skeletonShimmer {
-          0%   { background-position: -400px 0; }
-          100% { background-position:  400px 0; }
+          0%   { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
         }
         @keyframes skeletonPulse {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0.4; }
         }
         .skeleton-shimmer {
+          position: relative;
+          overflow: hidden;
+          background: #f3f4f6;
+        }
+        .skeleton-shimmer::after {
+          content: '';
+          position: absolute;
+          inset: 0;
           background: linear-gradient(
             90deg,
-            #f3f4f6 25%,
-            #e9eaec 50%,
-            #f3f4f6 75%
+            transparent 0%,
+            rgba(255,255,255,0.6) 50%,
+            transparent 100%
           );
-          background-size: 400px 100%;
           animation: skeletonShimmer 1.4s ease-in-out infinite;
+          will-change: transform;
         }
         .skeleton-pulse {
           animation: skeletonPulse 1.6s ease-in-out infinite;
