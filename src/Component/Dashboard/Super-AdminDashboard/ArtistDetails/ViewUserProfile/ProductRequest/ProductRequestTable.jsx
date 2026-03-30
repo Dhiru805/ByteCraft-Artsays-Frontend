@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useConfirm } from '../../../../StatusConfirm';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 
 
@@ -11,7 +12,7 @@ const ProductRequest = ({ userId }) => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
+    const BASE_URL = getImageUrl(null)
     const [searchTerm, setSearchTerm] = useState('');
 
     const confirm = useConfirm();
@@ -140,7 +141,7 @@ const ProductRequest = ({ userId }) => {
                                                     <img
                                                         src={
                                                             product.userId.profilePhoto
-                                                                ? `${BASE_URL}${product.userId.profilePhoto}`
+                                                                ? getImageUrl(product.userId.profilePhoto)
                                                                 : DEFAULT_PROFILE_IMAGE
                                                         }
                                                         className="rounded-circle avatar"
@@ -155,7 +156,7 @@ const ProductRequest = ({ userId }) => {
                                                     {product.userId.name} {product.userId.lastName}</td>
                                                 <td>
                                                     <img
-                                                        src={`${BASE_URL}${product.mainImage}`}
+                                                        src={getImageUrl(product.mainImage)}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         style={{

@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { jsPDF } from "jspdf";
 import { autoTable } from "jspdf-autotable";
 import { 
-  ArrowLeft, 
+    ArrowLeft, 
   Package, 
   Truck, 
   CheckCircle2, 
@@ -33,12 +33,13 @@ import {
   Wallet,
   BadgeCheck
 } from "lucide-react";
+import { getImageUrl } from "../../../../../../../utils/getImageUrl";
 
 const OrderView = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+  const BASE_URL = getImageUrl(null) || "";
 
   const [order, setOrder] = useState(null);
   const [loadingOrder, setLoadingOrder] = useState(true);

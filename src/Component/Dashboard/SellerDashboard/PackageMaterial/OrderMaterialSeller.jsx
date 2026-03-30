@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import getAPI from "../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const OrderMaterial = () => {
   const [orders, setOrders] = useState([]);
@@ -105,30 +106,30 @@ const OrderMaterial = () => {
 
   const getOrderImage = (order) => {
     if (order.material?.materialName?.materialNameImage)
-      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.material.materialName.materialNameImage.replace(
+      return getImageUrl(order.material.materialName.materialNameImage.replace(
         /\\/g,
         "/"
-      )}`;
+      ));
     if (order.stamp?.materialStampImage)
-      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.stamp.materialStampImage.replace(
+      return getImageUrl(order.stamp.materialStampImage.replace(
         /\\/g,
         "/"
-      )}`;
+      ));
     if (order.stickers?.materialStickersImage)
-      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.stickers.materialStickersImage.replace(
+      return getImageUrl(order.stickers.materialStickersImage.replace(
         /\\/g,
         "/"
-      )}`;
+      ));
     if (order.vouchers?.materialVouchersImage)
-      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.vouchers.materialVouchersImage.replace(
+      return getImageUrl(order.vouchers.materialVouchersImage.replace(
         /\\/g,
         "/"
-      )}`;
+      ));
     if (order.card?.materialCardImage)
-      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${order.card.materialCardImage.replace(
+      return getImageUrl(order.card.materialCardImage.replace(
         /\\/g,
         "/"
-      )}`;
+      ));
     return "/placeholder.jpg";
   };
 

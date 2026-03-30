@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from '../../../../api/getAPI';
 import useUserType from '../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 
 const Product = () => {
   const navigate = useNavigate();
   const userType = useUserType();
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE
+  const BASE_URL = getImageUrl(null)
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
@@ -165,7 +166,7 @@ const Product = () => {
                           {/* Product Name + Image */}
                           <td>
                             <img
-                              src={product.productId?.mainImage ? `${BASE_URL}${product.productId.mainImage}` : DEFAULT_PROFILE_IMAGE}
+                              src={product.productId?.mainImage ? getImageUrl(product.productId.mainImage) : DEFAULT_PROFILE_IMAGE}
                               className="rounded-circle avatar"
                               alt=""
                               onClick={() => handleImageClick(product.productId)}
@@ -298,7 +299,7 @@ const Product = () => {
           >
             {/* Image */}
             <img
-              src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+              src={getImageUrl(currentImages[currentImageIndex])}
               alt="Popup"
               style={{
                 width: '100%',

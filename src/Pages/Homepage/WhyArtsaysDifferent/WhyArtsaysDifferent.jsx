@@ -1,26 +1,26 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import WhyArtsaysDiffSkeleton from "../../../Component/Skeleton/WhyArtsaysDiffSkeleton";
 import { ChevronRight } from "lucide-react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const WhyArtsaysDifferent = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) return;
 
-        const sectionRes = await getAPI(`/api/homepage-sections/why-artsays-different/${homepage._id}`);
-        if (!sectionRes.data.success || !sectionRes.data.data)
-          throw new Error("Why Artsays Different section not found");
+          const sectionRes = await getAPI(`/api/homepage-sections/why-artsays-different/${homepage._id}`);
+          if (!sectionRes?.data?.success || !sectionRes?.data?.data) return;
 
-        setData(sectionRes.data.data);
-      } catch (err) {
+          setData(sectionRes.data.data);
+        } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
@@ -31,7 +31,7 @@ const WhyArtsaysDifferent = () => {
   }, []);
 
   if (loading) return <div><WhyArtsaysDiffSkeleton/></div>;
-  if (!data) return <div>No "Why Artsays Is Different" section available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gray-50 font-[poppins] py-16 px-4 md:px-6">
@@ -79,7 +79,7 @@ const WhyArtsaysDifferent = () => {
                 >
                   {/* Inner Glass Glow */}
                   <img 
-                    src={`${imageBaseURL}/${card.icon}`} 
+                    src={getImageUrl(card.icon)} 
                     alt={card.title} 
                     className="w-12 h-12 relative z-20" 
                   />

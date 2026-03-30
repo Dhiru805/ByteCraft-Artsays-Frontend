@@ -1,4 +1,4 @@
-import "./artist-card.css";
+﻿import "./artist-card.css";
 import React, { useEffect, useMemo, useState } from "react";
   import { 
     Search, ListFilter, X, ChevronRight, ChevronLeft, 
@@ -10,6 +10,7 @@ import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
 import { DEFAULT_PROFILE_IMAGE } from "./constant";
 import ProductsSkeliton from "../../../Component/Skeleton/products/ProductsSkeliton";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -35,8 +36,7 @@ const ArtistCard = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
-  const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+  const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
 
   const [filters, setFilters] = useState({
@@ -396,7 +396,7 @@ const ArtistCard = () => {
                     >
                       <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                         <img
-                          src={artist.profilePhoto ? `${imageBaseURL}${artist.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+                          src={artist.profilePhoto ? getImageUrl(artist.profilePhoto) : DEFAULT_PROFILE_IMAGE}
                           onError={(e) => { e.target.src = DEFAULT_PROFILE_IMAGE; }}
                           alt={artist.username}
                           className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
@@ -421,7 +421,7 @@ const ArtistCard = () => {
                           <div className="flex -space-x-1.5">
                             {artist.badges?.map((img, idx) => (
                               <div key={idx}>
-                                <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                                <img src={getImageUrl(img)} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
                               </div>
                             ))}
                           </div>

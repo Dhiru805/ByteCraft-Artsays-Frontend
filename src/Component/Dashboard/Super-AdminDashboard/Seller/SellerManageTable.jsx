@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from '../../ConfirmationDialog';
 import VerifyModal from "./VerifyModal"
@@ -9,6 +9,7 @@ import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables"
 import * as XLSX from 'xlsx-js-style';
 import { saveAs } from 'file-saver';
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 function SellerManageTable() {
   const [sellers, setSellers] = useState([]);
@@ -24,7 +25,7 @@ function SellerManageTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(10);
 const[loading,setLoading]=useState(false);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const navigate = useNavigate();
 
@@ -311,20 +312,21 @@ if(loading)return <ProductRequestSkeleton/>
                         <tr key={seller._id}>
                           <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
                           <td>
-                            <img
-                              src={
-                                seller.profilePhoto
-                                  ? `${BASE_URL}${seller.profilePhoto}`
-                                  : DEFAULT_PROFILE_IMAGE
-                              }
-                              className="rounded-circle avatar"
-                              alt=""
-                              style={{
-                                width: '30px',
-                                height: '30px',
-                                objectFit: 'cover',
-                              }}
-                            />
+                              <img
+                                src={
+                                  seller.profilePhoto
+                                    ? getImageUrl(seller.profilePhoto)
+                                    : DEFAULT_PROFILE_IMAGE
+                                }
+                                className="rounded-circle avatar"
+                                alt=""
+                                onError={(e) => { e.target.onerror = null; e.target.src = DEFAULT_PROFILE_IMAGE; }}
+                                style={{
+                                  width: '30px',
+                                  height: '30px',
+                                  objectFit: 'cover',
+                                }}
+                              />
 
                             <p className="c_name">
                               {seller.name} {seller.lastName}

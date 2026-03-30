@@ -7,8 +7,8 @@ import "../Create-post/Post.css";
 import { useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_IMAGE } from "../../../Constants/ConstantsVariables";
 import MediaSideSuggestionSkele from "../../Skeleton/Home/MedisSideSuggestionSkele";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
-const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
 const Suggestion = () => {
   const [users, setUsers] = useState([]);
   const [activeAdIndex, setActiveAdIndex] = useState(0);
@@ -50,7 +50,7 @@ const Suggestion = () => {
 
   // Use campaign images if available, otherwise fallback
   const displayAdImages = sidebarAds.length > 0
-    ? sidebarAds.map(ad => `${imageBaseURL}${ad.mainImage}`)
+    ? sidebarAds.map(ad => getImageUrl(ad.mainImage))
     : adImages;
 
   useEffect(() => {
@@ -78,68 +78,63 @@ const Suggestion = () => {
       } catch (error) {
         console.error("Error fetching suggested users:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     };
 
     fetchSuggestedUsers();
   }, []);
+
   const handleFollowToggle = async (targetUserId, currentStatus) => {
-  // Immediately set intermediate state to "Following"
-  setUsers(prev =>
-    prev.map(user =>
-      user._id === targetUserId ? { ...user, followStatus: "Following" } : user
-    )
-  );
+    setUsers(prev =>
+      prev.map(user =>
+        user._id === targetUserId ? { ...user, followStatus: "Following" } : user
+      )
+    );
 
-  try {
-    let response;
-    if (currentStatus === "Follow") {
-      response = await postAPI(
-        `/api/social-media/follow/${targetUserId}`,
-        { userId },
-        true,
-        true
-      );
-    } else {
-      response = await postAPI(
-        `/api/social-media/unfollow/${targetUserId}`,
-        { userId },
-        true,
-        true
-      );
-    }
+    try {
+      let response;
+      if (currentStatus === "Follow") {
+        response = await postAPI(
+          `/api/social-media/follow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
+      } else {
+        response = await postAPI(
+          `/api/social-media/unfollow/${targetUserId}`,
+          { userId },
+          true,
+          true
+        );
+      }
 
-    if (response?.data?.status === 200) {
-      // Success → final state
-      setUsers(prev =>
-        prev.map(user =>
-          user._id === targetUserId
-            ? { ...user, followStatus: currentStatus === "Follow" ? "Unfollow" : "Follow" }
-            : user
-        )
-      );
-    } else {
-      // Failure → revert to original
+      if (response?.data?.status === 200) {
+        setUsers(prev =>
+          prev.map(user =>
+            user._id === targetUserId
+              ? { ...user, followStatus: currentStatus === "Follow" ? "Unfollow" : "Follow" }
+              : user
+          )
+        );
+      } else {
+        setUsers(prev =>
+          prev.map(user =>
+            user._id === targetUserId ? { ...user, followStatus: currentStatus } : user
+          )
+        );
+        toast.error("Action failed. Try again.");
+      }
+    } catch (error) {
       setUsers(prev =>
         prev.map(user =>
           user._id === targetUserId ? { ...user, followStatus: currentStatus } : user
         )
       );
-      toast.error("Action failed. Try again.");
+      console.error("Error following/unfollowing user:", error);
     }
-  } catch (error) {
-    // Error → revert
-    setUsers(prev =>
-      prev.map(user =>
-        user._id === targetUserId ? { ...user, followStatus: currentStatus } : user
-      )
-    );
-    console.error("Error following/unfollowing user:", error);
-  }
-};
-
-
+  };
 
   const navigateToProfile = (user) => {
     navigate(
@@ -148,8 +143,10 @@ const Suggestion = () => {
         : `${user?.name}_${user?.lastName}_${user?._id}`
       }`, { state: { userId: user?._id } }
     );
-  }
-  if (loading) return <MediaSideSuggestionSkele />
+  };
+
+  if (loading) return <MediaSideSuggestionSkele />;
+
   return (
     <div className="suggestion sticky top-0 h-screen hidden lg:block col-span-3 px-2 py-2">
       <h3 className="text-lg font-bold my-2 ml-1">Discover Creators</h3>
@@ -172,8 +169,9 @@ const Suggestion = () => {
             {/* Avatar + Name */}
             <div className="col-span-5 flex items-center gap-2">
               <img
-                src={user?.profilePhoto ?
-                  `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}` : `${DEFAULT_PROFILE_IMAGE}`
+                src={user?.profilePhoto
+                  ? getImageUrl(user?.profilePhoto)
+                  : DEFAULT_PROFILE_IMAGE
                 }
                 alt="avatar"
                 className="rounded-full w-9 h-9 object-cover"
@@ -186,7 +184,6 @@ const Suggestion = () => {
                   Suggested for you
                 </p>
               </div>
-
             </div>
 
             {/* Buttons */}
@@ -200,14 +197,6 @@ const Suggestion = () => {
                 >
                   {followStatus === "Following" ? "Following" : isFollowing ? "Unfollow" : "Follow"}
                 </button>
-              {/* <button
-                className="text-[#6E4E37] text-sm font-bold leading-none"
-                onClick={() =>
-                  setUsers((prev) => prev.filter((u) => u._id !== user._id))
-                }
-              >
-                <i className="ri-close-line"></i>
-              </button> */}
             </div>
           </div>
         );
@@ -222,20 +211,18 @@ const Suggestion = () => {
             activeAdIndex={activeAdIndex}
             setActiveAdIndex={setActiveAdIndex}
             navigate={navigate}
-            imageBaseURL={imageBaseURL}
           />
       </div>
   );
 };
 
 /* ─── Sidebar Ad Card (Store-style product card with auto-slide) ─── */
-const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAdIndex, navigate, imageBaseURL }) => {
+const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAdIndex, navigate }) => {
   const timerRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [slideDir, setSlideDir] = useState("right"); // "right" or "left"
+  const [slideDir, setSlideDir] = useState("right");
   const totalAds = displayAdImages.length;
 
-  // Auto-slide every 4 seconds, pause on hover
   useEffect(() => {
     if (totalAds <= 1 || isHovered) return;
     timerRef.current = setInterval(() => {
@@ -318,9 +305,6 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
             />
           </div>
 
-          {/* Ad Badge */}
-            {/* Sponsored badge removed - now shown in content section */}
-
           {/* Discount Badge */}
           {hasDiscount && (
             <div className="absolute top-3 right-3 z-10">
@@ -330,7 +314,7 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
             </div>
           )}
 
-          {/* Prev / Next Arrows (show on hover, multiple ads) */}
+          {/* Prev / Next Arrows */}
           {totalAds > 1 && (
             <>
               <button
@@ -357,7 +341,7 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
             {/* Artist / Seller */}
             <div className="flex items-center gap-2">
               <img
-                src={ad?.userId?.profilePhoto ? `${imageBaseURL}${ad.userId.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+                src={ad?.userId?.profilePhoto ? getImageUrl(ad.userId.profilePhoto) : DEFAULT_PROFILE_IMAGE}
                 alt={ad?.userId?.name || "Seller"}
                 className="w-6 h-6 rounded-full object-cover border border-gray-200 flex-shrink-0"
               />
@@ -395,7 +379,7 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
             Buy Now
           </button>
 
-          {/* Dot indicators for multiple ads */}
+          {/* Dot indicators */}
           {totalAds > 1 && (
             <div className="flex justify-center gap-1.5 pt-1">
               {displayAdImages.map((_, idx) => (

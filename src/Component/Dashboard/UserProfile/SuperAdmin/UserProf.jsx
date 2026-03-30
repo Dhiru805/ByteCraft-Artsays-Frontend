@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,14 +7,17 @@ import getAPI from '../../../../api/getAPI';
 import Settings from './UserInfo/BasicInformation';
 import putAPI from '../../../../api/putAPI';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../utils/getImageUrl';
+import { useAuth } from '../../../../AuthContext';
 
 
 const UserProfileForm = () => {
   const location = useLocation();
-  const userId = location.state?._id;
+  const { userId: authUserId } = useAuth();
+  const userId = location.state?._id || authUserId || localStorage.getItem('userId');
   const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState('/DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -53,8 +56,8 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
+        const BASE_URL = getImageUrl(null);
+        const profilePhotoUrl = result.data.user.profilePhoto ? getImageUrl(result.data.user.profilePhoto) : '/DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {

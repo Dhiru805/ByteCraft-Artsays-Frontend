@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+﻿import React, { useEffect, useState, useCallback } from "react";
+import { getImageUrl } from '../../../../../../../../utils/getImageUrl';
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   Trash2, 
@@ -221,7 +222,7 @@ const WishlistTable = () => {
                     <div className="relative group/img flex-shrink-0">
                       <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 p-3 transition-transform duration-500 group-hover:scale-105">
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.mainImage}`}
+                          src={getImageUrl(item.mainImage)}
                           alt={item.productName}
                           className="w-full h-full object-contain mix-blend-multiply"
                         />

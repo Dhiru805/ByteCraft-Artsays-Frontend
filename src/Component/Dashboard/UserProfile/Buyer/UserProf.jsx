@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,12 +6,13 @@ import Preferences from './Pereferences/Pereferences';
 import getAPI from '../../../../api/getAPI';
 import putAPI from '../../../../api/putAPI';
 import Settings from './UserProfile/BasicInformation';
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 
 const UserProfileForm = () => {
   const navigate = useNavigate(); 
   const [imageFile, setImageFile] = useState(null);
-  const [previewImage, setPreviewImage] = useState('DashboardAssets/assets/images/user.png');
+  const [previewImage, setPreviewImage] = useState('/DashboardAssets/assets/images/user.png');
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -58,8 +59,8 @@ const UserProfileForm = () => {
           address: parsedAddress,
         });
 
-        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
-        const profilePhotoUrl = result.data.user.profilePhoto ? `${BASE_URL}${result.data.user.profilePhoto}` : 'DashboardAssets/assets/images/user.png';
+        const BASE_URL = getImageUrl(null);
+        const profilePhotoUrl = result.data.user.profilePhoto ? getImageUrl(result.data.user.profilePhoto) : '/DashboardAssets/assets/images/user.png';
         setPreviewImage(profilePhotoUrl);
       }
     } catch (error) {

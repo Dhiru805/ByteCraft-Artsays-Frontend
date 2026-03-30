@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
+import { getImageUrl } from '../../utils/getImageUrl';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaPlay, FaTrash } from 'react-icons/fa';
 import { BsBroadcast } from 'react-icons/bs';
@@ -112,13 +113,13 @@ const LiveHistory = () => {
                       const thumb = stream.thumbnail
                         ? stream.thumbnail.startsWith("http")
                           ? stream.thumbnail
-                          : `${process.env.REACT_APP_API_URL}/${stream.thumbnail.replace(/\\/g, "/")}`
+                          : getImageUrl(stream.thumbnail.replace(/\\/g, "/"))
                         : "/assets/profile/user.png";
 
                       const profileImg = stream.userId?.profilePhoto
                         ? stream.userId.profilePhoto.startsWith("http")
                           ? stream.userId.profilePhoto
-                          : `${process.env.REACT_APP_API_URL}/${stream.userId.profilePhoto}`
+                          : getImageUrl(stream.userId.profilePhoto)
                         : DEFAULT_PROFILE_IMAGE;
 
                       return (
@@ -293,7 +294,7 @@ const LiveHistory = () => {
                               <div className="flex items-center gap-2 mb-2">
                                 <img
                                   src={stream.userId.profilePhoto 
-                                    ? (stream.userId.profilePhoto.startsWith('http') ? stream.userId.profilePhoto : `${process.env.REACT_APP_API_URL}/${stream.userId.profilePhoto}`) 
+                                    ? (getImageUrl(stream.userId.profilePhoto)) 
                                     : DEFAULT_PROFILE_IMAGE}
                                   alt={stream.userId.username}
                                   className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"

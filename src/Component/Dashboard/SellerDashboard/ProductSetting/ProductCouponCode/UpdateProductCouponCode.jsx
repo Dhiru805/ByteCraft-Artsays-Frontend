@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import putAPI from "../../../../../api/putAPI";
 import getAPI from "../../../../../api/getAPI";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const ProductCouponCodeModal = ({ onClose, refreshProductCouponCodes, selectedProductCouponCode }) => {
   const [formData, setFormData] = useState({
@@ -176,7 +177,7 @@ const ProductCouponCodeModal = ({ onClose, refreshProductCouponCodes, selectedPr
                   <label>Product Details</label>
                   <div className="d-flex align-items-center">
                     <img
-                      src={selectedProduct.mainImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}` : "https://via.placeholder.com/100"}
+                        src={selectedProduct.mainImage ? getImageUrl(selectedProduct.mainImage) : "https://via.placeholder.com/100"}
                       alt={selectedProduct.productName}
                       className="img-thumbnail mr-3"
                       style={{ maxWidth: "100px", maxHeight: "100px" }}

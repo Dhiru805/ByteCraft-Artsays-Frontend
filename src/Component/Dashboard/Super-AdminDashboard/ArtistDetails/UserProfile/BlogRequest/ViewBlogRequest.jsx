@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 const ViewBlogRequest = ({ userId }) => {
   const [blogs, setBlogs] = useState([]);
@@ -10,7 +11,7 @@ const ViewBlogRequest = ({ userId }) => {
   const [blogsPerPage, setBlogsPerPage] = useState(10);
   const navigate = useNavigate();
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const fetchBlog = async () => {
     try {
@@ -119,7 +120,7 @@ const ViewBlogRequest = ({ userId }) => {
                           </td>
                           <td>
                             <img
-                              src={blog.blogImage ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}` : "/placeholder.jpg"}
+                              src={blog.blogImage ? getImageUrl(blog.blogImage.replace(/\\/g, "/")) : "/placeholder.jpg"}
                               alt={blog.blogName}
                               style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
                             />

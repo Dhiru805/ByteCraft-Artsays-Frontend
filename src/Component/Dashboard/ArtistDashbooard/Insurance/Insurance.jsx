@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 const InsuranceList = () => {
   const navigate = useNavigate();
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const [insurances, setInsurances] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -194,7 +195,7 @@ const InsuranceList = () => {
                                 <img
                                   src={
                                     item.productId?.mainImage
-                                      ? `${BASE_URL}${item.productId.mainImage}`
+                                      ? getImageUrl(item.productId.mainImage)
                                       : DEFAULT_PROFILE_IMAGE
                                   }
                                   className="rounded-circle"
@@ -333,7 +334,7 @@ const InsuranceList = () => {
             }}
           >
             <img
-              src={`${BASE_URL}${currentImages[currentImageIndex] || ""}`}
+              src={getImageUrl(currentImages[currentImageIndex] || "")}
               alt="Product preview"
               style={{
                 width: "100%",

@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from "react"
+﻿import { useEffect, useState, useRef } from "react"
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 const HelpPopover = ({ onClose }) => (
   <div
@@ -138,7 +139,7 @@ const ProductSection = ({
       <div className="p-4">
         <div className="d-flex" style={{ gap: "16px" }}>
           <img
-            src={product.mainImage ? `${BASE_URL}${product.mainImage}` : "/placeholder.svg?height=80&width=80"}
+            src={product.mainImage ? getImageUrl(product.mainImage) : "/placeholder.svg?height=80&width=80"}
             alt={product.productName}
             className="rounded"
             style={{

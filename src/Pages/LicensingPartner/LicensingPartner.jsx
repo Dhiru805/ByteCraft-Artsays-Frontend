@@ -1,17 +1,3 @@
-// import React from 'react';
-// import HeroImgLicensingPartner from './hero-img/hero-img';
-// import LicensingPartnerContent from "./LicensingPartnerContent/LicensingPartnerContent"
-
-// const LicensingPartner = () => {
-//   return (
-//     <div className="max-w-[1440px] mx-auto font-[poppins]">
-//         <HeroImgLicensingPartner/>
-//         <LicensingPartnerContent/>
-//     </div>
-//   );
-// };
-
-// export default LicensingPartner;
 
 
 
@@ -22,6 +8,7 @@ import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import HeroImgLicensingPartner from "./hero-img/hero-img";
 import LicensingPartnerContent from "./LicensingPartnerContent/LicensingPartnerContent";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const LicensingPartner = () => {
   const [seoData, setSeoData] = useState({
@@ -46,7 +33,7 @@ const LicensingPartner = () => {
             : meta.metaKeywords || "",
           metaAuthor: meta.metaAuthor || "ArtSays",
           metaImage: meta.metaImage
-            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+            ? getImageUrl(meta.metaImage)
             : "",
         });
       }

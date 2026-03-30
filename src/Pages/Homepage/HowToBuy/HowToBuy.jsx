@@ -1,30 +1,31 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import HowToBuySkeleton from "../../../Component/Skeleton/HowToBuySkeleton";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const HowToBuy = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeStep, setActiveStep] = useState(null);
   const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        
-        if (!homepage?._id) throw new Error("No published homepage found");
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          
+          if (!homepage?._id) return;
 
-        const sectionRes = await getAPI(
-          `/api/homepage-sections/how-to-buy/${homepage._id}`
-        );
-        if (!sectionRes.data.success) throw new Error("How To Buy section not found");
+          const sectionRes = await getAPI(
+            `/api/homepage-sections/how-to-buy/${homepage._id}`
+          );
+          if (!sectionRes?.data?.success) return;
 
-        setData(sectionRes.data.data);
-      } catch (err) {
+          setData(sectionRes.data.data);
+        } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
@@ -35,7 +36,7 @@ const HowToBuy = () => {
   }, []);
 
   if (loading) return <div><HowToBuySkeleton/></div>;
-  if (!data) return <div>How To Buy section not available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gradient-to-br from-gray-50 via-white to-amber-50/30 font-[poppins] py-12 md:py-24 px-3 md:px-6 overflow-hidden relative">
@@ -52,7 +53,7 @@ const HowToBuy = () => {
               <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
                 {data.heading}
               </h2>
-            <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+            <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
               {data.description}
             </p>
           </div>
@@ -104,7 +105,7 @@ const HowToBuy = () => {
                       <div className="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-orange-50/50 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-75" />
                       <div className="relative w-full max-w-[220px] aspect-square flex items-center justify-center">
                         <img
-                          src={`${imageBaseURL}/${card.image}`}
+                          src={getImageUrl(card.image)}
                           alt={card.title}
                           className="w-full h-full object-contain drop-shadow-lg transform group-hover:scale-110 group-hover:-rotate-2 transition-all duration-700"
                         />
@@ -132,7 +133,7 @@ const HowToBuy = () => {
                             className="p-3 bg-gray-50 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300 group/icon"
                           >
                             <img
-                              src={`${imageBaseURL}/${icon}`}
+                              src={getImageUrl(icon)}
                               alt="payment method"
                               className="h-7 w-auto object-contain grayscale group-hover/icon:grayscale-0 transition-all duration-300"
                             />

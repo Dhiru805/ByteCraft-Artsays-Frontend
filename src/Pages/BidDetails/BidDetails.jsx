@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MdVerified } from "react-icons/md";
 import { Star, Heart, ChevronLeft, ChevronRight, Share2, Eye, Box, Ruler, Award, ShieldCheck, Truck, MessageCircle, FileText, Download, ExternalLink } from "lucide-react";
@@ -12,15 +12,15 @@ import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
-
-const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+import { getImageUrl } from '../../utils/getImageUrl';
+
 
 const resolveMediaUrl = (path) => {
   if (!path || typeof path !== "string") return "/images/placeholder.jpg";
   if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
   const normalized = path.replace(/\\/g, "/");
   const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
-  const base = imageBaseURL.endsWith("/") ? imageBaseURL.slice(0, -1) : imageBaseURL;
+  const base = getImageUrl.endsWith("/") ? getImageUrl.slice(0, -1) : getImageUrl;
   return `${base}${leadingSlash}`;
 };
 
@@ -417,7 +417,7 @@ const BidDetails = () => {
               images={images}
               product={finalData}
               username={finalData.userId?.username || "Artist"}
-              imageBaseURL={imageBaseURL}
+              getImageUrl={getImageUrl}
               navigate={navigate}
               navigateToArtistProfile={navigateToArtistProfile}
               resolveMediaUrl={resolveMediaUrl}
@@ -438,7 +438,7 @@ const BidDetails = () => {
                 winner={winner}
                 artistName={`${finalData.userId?.name || ""} ${finalData.userId?.lastName || ""}`.trim()}
                 username={finalData.userId?.username || "Artist"}
-                imageBaseURL={imageBaseURL}
+                getImageUrl={getImageUrl}
               />
 
               <BiddingCard
@@ -495,7 +495,7 @@ const BidDetails = () => {
               </div>
             )}
 
-            {activeTab === "details" && <DetailsGrid product={finalData} categoryInfo={{ mainCategoryName, categoryName, subCategoryName }} imageBaseURL={imageBaseURL} resolveMediaUrl={resolveMediaUrl} />}
+            {activeTab === "details" && <DetailsGrid product={finalData} categoryInfo={{ mainCategoryName, categoryName, subCategoryName }} getImageUrl={getImageUrl} resolveMediaUrl={resolveMediaUrl} />}
 
             {activeTab === "artist" && (
               <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -587,7 +587,7 @@ const BidDetails = () => {
   );
 };
 
-const ProductGallery = ({ images, product, username, imageBaseURL, navigate, navigateToArtistProfile, resolveMediaUrl, handleShare, handleWishlist, likedProducts, isBidEnded, productBadgeEntry }) => {
+const ProductGallery = ({ images, product, username, getImageUrl, navigate, navigateToArtistProfile, resolveMediaUrl, handleShare, handleWishlist, likedProducts, isBidEnded, productBadgeEntry }) => {
   const [selected, setSelected] = useState(images[0]);
   const [showRoom, setShowRoom] = useState(false);
   const [roomBg, setRoomBg] = useState("/artimages/viewintheroom.jpg");
@@ -651,7 +651,7 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
             <span className="font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">{username}</span>
             {product.userId?.verified && <MdVerified className="text-blue-600" size={14} />}
             <div className="flex gap-1 ml-1">
-              {productBadgeEntry?.badges?.map((img, i) => (<img key={i} src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" />))}
+              {productBadgeEntry?.badges?.map((img, i) => (<img key={i} src={getImageUrl(img)} className="w-4 h-4 rounded-full" alt="Badge" />))}
             </div>
           </div>
         </div>
@@ -681,7 +681,7 @@ const ProductGallery = ({ images, product, username, imageBaseURL, navigate, nav
   );
 };
 
-const ProductInfo = ({ product, currentHighest, isBidEnded, winner, artistName, username, imageBaseURL }) => {
+const ProductInfo = ({ product, currentHighest, isBidEnded, winner, artistName, username, getImageUrl }) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -886,7 +886,7 @@ const OffersBlock = ({ offersData, index, setIndex }) => {
   );
 };
 
-const DetailsGrid = ({ product, categoryInfo, imageBaseURL, resolveMediaUrl }) => {
+const DetailsGrid = ({ product, categoryInfo, getImageUrl, resolveMediaUrl }) => {
   const Section = ({ title, icon: Icon, children }) => {
     const hasVisibleChildren = React.Children.toArray(children).some(child => child !== null);
     if (!hasVisibleChildren) return null;

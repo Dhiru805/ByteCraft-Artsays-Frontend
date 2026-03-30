@@ -1,39 +1,9 @@
-// import Hero from './Hero/Hero'
-// import BrowseCategories from './BrowseCategories/BrowseCategories'
-// import WhyFromArtsays from './WhyFromArtsays/WhyFromArtsays'
-// import BiddingArena from './BiddingArena/BiddingArena'
-// import HowToBuy from './HowToBuy/HowToBuy'
-// import DiscoverArtist from './DiscoverArtist/DiscoverArtist'
-// import WhyArtsaysDifferent from './WhyArtsaysDifferent/WhyArtsaysDifferent.jsx'
-// import HomeChallenges from './HomeChallenges/HomeChallenges'
-// import ArtIcon from './ArtIcon/ArtIcon'
-// import HowToSell from './HowToSell/HowToSell'
-
-// const Homepage = () => {
-//   return (
-//     <div className="font-[poppins] !bg-[#ffffff]">
-//         <Hero/>
-//         <BrowseCategories/>
-//         <WhyFromArtsays/>
-//         <BiddingArena/>
-//         <HowToBuy/>
-//         <DiscoverArtist/>
-//         <WhyArtsaysDifferent/>
-//         <HomeChallenges/>
-//         <ArtIcon/>
-//         <HowToSell/>
-//     </div>
-//   );
-// };
-
-// export default Homepage;
-
 
 
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { toast } from "react-toastify";
 import axiosInstance from "../../api/axiosConfig";
+import getAPI from "../../api/getAPI";
 
 import Hero from "./Hero/Hero";
 import BrowseCategories from "./BrowseCategories/BrowseCategories";
@@ -46,6 +16,7 @@ import HomeChallenges from "./HomeChallenges/HomeChallenges";
 import ArtIcon from "./ArtIcon/ArtIcon";
 import HowToSell from "./HowToSell/HowToSell";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const Homepage = () => {
   const [seoData, setSeoData] = useState({
@@ -55,6 +26,37 @@ const Homepage = () => {
     metaAuthor: "",
     metaImage: "",
   });
+  const [homepageId, setHomepageId] = useState(null);
+  const [heroReady, setHeroReady] = useState(false);
+  const handleHeroReady = () => {
+    // Defer by two frames so browser paints Hero content before BrowseCategories mounts
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setHeroReady(true);
+      });
+    });
+  };
+
+  // Fallback: if Hero never calls onReady (e.g. network error), unblock BrowseCategories after 8s
+  useEffect(() => {
+    const t = setTimeout(() => setHeroReady(true), 8000);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    // Fetch the published homepage ID once and share it with child sections
+    getAPI("/api/homepage/published")
+      .then((res) => {
+        const id = res?.data?.data?._id;
+        // If id found, pass it down. If not, set to undefined so children
+        // know the fetch is done and stop waiting (null = still loading).
+        setHomepageId(id || undefined);
+      })
+      .catch(() => {
+        // Fetch failed — signal children to stop waiting
+        setHomepageId(undefined);
+      });
+  }, []);
 
   const fetchSEOMetadata = async () => {
     try {
@@ -73,12 +75,11 @@ const Homepage = () => {
               "art marketplace, buy art, sell art, online art auctions, discover artists",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {
       console.error("Error fetching Homepage SEO metadata:", error);
-      toast.error("Failed to load SEO metadata");
     }
   };
 
@@ -114,8 +115,8 @@ const Homepage = () => {
       </Helmet>
         {/* <NavBar /> */}
 
-      <Hero />
-      <BrowseCategories />
+      <Hero homepageId={homepageId} onReady={handleHeroReady} />
+      {heroReady && <BrowseCategories homepageId={homepageId} />}
       <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
         <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
       </div>

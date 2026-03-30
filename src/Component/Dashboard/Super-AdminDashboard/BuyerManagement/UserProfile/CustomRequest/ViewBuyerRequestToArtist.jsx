@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useLocation, Link, useParams } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import useUserType from '../../../../urlconfig';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 function ViewBuyerRequest() {
     const location = useLocation();
@@ -11,7 +12,7 @@ function ViewBuyerRequest() {
     const { request } = state || {};
     const {userId} =useParams();
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
 
     const [productName, setProductName] = useState('');
@@ -27,7 +28,7 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            setImage(request.BuyerImage ? `${BASE_URL}${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? getImageUrl(request.BuyerImage) : '');
             setArtistId(`${request.Artist.id.name} ${request.Artist.id.lastName}`);
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
         }

@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Search, ChevronRight, HelpCircle, Shield, Award, CheckCircle2, FileCheck } from "lucide-react";
 import getAPI from "../../../api/getAPI";
 import CertificationSkeleton from "../../../Component/Skeleton/CertificationSkeleton";
 import "../../store/products/product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const CertificationContent = () => {
     const [pageData, setPageData] = useState(null);
     const [certifications, setCertifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const imageBaseURL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -273,7 +273,7 @@ const CertificationContent = () => {
                                         <div className="mb-6 flex justify-center">
                                             {card.image ? (
                                                 <img
-                                                    src={card.image.startsWith("http") ? card.image : `${imageBaseURL}/${card.image}`}
+                                                    src={card.image.startsWith("http") ? card.image : getImageUrl(card.image)}
                                                     alt={card.title}
                                                     className="h-24 object-contain group-hover:scale-110 transition-transform"
                                                 />
@@ -315,7 +315,7 @@ const CertificationContent = () => {
                                             <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl flex items-center justify-center">
                                                 {card.image ? (
                                                     <img
-                                                        src={`${imageBaseURL}/${card.image}`}
+                                                        src={getImageUrl(card.image)}
                                                         alt={card.title}
                                                         className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                                                     />
@@ -378,7 +378,7 @@ const CertificationContent = () => {
                                 <div className="bg-white backdrop-blur-sm rounded-[32px] p-3 border border-white/10 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700">
                                     {pageData.certificateSection?.image ? (
                                         <img
-                                            src={`${imageBaseURL}/${pageData.certificateSection.image}`}
+                                            src={getImageUrl(pageData.certificateSection.image)}
                                             alt="Certificate Preview"
                                             className="w-full h-auto rounded-xl shadow-2xl"
                                         />

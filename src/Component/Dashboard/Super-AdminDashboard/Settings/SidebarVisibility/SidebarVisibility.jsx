@@ -25,6 +25,10 @@ const ARTIST_TABS = [
   { label: "Exhibition", subTabs: [] },
   { label: "Packaging Material", subTabs: [] },
   { label: "Wallet", subTabs: [] },
+  {
+    label: "Product Settings",
+    subTabs: [{ label: "Product Coupon Code" }],
+  },
 ];
 
 const SELLER_TABS = [
@@ -471,7 +475,7 @@ const SidebarVisibility = () => {
       </div>
 
       {loading ? (
-        <div className="text-center py-5">
+        <div className="py-5 text-center">
           <i className="fa fa-spinner fa-spin fa-2x"></i>
         </div>
       ) : (
@@ -484,7 +488,7 @@ const SidebarVisibility = () => {
 
             <div className="row">
               {/* Artist Column */}
-              <div className="col-lg-6 col-md-6 col-sm-12 mb-4">
+              <div className="mb-4 col-lg-6 col-md-6 col-sm-12">
                 <div
                   style={{
                     background: "#fff3e0",
@@ -495,14 +499,14 @@ const SidebarVisibility = () => {
                   }}
                 >
                   <h5 style={{ margin: 0, fontSize: "1.5rem", color: "#e65100" }}>
-                    <i className="fa fa-paint-brush mr-2"></i> Artist Sidebar
+                    <i className="mr-2 fa fa-paint-brush"></i> Artist Sidebar
                   </h5>
                 </div>
                 {renderTabList(artistTabs, "artist")}
               </div>
 
               {/* Seller Column */}
-              <div className="col-lg-6 col-md-6 col-sm-12 mb-4">
+              <div className="mb-4 col-lg-6 col-md-6 col-sm-12">
                 <div
                   style={{
                     background: "#e8f5e9",
@@ -513,7 +517,7 @@ const SidebarVisibility = () => {
                   }}
                 >
                   <h5 style={{ margin: 0, fontSize: "1.5rem", color: "#1b5e20" }}>
-                    <i className="fa fa-tag mr-2"></i> Seller Sidebar
+                    <i className="mr-2 fa fa-tag"></i> Seller Sidebar
                   </h5>
                 </div>
                 {renderTabList(sellerTabs, "seller")}
@@ -529,11 +533,11 @@ const SidebarVisibility = () => {
               >
                 {saving ? (
                   <>
-                    <i className="fa fa-spinner fa-spin mr-2"></i> Saving...
+                    <i className="mr-2 fa fa-spinner fa-spin"></i> Saving...
                   </>
                 ) : (
                   <>
-                    <i className="fa fa-save mr-2"></i> Save Changes
+                    <i className="mr-2 fa fa-save"></i> Save Changes
                   </>
                 )}
               </button>

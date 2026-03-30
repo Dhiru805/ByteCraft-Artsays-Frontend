@@ -6,6 +6,7 @@
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
+  <meta name="robots" content="index, follow">
 
   <!-- SEO meta tags — replaced with real values by backend prerender for bots/crawlers -->
   <title>__META_TITLE__</title>
@@ -14,6 +15,7 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Artsays" />
   <meta property="og:title" content="__META_OG_TITLE__" />
   <meta property="og:description" content="__META_OG_DESCRIPTION__" />
   <meta property="og:image" content="__META_OG_IMAGE__" />
@@ -44,112 +46,284 @@
   </script>
 
   <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Artsays",
-      "url": "https://artsays.in",
-      "logo": "https://artsays.in/logo192.png",
-      "sameAs": [
-        "https://www.facebook.com/artsays",
-        "https://www.instagram.com/artsays",
-        "https://twitter.com/artsays"
-      ]
-    }
-  </script>
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Artsays",
+        "url": "https://artsays.in",
+        "logo": "https://artsays.in/logo192.png",
+        "sameAs": [
+          "https://www.facebook.com/artsays",
+          "https://www.instagram.com/artsays",
+          "https://twitter.com/artsays"
+        ]
+      }
+    </script>
 
-  <!-- Bootstrap Stylesheet -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://artsays.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Store",
+            "item": "https://artsays.in/store"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Bidding Arena",
+            "item": "https://artsays.in/bid"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Artists",
+            "item": "https://artsays.in/artist"
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "name": "Celebrities",
+            "item": "https://artsays.in/celebrity"
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "name": "Art Gallery",
+            "item": "https://artsays.in/art-gallery"
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "name": "Challenges",
+            "item": "https://artsays.in/challenges"
+          },
+          {
+            "@type": "ListItem",
+            "position": 8,
+            "name": "Blogs",
+            "item": "https://artsays.in/blogs"
+          },
+          {
+            "@type": "ListItem",
+            "position": 9,
+            "name": "About Us",
+            "item": "https://artsays.in/about-us"
+          },
+          {
+            "@type": "ListItem",
+            "position": 10,
+            "name": "Career",
+            "item": "https://artsays.in/career"
+          },
+          {
+            "@type": "ListItem",
+            "position": 11,
+            "name": "Contact Us",
+            "item": "https://artsays.in/contact-us"
+          }
+        ]
+      }
+    </script>
+
+  <!-- ================================================
+       CRITICAL CSS (render-blocking — small / above-fold)
+       ================================================ -->
+  <!-- Bootstrap layout — needed on every page -->
   <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap/css/bootstrap.min.css" />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700|Roboto:300,400,500,700,900&display=swap" rel="stylesheet">
+  <!-- Primary Google Fonts (Playfair + Roboto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/css/fontawesome.css">
+  <!-- CDN preconnects — reduces TCP/TLS handshake time for icon fonts and toastify -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- S3 / CloudFront preconnects — reduces LCP image load delay when storage is S3 -->
+  <link rel="preconnect" href="https://s3.amazonaws.com" crossorigin>
+  <link rel="preconnect" href="https://s3.ap-south-1.amazonaws.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cloudfront.net">
   <link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css"
-/>
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700,900&display=swap"
+    rel="stylesheet">
 
-
-  <!-- Site Stylesheets -->
-  <!-- <link rel="stylesheet" href="%PUBLIC_URL%/css/style.css"> -->
+  <!-- Core site styles -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/fontawesome.css">
   <link rel="stylesheet" href="%PUBLIC_URL%/css/plugins.css">
-  <!-- <link rel="stylesheet" href="%PUBLIC_URL%/css/color.css"> -->
   <link rel="stylesheet" href="%PUBLIC_URL%/css/responsive.css">
   <link rel="stylesheet" href="%PUBLIC_URL%/css/border-bottom.css">
 
-  <!-- Dashboard Assets Stylesheets -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css">
+  <!-- ================================================
+       NON-CRITICAL CSS (loaded asynchronously)
+       ================================================ -->
 
-  <!-- custom css -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css">
-  <!-- <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/h-menu.css"> -->
-  <!-- <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/ecommerce.css"> -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=ar_stickers" />
-  <!-- <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/toastr/toastr.min.css"> -->
-  <!-- <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/charts-c3/plugin.css"> -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+  <!-- Dashboard main & page-specific styles -->
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css">
+  </noscript>
 
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css">
+  </noscript>
 
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css">
+  </noscript>
 
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css">
+  </noscript>
 
+  <!-- Vendor CSS (dashboard-only, non-critical) -->
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css">
+  </noscript>
 
-  <!-- Font Awesome Icons CDN -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css" />
+  <link rel="preload" as="style"
+    href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css">
+  </noscript>
 
-  <!-- Optional Fonts -->
-  <link id="font-nunito" href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet" disabled>
-  <link id="poppins" href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet" disabled>
-  <link href="https://fonts.googleapis.com/css2?family=Windhavi&display=swap" rel="stylesheet">
-  <link id="font-ubuntu" href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet" disabled>
-  <link id="font-raleway" href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet" disabled>
-  <link id="font-IBMplex" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap" rel="stylesheet" disabled>
-  
-    <!-- Toastify CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css">
+  </noscript>
 
-  <!-- Bootstrap Icons CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css">
+  </noscript>
+
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css">
+  </noscript>
+
+  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css">
+  </noscript>
+
+  <link rel="preload" as="style"
+    href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet"
+      href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+  </noscript>
+
+  <!-- Icon fonts (CDN, non-critical) -->
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css">
+  </noscript>
+
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  </noscript>
+
+  <!-- Toastify CSS -->
+  <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  </noscript>
+
+  <!-- Secondary / optional Google Fonts (non-critical) -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Windhavi&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Windhavi&display=swap">
+  </noscript>
+
+  <!-- Dashboard switchable fonts — loaded non-blocking via media="print".
+         LeftSide.jsx immediately disables all 4 and re-enables only the saved
+         one, so loading them as render-blocking stylesheet serves no purpose. -->
+  <link id="font-nunito" rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap">
+  <link id="font-ubuntu" rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+    href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap">
+  <link id="font-raleway" rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+    href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap">
+  <link id="font-IBMplex" rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;700&display=swap">
+
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=ar_stickers"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=ar_stickers">
+  </noscript>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q5GZKQD578"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q5GZKQD578');
+  </script>
+
+  <meta name="google-site-verification" content="Ot6iL0vQJKaWicm9WbimNxk7aQO5Lmq3wUzDS8rc6Js">
+
 </head>
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 
-  <!-- jQuery CDN -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-  <!-- Additional Scripts (uncomment as needed) -->
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/bundles/libscripts.bundle.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/bundles/vendorscripts.bundle.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/bundles/apexcharts.bundle.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/bundles/jvectormap.bundle.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/bundles/knob.bundle.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/js/pages/blog.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/js/lightgallery-all.min.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.min.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/js/pages/ui/dialogs.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper-init.js"></script>
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/packagingcropper-init.js"></script>
+  <!-- jQuery CDN (deferred) -->
+  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
-  <!-- <script src="%PUBLIC_URL%/DashboardAssets/js/index.js"></script>  -->
-  <!-- <script src="%PUBLIC_URL%/DashboardAssets/assets/vendor/toastr/toastr.js"></script> 
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/bundles/c3.bundle.js"></script> 
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/bundles/mainscripts.bundle.js"></script>  -->
-  <script src="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+  <!-- Dashboard bundle scripts (all deferred) -->
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/libscripts.bundle.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/vendorscripts.bundle.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/apexcharts.bundle.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/jvectormap.bundle.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/knob.bundle.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/js/pages/blog.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/js/lightgallery-all.min.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.min.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/js/pages/ui/dialogs.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper-init.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/packagingcropper-init.js"></script>
+  <script defer
+    src="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
-  <!-- Toastify JS -->
-  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <!-- Toastify JS (deferred) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 
 

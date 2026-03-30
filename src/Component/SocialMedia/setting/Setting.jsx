@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+﻿import React, { useCallback, useEffect, useRef, useState } from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import { toast } from "react-toastify";
 import getAPI from "../../../../src/api/getAPI";
 import putAPI from "../../../../src/api/putAPI";
@@ -969,7 +970,7 @@ const Setting = () => {
                       src={
                         profilePhoto?.startsWith("blob:")
                           ? profilePhoto // show preview
-                          : `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profilePhoto}` // show from backend
+                          : getImageUrl(profilePhoto) // show from backend
                       }
                       alt="avatar"
                       className="w-14 h-14 rounded-full object-cover"
@@ -1557,9 +1558,9 @@ const Setting = () => {
                                 : order.status}
                             </span>
                           </td>
-                          <td className="px-3 py-2 text-xs text-gray-400 break-all">
-                            {order.easebuzzTxnId || "-"}
-                          </td>
+                            <td className="px-3 py-2 text-xs text-gray-400 break-all">
+                              {order.cfOrderId || "-"}
+                            </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1912,7 +1913,7 @@ const Setting = () => {
                       >
                         <div className="flex gap-2">
                           <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${item.profilePhoto}`}
+                            src={getImageUrl(item.profilePhoto)}
                             alt="profile pic"
                             className="w-11 h-11 rounded-full border border-white"
                           />
@@ -2020,7 +2021,7 @@ const Setting = () => {
                             <div className="flex items-center gap-2 font-semibold text-[#000000] text-md">
                               {badge.badgeName}
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${badge.badgeImage}`}
+                                src={getImageUrl(badge.badgeImage)}
                                 className="w-6 h-6 object-cover rounded-full"
                                 alt="badge"
                               />
@@ -2143,7 +2144,7 @@ const Setting = () => {
                     {/* Profile Preview */}
                     <div className="flex flex-col items-center space-y-1">
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                        src={getImageUrl(profile?.profilePhoto)}
                         alt="Profile"
                         className="w-20 h-20 rounded-full object-cover border-4 border-[#f3f3f3] shadow-sm"
                       />
@@ -2157,7 +2158,7 @@ const Setting = () => {
                       <div className="bg-gray-50 px-3 py-2 rounded-md border">
                         <h3 className="font-semibold text-gray-800 flex items-center gap-2">
                           <img
-                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activeBadge.badgeImage}`}
+                            src={getImageUrl(activeBadge.badgeImage)}
                             alt="badge"
                             className="w-6 h-6 object-cover rounded-full"
                           />
@@ -2257,7 +2258,7 @@ const Setting = () => {
 
                     <div className="flex justify-center">
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}`}
+                        src={getImageUrl(profile?.profilePhoto)}
                         alt="Profile"
                         className="w-24 h-24 rounded-full object-cover"
                       />
@@ -2266,7 +2267,7 @@ const Setting = () => {
                     <p className="text-center font-semibold flex items-center justify-center gap-2">
                       {profile?.username}{" "}
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activeBadge.badgeImage}`}
+                        src={getImageUrl(activeBadge.badgeImage)}
                         alt="badge"
                         className="w-6 h-6 object-cover rounded-full"
                       />

@@ -1,4 +1,5 @@
-import React from "react";
+﻿import React from "react";
+import { getImageUrl } from '../../utils/getImageUrl';
 import { useEffect, useState } from "react";
 import getAPI from "../../api/getAPI";
 import Sidebar from "../../Component/SocialMedia/Sidebar/Sidebar";
@@ -51,7 +52,7 @@ const Saved = () => {
                     <div key={post._id} className="relative">
                       <Link to={`/artsays-community/single-post/${post._id}`}>
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[0]}`}
+                          src={getImageUrl(post.images[0])}
                           alt={`post-${index}`}
                           className="h-[120px] sm:h-[240px] sm:w-full object-cover rounded-md cursor-pointer"
                         />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { GoPencil } from "react-icons/go";
 import { LuHandshake } from "react-icons/lu";
@@ -14,8 +14,9 @@ import NegotiateModal from "./NegotiateModal";
 import ViewBuyerRequest from "./ViewRequest";
 import { DEFAULT_PROFILE_IMAGE } from "./constant";
 import CreatableSelect from "react-select/creatable";
+import { getImageUrl } from '../../../../../../../utils/getImageUrl';
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+const BASE_URL = getImageUrl(null);
 
 const AddCustomRequestForm = () => {
   const [showNegotiationModal, setShowNegotiationModal] = useState(false);
@@ -750,7 +751,7 @@ const AddCustomRequestForm = () => {
   };
 
   const handleImageClick = (imagePath) => {
-    const fullPath = `${BASE_URL}/${imagePath}`;
+    const fullPath = getImageUrl(imagePath);
     setCurrentImages([fullPath]);
     setCurrentImageIndex(0);
     setShowPopup(true);
@@ -827,7 +828,7 @@ const AddCustomRequestForm = () => {
                             <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shadow-sm transition-transform duration-300 group-hover/row:scale-110">
                               {req.BuyerImage ? (
                                 <img
-                                  src={`${BASE_URL}/${req.BuyerImage}`}
+                                  src={getImageUrl(req.BuyerImage)}
                                   className="w-full h-full object-cover"
                                   alt="Product"
                                   onClick={() => handleImageClick(req.BuyerImage)}

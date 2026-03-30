@@ -5,6 +5,7 @@ import axiosInstance from "../../api/axiosConfig";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import HeroImgPartner from "./hero-img/hero-img";
 import PartnerContent from "./PartnerContent/PartnerContent";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const Partner = () => {
   const [seoData, setSeoData] = useState({
@@ -32,7 +33,7 @@ const Partner = () => {
               "partnership, brand partner, art gallery partner, museum partnership, artsays",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

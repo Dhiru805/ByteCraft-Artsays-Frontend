@@ -20,8 +20,7 @@ const CompanyProfile = ({ userId }) => {
         contactNo: '',
         emailAddress: '',
     });
-    const [isAuthorized, setIsAuthorized] = useState(false);
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchCompanyData = async () => {
@@ -29,8 +28,6 @@ const CompanyProfile = ({ userId }) => {
                 const response = await getAPI(`/api/getcompanyinfo/${userId}`,{},true);
                 if (response.data && response.data.length > 0) {
                     setFormData(response.data[0]);
-                    const storedEmail = localStorage.getItem("email");
-                    setIsAuthorized(storedEmail === 'shantu131201@gmail.com');
                 }
             } catch (error) {
                 console.log("Fetch attempt completed");
@@ -45,7 +42,6 @@ const CompanyProfile = ({ userId }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!isAuthorized) return;
 
         try {
             const url = `/api/updatecompanyinfo/${userId}`;
@@ -137,29 +133,23 @@ const CompanyProfile = ({ userId }) => {
                                     value={formData[field.name]}
                                     onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                                     required
-                                    disabled={!isAuthorized}
                                 />
                             </div>
                         </div>
                     ))}
                 </div>
-                {isAuthorized && 
-                        <button type="button"
-          className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-             if (!validateRequiredCompanyFields()) return;
-
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
-}
+                <button type="button"
+                    className="btn btn-primary mx-2"
+                    disabled={loading}
+                    onClick={(e) => {
+                        if (!validateRequiredCompanyFields()) return;
+                        setLoading(true);
+                        Promise.resolve(handleSubmit(e))
+                            .then(() => { window.location.reload(); })
+                            .catch(console.error)
+                            .finally(() => setLoading(false));
+                    }}
+                >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );

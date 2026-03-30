@@ -5,10 +5,22 @@ import "react-toastify/dist/ReactToastify.css";
 import "./LoginStyles.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../AuthContext";
+import { SESSION_STATE } from "../../auth/SessionOrchestrator";
 import postAPI from "../../api/postAPI";
 import VerificationPopup from "./VerificationPopup";
 import { useGoogleLogin } from "@react-oauth/google";
 import { FaGoogle } from "react-icons/fa";
+import { useGoogleClientId } from "../../GoogleClientIdContext";
+
+const GoogleLoginButton = ({ onSuccess, onError }) => {
+  const loginWithGoogle = useGoogleLogin({ flow: "auth-code", onSuccess, onError });
+  return (
+    <button type="button" className="login-google-btn" onClick={() => loginWithGoogle()}>
+      <FaGoogle size={20} />
+      Login with Google
+    </button>
+  );
+};
 
 const Login = () => {
   const [input, setInput] = useState("");
@@ -20,7 +32,8 @@ const Login = () => {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [googlePassword, setGooglePassword] = useState("");
   const navigate = useNavigate();
-  const { login, userType, status: userStatus } = useAuth();
+  const { login, userType, status: userStatus, sessionState } = useAuth();
+  const googleClientId = useGoogleClientId();
 
   const normalizeUserType = (userType) => {
     const userTypeMap = {
@@ -38,17 +51,21 @@ const Login = () => {
     return userTypeMap[userType.toLowerCase()] || userType;
   };
 
+  // Load remembered credentials once on mount — no session dependency needed.
   useEffect(() => {
-    console.log("Login component mounted. Initial state:", {
-      userType,
-      userStatus,
-      localStorage: {
-        token: localStorage.getItem("token"),
-        userType: localStorage.getItem("userType"),
-        status: localStorage.getItem("status"),
-        username: localStorage.getItem("username"),
-      },
-    });
+    const savedRememberMe = localStorage.getItem("rememberMe") === "true";
+    if (savedRememberMe) {
+      setRememberMe(true);
+      setInput(localStorage.getItem("rememberedEmailOrPhone") || "");
+      setPassword(localStorage.getItem("rememberedPassword") || "");
+    }
+  }, []);
+
+  // Redirect away from /login only once the session is fully confirmed.
+  // Guarding on SESSION_STATE.AUTHENTICATED prevents premature redirects while
+  // the orchestrator is still refreshing an expired token (SOFT_EXPIRED / REFRESHING).
+  useEffect(() => {
+    if (sessionState !== SESSION_STATE.AUTHENTICATED) return;
 
     const token = localStorage.getItem("token");
     const storedUserType = localStorage.getItem("userType");
@@ -61,26 +78,12 @@ const Login = () => {
       ) {
         setShowPopup(true);
       } else if (storedUserType === "Buyer") {
-        console.log("Navigating to / for Buyer");
         navigate("/");
-        window.location.reload();
       } else {
-        console.log(
-          "Navigating to dashboard:",
-          `/${storedUserType.toLowerCase()}/dashboard`
-        );
         navigate(`/${storedUserType.toLowerCase()}/dashboard`);
-        window.location.reload();
       }
     }
-
-    const savedRememberMe = localStorage.getItem("rememberMe") === "true";
-    if (savedRememberMe) {
-      setRememberMe(true);
-      setInput(localStorage.getItem("rememberedEmailOrPhone") || "");
-      setPassword(localStorage.getItem("rememberedPassword") || "");
-    }
-  }, [navigate, userType, userStatus]);
+  }, [sessionState, navigate]);
 
   useEffect(() => {
     console.log("AuthContext updated:", { userType, userStatus });
@@ -94,75 +97,48 @@ const Login = () => {
     }
   }, [userType, userStatus]);
 
-  const loginWithGoogle = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: async (codeResponse) => {
-      console.log("Google login response", codeResponse);
-
-      try {
-        const { code } = codeResponse;
-        const res = await postAPI("/auth/googlelogin", { code }, true);
-        console.log("google login api response", res);
-
-        const {
-          token,
-          userType,
-          email,
-          userId,
-          status,
-          userrole,
-          username,
-          firstName,
-          lastName,
-        } = res.data;
-        if (!token || !userType) {
-          throw new Error("Invalid response from server");
-        }
-
-        const normalizedUserType = normalizeUserType(userType);
-        const normalizedStatus = status
-          ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
-          : null;
-
-        login(
-          token,
-          normalizedUserType,
-          normalizedStatus,
-          username,
-          firstName,
-          lastName,
-          userId,
-          userrole
-        );
-
-        localStorage.setItem("email", email);
-
-        console.log("localStorage after login:", {
-          token: localStorage.getItem("token"),
-          userType: localStorage.getItem("userType"),
-          status: localStorage.getItem("status"),
-        });
-
-        if (rememberMe) {
-          localStorage.setItem("rememberedEmailOrPhone", input);
-          localStorage.setItem("rememberedPassword", password);
-          localStorage.setItem("rememberMe", "true");
-        } else {
-          localStorage.removeItem("rememberedEmailOrPhone");
-          localStorage.removeItem("rememberedPassword");
-          localStorage.setItem("rememberMe", "false");
-        }
-
-        toast.success("Login Successful!");
-        navigate("/");
-        window.location.reload();
-      } catch (error) {
-        console.error("Google Login Failed", error);
-        toast.error(error?.response?.data?.message || "Google Login Failed");
+  const handleGoogleSuccess = async (codeResponse) => {
+    console.log("Google login response", codeResponse);
+    try {
+      const { code } = codeResponse;
+      const res = await postAPI("/auth/googlelogin", { code }, true);
+      console.log("google login api response", res);
+      const {
+        token, refreshToken, userType, email, userId,
+        status, userrole, username, firstName, lastName,
+      } = res.data;
+      if (!token || !userType) throw new Error("Invalid response from server");
+      const normalizedUserType = normalizeUserType(userType);
+      const normalizedStatus = status
+        ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+        : null;
+      login(token, normalizedUserType, normalizedStatus, username, firstName, lastName, userId, userrole, refreshToken);
+      localStorage.setItem("email", email);
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmailOrPhone", input);
+        localStorage.setItem("rememberedPassword", password);
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("rememberedEmailOrPhone");
+        localStorage.removeItem("rememberedPassword");
+        localStorage.setItem("rememberMe", "false");
       }
-    },
-    onError: () => toast.error("Google Login Failed"),
-  });
+      toast.success("Login Successful!");
+      if (normalizedUserType === "Buyer") {
+        navigate("/");
+      } else if (
+        (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
+        (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
+      ) {
+        setShowPopup(true);
+      } else {
+        navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
+      }
+    } catch (error) {
+      console.error("Google Login Failed", error);
+      toast.error(error?.response?.data?.message || "Google Login Failed");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -177,36 +153,37 @@ const Login = () => {
         },
         true
       );
-      const {
-        token,
-        userType,
-        email,
-        userId,
-        status,
-        userrole,
-        username,
-        firstName,
-        lastName,
-      } = res.data;
-      console.log("Login API response:", {
-        token,
-        userType,
-        email,
-        userId,
-        status,
-        username,
-      });
+        const {
+          token,
+          refreshToken,
+          userType,
+          email,
+          userId,
+          status,
+          userrole,
+          username,
+          firstName,
+          lastName,
+        } = res.data;
+        console.log("Login API response:", {
+          token,
+          userType,
+          email,
+          userId,
+          status,
+          username,
+        });
 
-      if (!token || !userType) {
-        throw new Error("Invalid response from server");
-      }
+        if (!token || !userType) {
+          throw new Error("Invalid response from server");
+        }
 
-      const normalizedUserType = normalizeUserType(userType);
-      const normalizedStatus = status
-        ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
-        : null;
+        const normalizedUserType = normalizeUserType(userType);
+        const normalizedStatus = status
+          ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+          : null;
 
-      login(token, normalizedUserType, normalizedStatus, username, firstName, lastName, userId, userrole);
+        login(token, normalizedUserType, normalizedStatus, username, firstName, lastName, userId, userrole, refreshToken);
 
       localStorage.setItem("email", email);
       
@@ -230,7 +207,6 @@ const Login = () => {
 
       if (normalizedUserType === "Buyer") {
         navigate("/");
-        window.location.reload();
       } else if (
         (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
         (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
@@ -238,7 +214,6 @@ const Login = () => {
         setShowPopup(true);
       } else {
         navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
-        window.location.reload();
       }
     } catch (error) {
       const message =
@@ -341,14 +316,17 @@ const Login = () => {
                 <span className="login-divider-line"></span>
               </div>
 
-              <button
-                type="button"
-                className="login-google-btn"
-                onClick={() => loginWithGoogle()}
-              >
-                <FaGoogle size={20} />
-                Login with Google
-              </button>
+                {googleClientId ? (
+                  <GoogleLoginButton
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => toast.error("Google Login Failed")}
+                  />
+                ) : (
+                  <button type="button" className="login-google-btn" disabled>
+                    <FaGoogle size={20} />
+                    Login with Google
+                  </button>
+                )}
             </form>
           </div>
         </div>

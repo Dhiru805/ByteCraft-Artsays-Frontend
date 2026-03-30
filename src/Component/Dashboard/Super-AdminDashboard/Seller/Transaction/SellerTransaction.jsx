@@ -3,13 +3,14 @@ import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const Transaction = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
 const[loading,setLoading]=useState(false);
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
     const [searchTerm, setSearchTerm] = useState('');
 
 

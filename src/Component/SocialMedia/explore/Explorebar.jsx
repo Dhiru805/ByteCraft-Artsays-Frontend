@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import putAPI from "../../../api/putAPI";
 import { Link } from "react-router-dom";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const Explorebar = () => {
   const userId = localStorage.getItem("userId");
@@ -162,7 +163,7 @@ const Explorebar = () => {
                 <img
                   src={
                     art.images && art.images.length > 0
-                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${art.images[0]}`
+                      ? getImageUrl(art.images[0])
                         : "/assets/profile/user.png"
                   }
                   alt="Art"

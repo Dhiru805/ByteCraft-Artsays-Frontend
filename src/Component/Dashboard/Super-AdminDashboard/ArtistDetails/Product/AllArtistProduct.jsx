@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import useUserType from "../../../urlconfig";
 import ConfirmationDialog from "../../../ConfirmationDialog";
 import { LuGavel } from "react-icons/lu";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 const ApprovedProduct = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +14,7 @@ const ApprovedProduct = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedProductToDelete, setSelectedProductToDelete] = useState(null);
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const [showPopup, setShowPopup] = useState(false);
   const [currentImages, setCurrentImages] = useState([]);
@@ -207,7 +208,7 @@ const ApprovedProduct = () => {
                         </td>
                         <td>
                           <img
-                            src={`${BASE_URL}${product.mainImage}`}
+                            src={getImageUrl(product.mainImage)}
                             className="rounded-circle avatar"
                             alt=""
                             onClick={() => handleImageClick(product)}
@@ -395,7 +396,7 @@ const ApprovedProduct = () => {
 
             {/* Image */}
             <img
-              src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+              src={getImageUrl(currentImages[currentImageIndex])}
               alt="Popup"
               style={{
                 width: "100%",

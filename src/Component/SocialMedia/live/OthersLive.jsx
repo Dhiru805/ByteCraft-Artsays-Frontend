@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
@@ -9,6 +9,7 @@ import {
   MoreHorizontal, X, Smile, Heart, 
   MessageSquare, Sticker, Users, Gift, ChevronRight
 } from 'lucide-react';
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const SOCKET_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -128,7 +129,6 @@ const OthersLive = () => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [followerCount, setFollowerCount] = useState(0);
     const [streamerProducts, setStreamerProducts] = useState([]);
-    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   
     // Refs
     const videoRef = useRef(null);
@@ -702,7 +702,7 @@ const OthersLive = () => {
                       className="bg-[#FEE2CC]/30 rounded-[24px] p-4 flex items-center gap-4 group cursor-pointer hover:bg-[#FEE2CC]/50 transition-all"
                     >
                       <img 
-                        src={`${imageBaseURL}${product.mainImage}`} 
+                        src={getImageUrl(product.mainImage)} 
                         className="w-24 h-24 rounded-2xl object-cover" 
                         alt={product.productName} 
                       />

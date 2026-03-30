@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import getAPI from "../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../ConfirmationDialog";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const OrderMaterial = () => {
   const [orders, setOrders] = useState([]);
@@ -198,10 +199,7 @@ const OrderMaterial = () => {
                                 <img
                                   src={
                                     productImage
-                                      ? `${
-                                          process.env
-                                            .REACT_APP_API_URL_FOR_IMAGE
-                                        }/${productImage.replace(/\\/g, "/")}`
+                                      ? getImageUrl(productImage.replace(/\\/g, "/"))
                                       : "/placeholder.jpg"
                                   }
                                   className="rounded-circle"

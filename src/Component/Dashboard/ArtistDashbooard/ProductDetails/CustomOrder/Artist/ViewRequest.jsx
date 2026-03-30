@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import useUserType from '../../../../urlconfig';
 import getAPI from "../../../../../../api/getAPI";
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 
 function ViewBuyerRequest() {
@@ -12,7 +13,7 @@ function ViewBuyerRequest() {
     const { state } = location || {};
     const { request } = state || {};
     
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
@@ -44,7 +45,7 @@ function ViewBuyerRequest() {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
             setBudget(request.Budget || '');
-            setImage(request.BuyerImage ? `${BASE_URL}/${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? getImageUrl(request.BuyerImage) : '');
             setBuyerId(`${request.Buyer.id.name} ${request.Buyer.id.lastName}`);
             setBuyerAddress(request.Buyer.id.address || '');
         }
@@ -92,7 +93,7 @@ function ViewBuyerRequest() {
                                             //     style={{ height: '100%', objectFit: 'cover' }}
                                             // />
                                             <img
-                                                src={`${BASE_URL}/${localRequest?.BuyerImage?.replace(/\\/g, '/')}`}
+                                                src={getImageUrl(localRequest?.BuyerImage?.replace(/\\/g, '/'))}
                                                 alt="Buyer"
                                                 className="img-fluid rounded shadow w-100"
                                                 onClick={() => handleImageClick(localRequest)}
@@ -135,7 +136,7 @@ function ViewBuyerRequest() {
                                                     >
                                                         {/* Image */}
                                                         <img
-                                                            src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                                                            src={getImageUrl(currentImages[currentImageIndex]?.replace(/\\/g, '/'))}
                                                             alt="Popup"
                                                             style={{
                                                                 width: '100%',

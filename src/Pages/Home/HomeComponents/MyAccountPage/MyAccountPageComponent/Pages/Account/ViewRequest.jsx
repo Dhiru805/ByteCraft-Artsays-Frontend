@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import 'react-quill/dist/quill.snow.css';
 import ReactQuill from 'react-quill';
 import axios from 'axios';
+import { getImageUrl } from '../../../../../../../utils/getImageUrl';
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+const BASE_URL = getImageUrl(null);
 
 function ViewBuyerRequest({ request, onClose }) {
     const [productName, setProductName] = useState('');
@@ -29,7 +30,7 @@ function ViewBuyerRequest({ request, onClose }) {
         if (request) {
             setProductName(request.ProductName || '');
             setDescription(request.Description || '');
-            setImage(request.BuyerImage ? `${BASE_URL}/${request.BuyerImage}` : '');
+            setImage(request.BuyerImage ? getImageUrl(request.BuyerImage) : '');
             setArtistId(
                 request.Artist?.id
                     ? `${request.Artist.id.name || ''} ${request.Artist.id.lastName || ''}`.trim()
@@ -75,7 +76,7 @@ function ViewBuyerRequest({ request, onClose }) {
                                     //     style={{ height: '100%', objectFit: 'cover' }}
                                     // />
                                     <img
-                                        src={`${BASE_URL}/${request.BuyerImage?.replace(/\\/g, '/')}`}
+                                        src={getImageUrl(request.BuyerImage?.replace(/\\/g, '/'))}
                                         alt="Buyer"
                                         className="img-fluid rounded shadow w-100"
                                         onClick={() => handleImageClick(request)} //
@@ -119,7 +120,7 @@ function ViewBuyerRequest({ request, onClose }) {
                                             >
                                                 {/* Image */}
                                                 <img
-                                                    src={`${BASE_URL}/${currentImages[currentImageIndex]?.replace(/\\/g, '/')}`}
+                                                    src={getImageUrl(currentImages[currentImageIndex]?.replace(/\\/g, '/'))}
                                                     alt="Popup"
                                                     style={{
                                                         width: '100%',

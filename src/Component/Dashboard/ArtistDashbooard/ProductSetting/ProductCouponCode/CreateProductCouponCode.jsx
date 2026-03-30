@@ -4,11 +4,12 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import getAPI from "../../../../../api/getAPI";
 import postAPI from "../../../../../api/postAPI";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) => {
   const [formData, setFormData] = useState({
     userType: "Artist",
-    userId: localStorage.getItem("userId") ,
+    userId: localStorage.getItem("userId"),
     productId: "",
     couponName: "",
     discountPercentage: "",
@@ -20,7 +21,7 @@ const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) =>
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const userId = localStorage.getItem("userId") ;
+        const userId = localStorage.getItem("userId");
         const response = await getAPI(`/api/products-by-user?userId=${userId}`, {}, true);
         if (!response.hasError) {
           setProducts(response.data.data);
@@ -152,7 +153,7 @@ const CreateProductCouponCodeModal = ({ onClose, refreshProductCouponCodes }) =>
                   <label>Product Details</label>
                   <div className="d-flex align-items-center">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                      src={getImageUrl(selectedProduct.mainImage)}
                       alt={selectedProduct.productName}
                       className="img-thumbnail mr-3"
                       style={{ maxWidth: "100px", maxHeight: "100px" }}

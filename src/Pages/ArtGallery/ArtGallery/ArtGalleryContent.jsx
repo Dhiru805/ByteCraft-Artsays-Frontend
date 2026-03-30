@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Heart, Search, ChevronRight, ChevronLeft, ShoppingCart, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
@@ -7,6 +7,7 @@ import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import ArtGalleryContentSkeleton from "../../../Component/Skeleton/Home/Account/ArtGalleryContentSkeleton";
 import "../../store/products/product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -34,8 +35,7 @@ const ArtGalleryContent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const navigate = useNavigate();
   const base = process.env.REACT_APP_API_URL;
 
   const userId = localStorage.getItem("userId");
@@ -311,7 +311,7 @@ const ArtGalleryContent = () => {
                     >
                       <div className="relative aspect-square overflow-hidden bg-[#F8F9FA]">
                         <img
-                          src={`${imageBaseURL}${product.mainImage}`}
+                          src={getImageUrl(product.mainImage)}
                           alt={product.productName}
                           className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
                         />
@@ -341,7 +341,7 @@ const ArtGalleryContent = () => {
                           </div>
                           <div className="flex -space-x-2">
                             {product.badges?.map((img, idx) => (
-                              <img key={idx} src={`${imageBaseURL}${img}`} className="w-5 h-5 rounded-full border-2 border-white shadow-sm" alt="Badge" />
+                              <img key={idx} src={getImageUrl(img)} className="w-5 h-5 rounded-full border-2 border-white shadow-sm" alt="Badge" />
                             ))}
                           </div>
                         </div>

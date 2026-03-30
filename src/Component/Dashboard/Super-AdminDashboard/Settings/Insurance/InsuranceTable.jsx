@@ -91,10 +91,11 @@ const InsuranceSettingTable = ({
     try {
       const formData = new FormData();
       formData.append("file", importFile);
-      const response = await fetch("/api/import-insurance-settings", {
-        method: "POST",
-        body: formData,
-      });
+        const response = await fetch("/api/import-insurance-settings", {
+          method: "POST",
+          headers: { "x-requested-with": "XMLHttpRequest" },
+          body: formData,
+        });
       const result = await response.json();
       if (response.ok) {
         toast.success(result.message || "Import successful.");

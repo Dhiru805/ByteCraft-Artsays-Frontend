@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import Testimonials from "../AboutUs/Testimonials/Testimonials";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const HowToResell = () => {
   const [seoData, setSeoData] = useState({
@@ -31,7 +32,7 @@ const HowToResell = () => {
             : meta.metaKeywords || "resell art, digital resale, art trading",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

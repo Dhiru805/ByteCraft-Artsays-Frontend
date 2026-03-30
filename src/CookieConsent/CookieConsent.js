@@ -104,6 +104,15 @@ import { motion, AnimatePresence } from "framer-motion";
  */
 
 const CookieConsent = () => {
+  const [websiteMode, setWebsiteMode] = useState(null);
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL || "http://localhost:3001"}/api/website-mode`)
+      .then((r) => r.json())
+      .then((d) => { if (d?.data) setWebsiteMode(d.data); })
+      .catch(() => {});
+  }, []);
+
   const [cookies, setCookie] = useCookies([
     "userConsent",
     "pageData",
@@ -225,6 +234,7 @@ const CookieConsent = () => {
     setShowPrefs(false);
   };
 
+  if (websiteMode?.comingSoon || websiteMode?.maintenance) return null;
   if (!visible) return null;
 
   return (
@@ -257,7 +267,7 @@ const CookieConsent = () => {
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm md:text-base font-semibold text-dark">Artsays Sses Cookies - Crafted for Creators & Collectors</h3>
+                    <h3 className="text-sm md:text-base font-semibold text-dark">Artsays Cookies - Crafted for Creators & Collectors</h3>
                     <p className="text-xs md:text-sm text-dark mt-1">Cookies help power bidding, deliver your Certificate of Authenticity (COA), and personalise the marketplace experience. Manage preferences anytime.</p>
                   </div>
 

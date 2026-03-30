@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import { useLocation } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
@@ -46,7 +47,7 @@ if(loading)return <ProductRequestSkeleton/>
           {blogs[0].blogImage && (
             <meta
               property="og:image"
-              content={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+              content={getImageUrl(blogs[0].blogImage.replace(/\\/g, "/"))}
             />
           )}
 
@@ -57,7 +58,7 @@ if(loading)return <ProductRequestSkeleton/>
           {blogs[0].blogImage && (
             <meta
               name="twitter:image"
-              content={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+              content={getImageUrl(blogs[0].blogImage.replace(/\\/g, "/"))}
             />
           )}
         </Helmet>
@@ -104,7 +105,7 @@ if(loading)return <ProductRequestSkeleton/>
                   <div className="img-post mb-4">
                     <img
                       className="img-fluid rounded"
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${blogs[0].blogImage.replace(/\\/g, "/")}`}
+                      src={getImageUrl(blogs[0].blogImage.replace(/\\/g, "/"))}
                       alt={blogs[0].blogName}
                       style={{ maxHeight: '500px', objectFit: 'cover', width: '100%' }}
                     />
@@ -168,7 +169,7 @@ if(loading)return <ProductRequestSkeleton/>
               <img
                 src={
                   blogs[0]?.uploadedBy?.id?.profilePhoto
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${blogs[0].uploadedBy.id.profilePhoto.replace(/\\/g, "/")}`
+                    ? getImageUrl(blogs[0].uploadedBy.id.profilePhoto.replace(/\\/g, "/"))
                     : "/default-profile.jpg"
                 }
                 alt="Author"

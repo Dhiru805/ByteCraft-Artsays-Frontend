@@ -28,8 +28,6 @@ const Sidebar = () => {
         path: "/super-admin/dashboard",
         subTabs: [],
       },
-      // ...(email === "shantu131201@gmail.com"
-      //   ? [
       ...(userType?.toLowerCase() === "super-admin"
         ? [
             {
@@ -42,14 +40,14 @@ const Sidebar = () => {
           ]
         : []),
 
-          {
-            label: "Support",
-            icon: "fa-ticket",
-            path: "/super-admin/support",
-            subTabs: [],
-          },
-        {
-          label: "Admin",
+      {
+        label: "Support",
+        icon: "fa-ticket",
+        path: "/super-admin/support",
+        subTabs: [],
+      },
+      {
+        label: "Admin",
 
         tabId: "adn1",
         icon: "fas fa-user",
@@ -103,35 +101,6 @@ const Sidebar = () => {
         ],
       },
       {
-        label: "Buyer",
-        tabId: "byr1",
-        icon: "fa-handshake",
-        path: `#Buyer-management`,
-        basePath: "/super-admin/buyer",
-        subTabs: [
-          {
-            label: "Management",
-            subtabId: "byr11",
-            path: `/super-admin/buyer/management`,
-          },
-          {
-            label: "Product Purchased",
-            subtabId: "byr12",
-            path: `/super-admin/buyer/productpurchased`,
-          },
-          {
-            label: "Resell Product Request",
-            subtabId: "byr13",
-            path: `/super-admin/buyer/resellproduct`,
-          },
-          {
-            label: "Sold Product",
-            subtabId: "byr14",
-            path: `/super-admin/buyer/soldproduct`,
-          },
-        ],
-      },
-      {
         label: "Seller",
         tabId: "slr1",
         icon: "fa fa-tag",
@@ -161,10 +130,46 @@ const Sidebar = () => {
         ],
       },
       {
+        label: "Buyer",
+        tabId: "byr1",
+        icon: "fa-handshake",
+        path: `#Buyer-management`,
+        basePath: "/super-admin/buyer",
+        subTabs: [
+          {
+            label: "Management",
+            subtabId: "byr11",
+            path: `/super-admin/buyer/management`,
+          },
+          {
+            label: "Product Purchased",
+            subtabId: "byr12",
+            path: `/super-admin/buyer/productpurchased`,
+          },
+          {
+            label: "Resell Product Request",
+            subtabId: "byr13",
+            path: `/super-admin/buyer/resellproduct`,
+          },
+          {
+            label: "Sold Product",
+            subtabId: "byr14",
+            path: `/super-admin/buyer/soldproduct`,
+          },
+        ],
+      },
+      {
         label: "Celebrities",
         tabId: "cls1",
         icon: "fas fa-user",
         path: "/super-admin/celebrities",
+        subTabs: [],
+      },
+      {
+        label: "Art Gallery",
+        icon: "fa fa-image",
+        path: `/super-admin/art-gallery`,
+        basePath: "/super-admin/art-gallery",
         subTabs: [],
       },
       {
@@ -291,25 +296,18 @@ const Sidebar = () => {
           },
         ],
       },
-        {
-          label: "Enquiry",
-          icon: "fa fa-mail-forward",
-          path: `/super-admin/enquiry`,
-          basePath: "/super-admin/enquiry",
-          subTabs: [],
-        },
-        {
-          label: "Newsletter",
-          icon: "fa fa-envelope",
-          path: `/super-admin/newsletter`,
-          basePath: "/super-admin/newsletter",
-          subTabs: [],
-        },
       {
-        label: "Art Gallery",
-        icon: "fa fa-image",
-        path: `/super-admin/art-gallery`,
-        basePath: "/super-admin/art-gallery",
+        label: "Enquiry",
+        icon: "fa fa-mail-forward",
+        path: `/super-admin/enquiry`,
+        basePath: "/super-admin/enquiry",
+        subTabs: [],
+      },
+      {
+        label: "Newsletter",
+        icon: "fa fa-envelope",
+        path: `/super-admin/newsletter`,
+        basePath: "/super-admin/newsletter",
         subTabs: [],
       },
       {
@@ -339,10 +337,6 @@ const Sidebar = () => {
             path: `/super-admin/product-settings/product-surface-type`,
           },
           {
-            label: "Product Coupon Code",
-            path: `/super-admin/product-settings/product-coupon-code`,
-          },
-          {
             label: "Product Packaging Type",
             path: `/super-admin/product-settings/product-packaging-type`,
           },
@@ -361,6 +355,10 @@ const Sidebar = () => {
           {
             label: "Token Standard",
             path: `/super-admin/product-settings/token-standard`,
+          },
+          {
+            label: "Product Coupon Code",
+            path: `/super-admin/product-settings/product-coupon-code`,
           },
         ],
       },
@@ -472,7 +470,6 @@ const Sidebar = () => {
       {
         label: "Settings",
         tabId: "stg1",
-        label: "Settings",
         icon: "fa fa-cog",
         path: `#settings`,
         basePath: "/super-admin/settings",
@@ -487,18 +484,18 @@ const Sidebar = () => {
             subtabId: "stg12",
             path: `/super-admin/settings/blog-category`,
           },
-            {
-              label: "Email Setting",
-              subtabId: "stg13",
-              path: `/super-admin/settings/email-setting`,
-            },
-            {
-              label: "Storage Setting",
-              subtabId: "stg17",
-              path: `/super-admin/settings/storage-setting`,
-            },
-            {
-              label: "Payment Gateway",
+          {
+            label: "Email Setting",
+            subtabId: "stg13",
+            path: `/super-admin/settings/email-setting`,
+          },
+          {
+            label: "Storage Setting",
+            subtabId: "stg17",
+            path: `/super-admin/settings/storage-setting`,
+          },
+          {
+            label: "Payment Gateway",
             path: `/super-admin/settings/payment-getway`,
           },
           {
@@ -517,27 +514,42 @@ const Sidebar = () => {
           },
           { label: "GST", path: `/super-admin/settings/GST` },
           { label: "Insurance", path: `/super-admin/settings/insurance` },
-           { label: "Exhibition setting", path: `/super-admin/settings/exhibition` },
-           { label: "Sidebar Visibility", subtabId: "stg16", path: `/super-admin/settings/sidebar-visibility` },
-         
-             {
-               label: "Default Auto Targeting",
-               path: `/super-admin/settings/auto-targeting`,
-             },
-            {
-              label: "Google OAuth",
-              path: `/super-admin/settings/google-oauth`,
-            },
-            {
-              label: "Feedback Form",
-              path: `/super-admin/settings/feedback-form`,
-            },
-         ],
-        },
+          {
+            label: "Exhibition setting",
+            path: `/super-admin/settings/exhibition`,
+          },
+          {
+            label: "Sidebar Visibility",
+            subtabId: "stg16",
+            path: `/super-admin/settings/sidebar-visibility`,
+          },
+          {
+            label: "Default Auto Targeting",
+            path: `/super-admin/settings/auto-targeting`,
+          },
+          {
+            label: "Google OAuth",
+            path: `/super-admin/settings/google-oauth`,
+          },
+          {
+            label: "Feedback Form",
+            path: `/super-admin/settings/feedback-form`,
+          },
+          {
+            label: "Website Mode",
+            subtabId: "stg18",
+            path: `/super-admin/settings/website-mode`,
+          },
+          {
+            label: "System Logs",
+            subtabId: "stg19",
+            path: `/super-admin/settings/logs`,
+          },
+        ],
+      },
       {
         label: "SMS Settings",
         tabId: "sms1",
-        label: "SMS Settings",
         icon: "fa fa-cog",
         path: `#sms-settings`,
         basePath: "/super-admin/sms-settings",
@@ -563,14 +575,14 @@ const Sidebar = () => {
           },
           { label: "Reports", path: `/super-admin/community-cms/reports` },
           { label: "Sponsors", path: `/super-admin/community-cms/sponsors` },
-            {
-              label: "Purchase Badge",
-              path: `/super-admin/community-cms/purchase-badge`,
-            },
-            {
-              label: "Membership Orders",
-              path: `/super-admin/community-cms/membership-orders`,
-            },
+          {
+            label: "Purchase Badge",
+            path: `/super-admin/community-cms/purchase-badge`,
+          },
+          {
+            label: "Membership Orders",
+            path: `/super-admin/community-cms/membership-orders`,
+          },
         ],
       },
 
@@ -625,25 +637,25 @@ const Sidebar = () => {
       },
     ],
     // ----------------------------------------------Artist-----------------------------------------------------//
-      Artist: [
-        {
-          label: "Dashboard",
-          icon: "fa-dashboard",
-          path: "/artist/dashboard",
-          subTabs: [],
-        },
-        {
-          label: "Support",
-          icon: "fa-ticket",
-          path: "/artist/support",
-          subTabs: [],
-        },
-        {
-          label: "Blogs",
-          icon: "fa fa-newspaper",
-          path: "/artist/bloglist",
-          subTabs: [],
-        },
+    Artist: [
+      {
+        label: "Dashboard",
+        icon: "fa-dashboard",
+        path: "/artist/dashboard",
+        subTabs: [],
+      },
+      {
+        label: "Support",
+        icon: "fa-ticket",
+        path: "/artist/support",
+        subTabs: [],
+      },
+      {
+        label: "Blogs",
+        icon: "fa fa-newspaper",
+        path: "/artist/bloglist",
+        subTabs: [],
+      },
       {
         label: "Product",
         icon: "fa fa-cart-plus",
@@ -708,42 +720,38 @@ const Sidebar = () => {
         path: "/artist/wallet",
         subTabs: [],
       },
+      {
+        label: "Product Settings",
+        icon: "fa fa-cog",
+        path: `#Settings`,
+        subTabs: [
+          {
+            label: "Product Coupon Code",
+            path: `/artist/product-coupon-codes`,
+          },
+        ],
+      },
     ],
-    // ----------------------------------------------Buyer-----------------------------------------------------//
-      Buyer: [
-        {
-          label: "Dashboard",
-          icon: "fa-dashboard",
-          path: "/buyer/dashboard",
-          subTabs: [],
-        },
-        {
-          label: "Support",
-          icon: "fa-ticket",
-          path: "/buyer/support",
-          subTabs: [],
-        },
-      ],
     // ----------------------------------------------Seller-----------------------------------------------------//
-      Seller: [
-        {
-          label: "Dashboard",
-          icon: "fa-dashboard",
-          path: "/seller/dashboard",
-          subTabs: [],
-        },
-        {
-          label: "Support",
-          icon: "fa-ticket",
-          path: "/seller/support",
-          subTabs: [],
-        },
-        {
-          label: "Product",
-          icon: "fa fa-cart-plus",
-          path: "/seller/product-details",
-          subTabs: [],
-        },
+    Seller: [
+      {
+        label: "Dashboard",
+        icon: "fa-dashboard",
+        path: "/seller/dashboard",
+        subTabs: [],
+      },
+      {
+        label: "Support",
+        icon: "fa-ticket",
+        path: "/seller/support",
+        subTabs: [],
+      },
+      {
+        label: "Product",
+        icon: "fa fa-cart-plus",
+        path: "/seller/product-details",
+        subTabs: [],
+      },
       {
         label: "Product Purchased",
         icon: "fa fa-cart-plus",
@@ -769,7 +777,6 @@ const Sidebar = () => {
       {
         label: "Certification Services",
         icon: "fa fa-certificate",
-        path: `#`,
         path: `/seller/certification`,
         subTabs: [],
       },
@@ -864,7 +871,7 @@ const Sidebar = () => {
 
     const roleMenu = menuConfig[roleKey] || [];
 
-    if (email === "shantu131201@gmail.com") {
+    if (email === "dhiraj.zope1997@gmail.com") {
       setFetchedTabs(menuConfig["Super-Admin"]);
       return;
     }
@@ -875,7 +882,7 @@ const Sidebar = () => {
         const filteredTabs = roleData.tabs
           .map((apiTab) => {
             const matchingConfigTab = roleMenu.find(
-              (cfgTab) => cfgTab.tabId === apiTab.tabId
+              (cfgTab) => cfgTab.tabId === apiTab.tabId,
             );
             if (!matchingConfigTab) return null;
 
@@ -883,7 +890,7 @@ const Sidebar = () => {
               .filter((sub) => sub.permissions?.view)
               .map((apiSub) => {
                 const matchConfigSub = matchingConfigTab.subTabs?.find(
-                  (s) => s.subtabId === apiSub.subtabId
+                  (s) => s.subtabId === apiSub.subtabId,
                 );
                 return matchConfigSub || null;
               })
@@ -908,14 +915,18 @@ const Sidebar = () => {
           roleKey === "Artist"
             ? "artistTabs"
             : roleKey === "Seller"
-            ? "sellerTabs"
-            : null;
-        const savedTabs = visibilityKey ? globalVisibility[visibilityKey] : null;
+              ? "sellerTabs"
+              : null;
+        const savedTabs = visibilityKey
+          ? globalVisibility[visibilityKey]
+          : null;
 
         if (savedTabs && savedTabs.length > 0) {
           // Build a flat map: original label -> menuTab (for parent tabs)
           const parentByLabel = {};
-          roleMenu.forEach((t) => { parentByLabel[t.label] = t; });
+          roleMenu.forEach((t) => {
+            parentByLabel[t.label] = t;
+          });
 
           // Build a flat map: original subtab label -> { path, parentIcon }
           // so promoted subtabs can find their route
@@ -940,7 +951,7 @@ const Sidebar = () => {
                   savedTab.subTabs.forEach((savedSub) => {
                     if (savedSub.visible === false) return;
                     const match = menuTab.subTabs.find(
-                      (ms) => ms.label === savedSub.label
+                      (ms) => ms.label === savedSub.label,
                     );
                     if (match) {
                       resolvedSubTabs.push({
@@ -989,7 +1000,7 @@ const Sidebar = () => {
     }
   }, []);
 
-    // Derive active tab/subtab purely from the current URL so page-reload works
+  // Derive active tab/subtab purely from the current URL so page-reload works
   useEffect(() => {
     const path = location.pathname;
 
@@ -997,16 +1008,16 @@ const Sidebar = () => {
     let matchedSubPath = null;
 
     for (const item of fetchedTabs) {
-        if (item.subTabs && item.subTabs.length > 0) {
-          // Exact match first, then prefix match — ensures more specific paths win
-          const matchedSub =
-            item.subTabs.find((sub) => path === sub.path) ||
-            item.subTabs.find((sub) => path.startsWith(sub.path + "/"));
-          if (matchedSub) {
-            matchedParent = item.label;
-            matchedSubPath = matchedSub.path;
-            break;
-          }
+      if (item.subTabs && item.subTabs.length > 0) {
+        // Exact match first, then prefix match — ensures more specific paths win
+        const matchedSub =
+          item.subTabs.find((sub) => path === sub.path) ||
+          item.subTabs.find((sub) => path.startsWith(sub.path + "/"));
+        if (matchedSub) {
+          matchedParent = item.label;
+          matchedSubPath = matchedSub.path;
+          break;
+        }
       } else {
         // Leaf tab — exact match or basePath prefix
         if (
@@ -1040,51 +1051,46 @@ const Sidebar = () => {
     }
   };
 
-  const handleSubTabClick = () => {
-    // Active state will update via the location useEffect on navigation
-  };
-
-
   return (
     <nav id="left-sidebar-nav" className="sidebar-nav">
       <ul id="main-menu" className="metismenu">
         {fetchedTabs.map(
           (
             item,
-            index // Changed: Use fetchedTabs instead of menuItems
+            index, // Changed: Use fetchedTabs instead of menuItems
           ) => (
             <li
               key={index}
               className={`menu-item ${isActive[item.label] ? "active" : ""}`}
             >
               <Link
-                  to={item.path}
-                  onClick={() => handleTabToggle(item.label, item.subTabs.length > 0)}
-                  className={item.subTabs.length ? "has-arrow" : ""}
+                to={item.path}
+                onClick={() =>
+                  handleTabToggle(item.label, item.subTabs.length > 0)
+                }
+                className={item.subTabs.length ? "has-arrow" : ""}
+              >
+                <i className={`fa ${item.icon}`}></i>
+                <span>{item.label}</span>
+              </Link>
+              {item.subTabs.length > 0 && (
+                <ul
+                  className={`collapse ${
+                    expandedTab === item.label ? "in" : ""
+                  }`}
                 >
-                  <i className={`fa ${item.icon}`}></i>
-                  <span>{item.label}</span>
-                </Link>
-                {item.subTabs.length > 0 && (
-                  <ul
-                    className={`collapse ${
-                      expandedTab === item.label ? "in" : ""
-                    }`}
-                  >
-                    {item.subTabs.map((subTab, subIndex) => (
-                      <li
-                        key={subIndex}
-                        className={activeSubTab === subTab.path ? "active" : ""}
-                      >
-                        <Link to={subTab.path}>
-                          {subTab.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                  {item.subTabs.map((subTab, subIndex) => (
+                    <li
+                      key={subIndex}
+                      className={activeSubTab === subTab.path ? "active" : ""}
+                    >
+                      <Link to={subTab.path}>{subTab.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
-          )
+          ),
         )}
       </ul>
     </nav>

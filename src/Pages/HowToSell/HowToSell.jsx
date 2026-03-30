@@ -1,18 +1,3 @@
-// import React from 'react';
-// import HeroImgHowToSell from './hero-img/hero-img';
-// import HowToSellContent from './HowToSellContent/HowToSellContent'
-
-// const HowToSell = () => {
-//   return (
-//     <div className="max-w-[1440px] mx-auto font-[poppins]">
-//         <HeroImgHowToSell/>
-//         <HowToSellContent/>
-//     </div>
-//   );
-// };
-
-// export default HowToSell;
-
 
 import React, { useEffect, useState } from "react";
 import HeroImgHowToSell from "./hero-img/hero-img";
@@ -21,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import axiosInstance from "../../api/axiosConfig";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import Testimonials from "../AboutUs/Testimonials/Testimonials";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const HowToSell = () => {
   const [seoData, setSeoData] = useState({
@@ -46,7 +32,7 @@ const HowToSell = () => {
             : meta.metaKeywords || "sell art, art guide, how to sell",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

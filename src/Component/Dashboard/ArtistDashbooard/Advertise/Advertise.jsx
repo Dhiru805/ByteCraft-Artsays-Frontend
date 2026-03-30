@@ -4,6 +4,7 @@ import getAPI from '../../../../api/getAPI';
 import putAPI from '../../../../api/putAPI';
 import useUserType from '../../urlconfig';
 import { toast } from 'react-toastify';
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const Product = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Product = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [viewCampaign, setViewCampaign] = useState(null);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
 
   useEffect(() => {

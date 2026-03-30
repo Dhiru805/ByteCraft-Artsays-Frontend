@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../../../api/getAPI";
 import { toast } from "react-toastify";
@@ -64,7 +65,7 @@ const[loading,setLoading]=useState(true)
                           <td>{index + 1}</td>
                           <td>
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${badge.badgeImage}`}
+                              src={getImageUrl(badge.badgeImage)}
                               alt="Badge"
                               style={{ width: "40px", height: "40px", objectFit: "cover" }}
                             />

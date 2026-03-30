@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import ProductRequestSkeleton from '../../../../Skeleton/artist/ProductRequestSkeleton';
@@ -14,25 +15,6 @@ const BiddedProduct = () => {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //     const fetchProducts = async () => {
-  //         try {
-  //             const result = await getAPI("/api/getbiddedproduct", {}, true, false);
-  //             if (result && result.data && Array.isArray(result.data.biddedProducts)) {
-  //                 setProducts(result.data.biddedProducts);
-  //             } else {
-  //                 console.error("API response does not contain an array:", result.data);
-  //                 setProducts([]);
-  //             }
-
-  //         } catch (error) {
-  //             console.error("Error fetching products:", error);
-  //             setProducts([]);
-  //         }
-  //     };
-
-  //     fetchProducts();
-  // }, []);
 
   const fetchProducts = async () => {
     try {
@@ -105,19 +87,6 @@ const BiddedProduct = () => {
     setCurrentPage(1);
   };
 
-  //  const filteredProducts = products.filter(product =>
-  //         product?.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //         product?.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-  //     );
-  // const filteredProducts = products.filter((product) => {
-  //     const search = searchTerm.toLowerCase();
-
-  //     return (
-  //         product.artworkName?.toLowerCase().includes(search) ||
-  //         product.product?.productName?.toLowerCase().includes(search) ||
-  //         product.user?.name?.toLowerCase().includes(search)
-  //     );
-  // });
   const filteredProducts = products.filter((product) => {
     const s = searchTerm.toLowerCase();
 
@@ -128,17 +97,6 @@ const BiddedProduct = () => {
     );
   });
 
-  // const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-  // const displayedProducts = filteredProducts.slice(
-  //     (currentPage - 1) * productsPerPage,
-  //     currentPage * productsPerPage
-  // );
-
-  // const paginatedProducts = filteredProducts.slice(
-  //     (currentPage - 1) * productsPerPage,
-  //     currentPage * productsPerPage
-  // );
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
@@ -211,202 +169,7 @@ const BiddedProduct = () => {
                       <th>Action</th>
                     </tr>
                   </thead>
-                  {/* <tbody>
-                                        {paginatedProducts.length === 0 ? (
-                                            <tr>
-                                                <td colSpan="6" className="text-center">
-                                                    No data available
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            paginatedProducts.map((product, index) => {
-                                                const productData = product.product?.product;
-                                                const buyer = product.buyer;
-                                                return (
-                                                    <tr key={product._id}>
-                                                        <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                                                        <td>{buyer.name} {buyer.lastName}</td>
-                                                        <td>
-                                                            {productData ? (
-                                                                <>
-                                                                    <img
-                                                                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${productData.mainImage}`}
-                                                                        className="rounded-circle avatar"
-                                                                        alt=""
-                                                                        style={{
-                                                                            width: '30px',
-                                                                            height: '30px',
-                                                                            objectFit: 'cover',
-                                                                            marginRight: '10px'
-                                                                        }}
-                                                                    />
-                                                                    {productData.productName}
-                                                                </>
-                                                            ) : (
-                                                                "No Product Data"
-                                                            )}
-                                                        </td>
-                                                        <td>
-                                                            {productData
-                                                                ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-                                                                    .format(product.totalPrice)
-                                                                    .replace(/\.00$/, '')
-                                                                : 'N/A'}
-                                                        </td>
-                                                        <td>
-                                                            {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                                        </td>
-                                                        <td>
-                                                            <button className="btn btn-sm btn-outline-info mr-2"
-                                                                onClick={() => navigate(`/Dashboard/biddedproduct/productdetails/${productData._id}`)}
-                                                            >
-                                                                <i className="fa fa-eye"></i>
-                                                            </button>
-
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })
-                                        )}
-                                    </tbody> */}
-                  {/* <tbody>
-  {paginatedProducts.length === 0 ? (
-    <tr>
-      <td colSpan="6" className="text-center">No data available</td>
-    </tr>
-  ) : (
-    paginatedProducts.map((item, index) => {
-      const productData = item.product;
-      const creator = item.user;
-
-      return (
-        <tr key={item.bidId}>
-          <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-
-        
-          <td>{creator?.name || "Unknown User"}</td>
-
-          <td>
-            {productData ? (
-              <>
-                <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${productData.mainImage}`}
-                  className="rounded-circle avatar"
-                  alt=""
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    objectFit: "cover",
-                    marginRight: "10px",
-                  }}
-                />
-                {productData.productName}
-              </>
-            ) : "No Product"}
-          </td>
-
-          <td>
-            ₹{new Intl.NumberFormat('en-IN').format(item.basePrice || item.reservePrice)}
-          </td>
-
-          <td>{new Date(item.bidStart).toLocaleDateString("en-IN")}</td>
-          <td>
-  {item.status === "Expired" ? (
-    <span className="badge badge-danger">Expired</span>
-  ) : (
-    <span className="badge badge-success">
-      Bidded
-    </span>
-  )}
-</td>
-
-
-          <td>
-            <button
-              className="btn btn-sm btn-outline-info"
-              onClick={() => navigate(`/Dashboard/biddedproduct/productdetails/${productData?._id}`)}
-            >
-              <i className="fa fa-eye"></i>
-            </button>
-          </td>
-        </tr>
-      );
-    })
-  )}
-</tbody> */}
-                  {/* <tbody>
-  {paginatedProducts.length === 0 ? (
-    <tr>
-      <td colSpan="7" className="text-center">No data available</td>
-    </tr>
-  ) : (
-    paginatedProducts.map((item, index) => {
-      const seller = item.seller;
-      const productData = item.product;
-const winnerInfo = successfulBids.find(
-  (s) => s.bidId === item.bidId
-);
-
-      return (
-        <tr key={item.bidId}>
-          <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-
-          <td>
-            {item.highestBidder?.name || "No Bids"}
-          </td>
-
-          <td>
-            {productData ? (
-              <>
-                <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${productData.mainImage}`}
-                  className="rounded-circle avatar"
-                  alt=""
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    objectFit: "cover",
-                    marginRight: "10px",
-                  }}
-                />
-                {productData.productName}
-              </>
-            ) : (
-              "No Product"
-            )}
-          </td>
-
-      
-          {/* <td>
-            ₹{new Intl.NumberFormat("en-IN").format(item.highestBid || 0)}
-          </td> */}
-
-                  {/*       
-          <td>{new Date(item.bidEnd).toLocaleDateString("en-IN")}</td>
-
-        
-          <td>
-            <span className="badge badge-primary">
-              Completed
-            </span>
-          </td> */}
-
-                  {/*
-          <td>
-            <button
-              className="btn btn-sm btn-outline-info"
-              onClick={() =>
-                navigate(`/Dashboard/biddedproduct/productdetails/${productData?.id}`)
-              }
-            >
-              <i className="fa fa-eye"></i>
-            </button>
-          </td>
-        </tr>
-      );
-    })
-  )}
-</tbody> */}
+                 
                   <tbody>
                     {paginatedProducts.length === 0 ? (
                       <tr>
@@ -431,7 +194,7 @@ const winnerInfo = successfulBids.find(
                             {/* Product Name */}
                             <td>
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${p?.mainImage}`}
+                                src={getImageUrl(p?.mainImage)}
                                 className="rounded-circle avatar"
                                 alt=""
                                 style={{

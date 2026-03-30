@@ -6,17 +6,9 @@ import getAPI from "../../api/getAPI";
 import postAPI from "../../api/postAPI";
 import deleteAPI from "../../api/deleteAPI";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../utils/getImageUrl";
 
-const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
-
-const resolveMediaUrl = (path) => {
-  if (!path || typeof path !== "string") return "/images/placeholder.jpg";
-  if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
-  const normalized = path.replace(/\\/g, "/");
-  const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
-  const base = imageBaseURL.endsWith("/") ? imageBaseURL.slice(0, -1) : imageBaseURL;
-  return `${base}${leadingSlash}`;
-};
+const resolveMediaUrl = (path) => getImageUrl(path) || "/images/placeholder.jpg";
 
 const timeAgo = (timestamp) => {
   const diff = Date.now() - new Date(timestamp).getTime();

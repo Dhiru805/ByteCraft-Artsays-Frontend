@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import putAPI from "../../../../api/putAPI";
 import { useConfirm } from '../../StatusConfirm';
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 const VerifyModal = ({ buyer, onClose, refreshBuyers }) => {
     const [filePreview, setFilePreview] = useState(null);
@@ -9,7 +10,7 @@ const VerifyModal = ({ buyer, onClose, refreshBuyers }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [users, setUsers] = useState([]);
     const confirm = useConfirm();
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
     const updateUserStatus = async (userId, status) => {
         try {
@@ -44,7 +45,7 @@ const VerifyModal = ({ buyer, onClose, refreshBuyers }) => {
 
     useEffect(() => {
         if (buyer?.verification?.documentFile) {
-            setFilePreview(`${BASE_URL}/${buyer.verification.documentFile}`);
+            setFilePreview(getImageUrl(buyer.verification.documentFile));
             setFileType(buyer.verification.documentFile.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
         }
     }, [buyer]);

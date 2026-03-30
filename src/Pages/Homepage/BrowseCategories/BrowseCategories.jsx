@@ -1,4 +1,4 @@
-
+﻿
 
 import { useState, useEffect, useRef } from "react";
 import getAPI from "../../../api/getAPI";
@@ -11,6 +11,7 @@ import deleteAPI from "../../../api/deleteAPI";
 import { toast } from "react-toastify";
 import BrowserCategorySkeleton from "../../../Component/Skeleton/BrowserCategorySkeleton";
 import "../../store/products/product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -29,7 +30,7 @@ const useDebounce = (value, delay) => {
   return debouncedValue;
 };
 
-const BrowseCategories = () => {
+const BrowseCategories = ({ homepageId: homepageIdProp }) => {
   const [data, setData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -43,7 +44,6 @@ const BrowseCategories = () => {
   const navigate = useNavigate();
   const [likedProducts, setLikedProducts] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
 
@@ -147,13 +147,19 @@ const BrowseCategories = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
+        // Use homepageId from parent if available, otherwise fetch it
+        let id = homepageIdProp;
+        if (!id) {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          id = pageRes?.data?.data?._id;
+        }
+        if (!id) return;
 
-        const sectionRes = await getAPI(
-          `/api/homepage-sections/browse-categories/${homepage._id}`
-        );
-        setData(sectionRes.data.data || {});
+          const sectionRes = await getAPI(
+            `/api/homepage-sections/browse-categories/${id}`
+          );
+          setData(sectionRes?.data?.data || {});
 
         const [res1, res2, ratingRes, badgeRes] = await Promise.all([
           getAPI("/api/getstatusapprovedproduct", {}, true, false),
@@ -198,8 +204,8 @@ const BrowseCategories = () => {
 
         setAllProducts(finalProducts);
 
-        const catRes = await getAPI("/api/all");
-        const allCats = catRes.data.data || [];
+          const catRes = await getAPI("/api/all");
+          const allCats = catRes?.data?.data || [];
 
         const usedIds = new Set(
           finalProducts.map((p) => p.category?.toString())
@@ -228,8 +234,10 @@ const BrowseCategories = () => {
       }
     };
 
-    fetchData();
-  }, []);
+    // Wait for homepageId from parent before fetching
+    if (homepageIdProp !== undefined && homepageIdProp === null) return;
+      fetchData();
+    }, [homepageIdProp]);
 
   const ensureBuyer = () => {
     if (userType !== "Buyer") {
@@ -300,8 +308,8 @@ const BrowseCategories = () => {
     fetchWishlist();
   }, [userId]);
 
-  if (loading) return <div><BrowserCategorySkeleton /></div>;
-  if (!data) return <div>No Browse Categories section available</div>;
+  if (loading) return <BrowserCategorySkeleton />;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
@@ -312,7 +320,7 @@ const BrowseCategories = () => {
               <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
                 {data.heading || "Browse Categories"}
               </h2>
-              <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+              <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
                 {data.description || "Discover a curated selection of masterpieces across various artistic styles and mediums."}
               </p>
             </div>
@@ -395,7 +403,7 @@ const BrowseCategories = () => {
                   {/* Image Container */}
                   <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                     <img
-                      src={`${imageBaseURL}${product.mainImage}`}
+                      src={getImageUrl(product.mainImage)}
                       alt={product.productName}
                       className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
                     />
@@ -447,7 +455,7 @@ const BrowseCategories = () => {
                       <div className="flex -space-x-1.5">
                         {product.badges?.map((img, idx) => (
                           <div key={idx}>
-                            <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full" alt="Badge" width="16" height="16" />
+                            <img src={getImageUrl(img)} className="w-4 h-4 rounded-full" alt="Badge" width="16" height="16" />
                           </div>
                         ))}
                       </div>

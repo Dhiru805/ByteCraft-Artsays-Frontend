@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import putAPI from "../../../../api/putAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const UpdateHowToSell = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const UpdateHowToSell = () => {
 
       setBannerPreviews(
         page.articles?.map((a) =>
-          a.bannerImage ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${a.bannerImage}` : null
+          a.bannerImage ? getImageUrl(a.bannerImage) : null
         ) || [null]
       );
     }

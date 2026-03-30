@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ConfirmationDialog from "../../../ConfirmationDialog";
 import EditGSTModal from "./UpdateGST";
+import { Modal, Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const GSTTable = ({
   setSelectedSubGST,
@@ -15,6 +17,7 @@ const GSTTable = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const sortedSubGSTSettings = [...subGSTSettings].sort((a, b) => {
     const mainCatCompare = (a.mainCategoryId?.mainCategoryName || "").localeCompare(b.mainCategoryId?.mainCategoryName || "");
@@ -70,6 +73,90 @@ const GSTTable = ({
     setCurrentPage(1);
   };
 
+  const ImportGSTModal = ({ isOpen, onClose, fetchSubGSTData }) => {
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileChange = (e) => setSelectedFile(e.target.files[0]);
+
+    const handleImport = async () => {
+      if (!selectedFile) return alert("Please select a file before importing.");
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      try {
+          const response = await fetch("/api/import-gst", {
+            method: "POST",
+            headers: { "x-requested-with": "XMLHttpRequest" },
+            body: formData,
+          });
+
+        if (!response.ok) throw new Error("Failed to import GST settings");
+
+        const data = await response.json();
+        toast.success(data.message || "GST settings imported successfully!");
+
+        await fetchSubGSTData();
+        onClose();
+      } catch (error) {
+        console.error("Error importing GST settings:", error);
+        toast.error("Failed to import GST settings. Please check your file.");
+      }
+    };
+
+    return (
+      <Modal show={isOpen} onHide={onClose} centered>
+        <div className="p-4">
+          <h5 className="mb-3">Import GST Settings</h5>
+
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <button
+              type="button"
+              className="btn btn-outline-success btn-sm"
+              onClick={async () => {
+                try {
+                  const response = await fetch("/api/export-gst-template", { method: "GET" });
+                  if (!response.ok) throw new Error("Failed to fetch template");
+                  const blob = await response.blob();
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "GST_Template.xlsx";
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  window.URL.revokeObjectURL(url);
+                } catch (error) {
+                  console.error("Error downloading template:", error);
+                  alert("Failed to download template. Please try again.");
+                }
+              }}
+            >
+              <i className="fa fa-download mr-2"></i> Download Template
+            </button>
+          </div>
+
+          <label className="mb-2">Upload your filled Excel file:</label>
+          <input
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleFileChange}
+            className="form-control mb-3"
+          />
+
+          <div className="d-flex justify-content-end">
+            <Button variant="secondary" onClick={onClose} className="mr-2">
+              Cancel
+            </Button>
+            <Button variant="success" onClick={handleImport}>
+              Import
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    );
+  };
+
   return (
     <>
       <div className="row clearfix">
@@ -114,6 +201,14 @@ const GSTTable = ({
                     }}
                   ></i>
                 </div>
+
+                <button
+                  type="button"
+                  className="btn btn-outline-success btn-sm ml-2"
+                  onClick={() => setIsImportModalOpen(true)}
+                >
+                  <i className="fa fa-upload mr-1"></i> Import
+                </button>
               </div>
             </div>
             <div className="body">
@@ -229,6 +324,12 @@ const GSTTable = ({
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         gst={selectedSubGST}
+        fetchSubGSTData={fetchSubGSTData}
+      />
+
+      <ImportGSTModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
         fetchSubGSTData={fetchSubGSTData}
       />
     </>

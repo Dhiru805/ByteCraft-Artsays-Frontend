@@ -12,16 +12,16 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo '📥 Checking out frontend code...'
-                checkout([$class: 'GitSCM',
-                          branches: [[name: '*/anshul2.0']],
-                          userRemoteConfigs: [[url: 'https://github.com/Shantanu58/ByteCraft-Artsays-Frontend.git']]])
+                    checkout([$class: 'GitSCM',
+                          branches: [[name: '*/frontend-server']],
+                          userRemoteConfigs: [[url: 'https://github.com/Dhiru805/ByteCraft-Artsays-Frontend.git']]])
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Building Docker image for frontend...'
-                sh 'docker build --no-cache --memory=6g --memory-swap=6g -t artsays-frontend .'
+                  sh 'docker build --no-cache -t artsays-frontend .'
             }
         }
 
@@ -50,7 +50,7 @@ pipeline {
                 docker run -d \
                   --name artsays-frontend-container \
                   --network artsays-network \
-                  -p 80:80 \
+                  -p 3000:80 \
                   artsays-frontend
 
                 echo "⏳ Waiting for frontend to start..."
@@ -59,14 +59,36 @@ pipeline {
             }
         }
 
+        stage('Sync index.html to host volume') {
+            steps {
+                echo 'Copying fresh index.html from frontend container to host and into backend container...'
+                sh '''
+                # Copy index.html from frontend container to a temp path jenkins owns (no sudo needed)
+                  docker cp artsays-frontend-container:/usr/share/nginx/html/index.html /tmp/artsays-index.html
+
+                  # Verify placeholders are present
+                  grep -c "__META_TITLE__" /tmp/artsays-index.html && echo "OK - placeholders present" || echo "WARN - no placeholders found in index.html"
+
+                  # Inject directly into the running backend container via docker cp
+                  # (no sudo, no host-path permissions needed)
+                  if docker inspect artsays-backend-container >/dev/null 2>&1; then
+                      docker exec artsays-backend-container mkdir -p /var/www/artsays/frontend 2>/dev/null || true
+                      docker cp /tmp/artsays-index.html artsays-backend-container:/var/www/artsays/frontend/index.html
+                      echo "Injected index.html directly into backend container"
+                  else
+                      echo "Backend container not running — skipping inject (backend will fetch via HTTP on next request)"
+                  fi
+                '''
+            }
+        }
+
         stage('Clear Backend Prerender Cache') {
             steps {
-                echo '🔄 Clearing backend prerender cache so new index.html is used...'
+                echo 'Clearing backend prerender cache so new index.html is picked up...'
                 sh '''
-                # Tell the backend to drop its cached index.html so it re-fetches from the new container
                 curl -s -X POST http://artsays-backend-container:3001/__prerender-cache-clear || \
                   curl -s -X POST http://localhost:3001/__prerender-cache-clear || \
-                  echo "⚠️  Cache-clear request failed (backend may not be running yet) — it will auto-refresh on next request"
+                  echo "Cache-clear request failed (backend may not be running yet) — it will auto-refresh on next request"
                 '''
             }
         }

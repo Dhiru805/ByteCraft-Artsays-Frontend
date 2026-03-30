@@ -6,6 +6,17 @@ import "../Login/LoginStyles.css";
 import { FaEye, FaEyeSlash, FaCheck, FaGoogle } from "react-icons/fa";
 import postAPI from "../../api/postAPI";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useGoogleClientId } from "../../GoogleClientIdContext";
+
+const GoogleSignupButton = ({ onSuccess, onError }) => {
+  const signUpWithGoogle = useGoogleLogin({ flow: "auth-code", onSuccess, onError });
+  return (
+    <button type="button" className="login-google-btn" onClick={() => signUpWithGoogle()}>
+      <FaGoogle size={20} />
+      Continue with Google
+    </button>
+  );
+};
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -28,6 +39,7 @@ const Register = () => {
   const [showOTPField, setShowOTPField] = useState(false);
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const navigate = useNavigate();
+  const googleClientId = useGoogleClientId();
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -194,19 +206,15 @@ const Register = () => {
     }
   };
 
-  const signUpWithGoogle = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: async (codeResponse) => {
-      try {
-        const { code } = codeResponse;
-        await postAPI("/auth/googlesignup", { code }, true);
-        toast.success("Google Signup successful");
-      } catch (error) {
-        toast.error(error?.response?.data?.message || "Google Signup Failed");
-      }
-    },
-    onError: () => toast.error("Google Signup Failed"),
-  });
+  const handleGoogleSignupSuccess = async (codeResponse) => {
+    try {
+      const { code } = codeResponse;
+      await postAPI("/auth/googlesignup", { code }, true);
+      toast.success("Google Signup successful");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Google Signup Failed");
+    }
+  };
 
   return (
     <>
@@ -417,14 +425,17 @@ const Register = () => {
                 {loadingSubmit ? "Creating account..." : "Sign Up"}
               </button>
 
-              <button
-                type="button"
-                className="login-google-btn"
-                onClick={() => signUpWithGoogle()}
-              >
-                <FaGoogle size={20} />
-                Continue with Google
-              </button>
+                {googleClientId ? (
+                  <GoogleSignupButton
+                    onSuccess={handleGoogleSignupSuccess}
+                    onError={() => toast.error("Google Signup Failed")}
+                  />
+                ) : (
+                  <button type="button" className="login-google-btn" disabled>
+                    <FaGoogle size={20} />
+                    Continue with Google
+                  </button>
+                )}
 
               <div className="login-divider">
                 <span className="login-divider-line"></span>

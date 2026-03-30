@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const CreateMaterial = () => {
   const navigate = useNavigate();
@@ -95,10 +96,10 @@ const CreateMaterial = () => {
       if (!imagePath) return null;
 
       // Convert Windows backslashes to forward slashes
-      return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${imagePath.replace(
+      return getImageUrl(imagePath.replace(
         /\\/g,
         "/"
-      )}`;
+      ));
     } catch (err) {
       console.error("Failed to fetch image:", err);
       return null;

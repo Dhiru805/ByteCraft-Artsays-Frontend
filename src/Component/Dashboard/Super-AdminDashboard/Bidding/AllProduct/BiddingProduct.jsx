@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,24 +7,10 @@ import { useNavigate } from 'react-router-dom';
 const AllBiddingProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
     const [searchTerm, setSearchTerm] = useState('');
     const [productsPerPage, setProductsPerPage] = useState(10);
 const navigate = useNavigate();
 
-    // const fetchProducts = async () => {
-    //     try {
-    //         const result = await getAPI("/api/getallbid", {}, true, false);
-    //         if (result && result.data && Array.isArray(result.data.bids)) {
-    //             setProducts(result.data.bids);
-    //         } else {
-    //             console.error("Invalid API response", result.data);
-    //             setProducts([]);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching bids:", error);
-    //     }
-    // };
 const fetchProducts = async () => {
     try {
         const result = await getAPI("/api/bidding/all", {}, true, false);
@@ -52,10 +39,6 @@ const fetchProducts = async () => {
         return () => clearInterval(interval);
     }, []);
 
-    // const filteredProducts = products.filter(product =>
-    //     product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    //     product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-    // );
 const filteredProducts = products.filter(p => {
     const s = searchTerm.toLowerCase();
 
@@ -184,7 +167,7 @@ const filteredProducts = products.filter(p => {
                                                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                                                     <td>
                                                         <img
-                                                            src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${product.product.mainImage}`}
+                                                            src={getImageUrl(product.product.mainImage)}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{
@@ -262,7 +245,7 @@ const filteredProducts = products.filter(p => {
 
                 <td>
                     <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${p?.mainImage}`}
+                        src={getImageUrl(p?.mainImage)}
                         className="rounded-circle avatar"
                         style={{
                             width: "30px",

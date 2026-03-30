@@ -192,6 +192,7 @@ import deleteAPI from "../../api/deleteAPI";
 import { toast } from "react-toastify";
 import { FiChevronRight } from "react-icons/fi";
 import { FiChevronLeft } from "react-icons/fi";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const ProductGrid = ({ overrideProducts = null }) => {
   const [products, setProducts] = useState([]);
@@ -200,7 +201,6 @@ const ProductGrid = ({ overrideProducts = null }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 12;
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   const userId = localStorage.getItem("userId");
   const userType = localStorage.getItem("userType");
@@ -404,7 +404,7 @@ useEffect(() => {
                                 </span>
                               )}
                               <img
-                                src={`${imageBaseURL}${product.mainImage}`}
+                                  src={getImageUrl(product.mainImage)}
                                 alt={product.productName}
                                 className={`w-full h-40 sm:h-64 object-contain rounded-t-2xl product-img ${(!product.quantity || product.quantity === 0) ? 'blur-[2px]' : ''}`}
                               />
@@ -472,7 +472,7 @@ useEffect(() => {
                               {product.badges?.map((img, index) => (
                                 <img
                                   key={index}
-                                  src={`${imageBaseURL}${img}`}
+                                    src={getImageUrl(img)}
                                   className="w-5 h-5 rounded-full"
                                 />
                               ))}

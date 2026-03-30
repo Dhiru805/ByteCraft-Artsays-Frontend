@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import putAPI from "../../../../../api/putAPI";
 import { toast } from "react-toastify";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
@@ -271,12 +272,7 @@ return (
                                 src={
                                   mat.material?.materialName
                                     ?.materialNameImage
-                                    ? `${process.env
-                                      .REACT_APP_API_URL_FOR_IMAGE
-                                    }/${mat.material?.materialName?.materialNameImage.replace(
-                                      /\\/g,
-                                      "/"
-                                    )}`
+                                    ? getImageUrl(mat.material?.materialName?.materialNameImage.replace(/\\/g,"/"))
                                     : "/placeholder.jpg"
                                 }
                                 className="rounded-circle"

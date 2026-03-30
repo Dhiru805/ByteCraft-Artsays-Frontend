@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import putAPI from "../../../../api/putAPI";
 import getAPI from "../../../../api/getAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const UpdateMaterialOrder = () => {
   const { id } = useParams();
@@ -313,7 +314,7 @@ const UpdateMaterialOrder = () => {
       switch (type) {
         case "stamp":
           selectedItem = selectedStamp.find((s) => s._id === id);
-            const stampUrl = selectedItem?.materialStampImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem?.materialStampImage.replace(/\\/g, "/")}` : null || selectedItem.stamp?.materialStampImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem.stamp?.materialStampImage.replace(/\\/g, "/")}` : null;
+            const stampUrl = selectedItem?.materialStampImage ? `${ getImageUrl(null) }/${selectedItem?.materialStampImage.replace(/\\/g, "/")}` : null || selectedItem.stamp?.materialStampImage ? `${ getImageUrl(null) }/${selectedItem.stamp?.materialStampImage.replace(/\\/g, "/")}` : null;
           setStampData((prev) => ({
             ...prev,
             stamp: id,
@@ -323,7 +324,7 @@ const UpdateMaterialOrder = () => {
           break;
         case "stickers":
           selectedItem = selectedStickers.find((s) => s._id === id);
-          const stickerUrl = selectedItem?.materialStickersImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem?.materialStickersImage.replace(/\\/g, "/")}` : null || selectedItem.stickers?.materialStickersImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem.stickers?.materialStickersImage.replace(/\\/g, "/")}` : null;
+          const stickerUrl = selectedItem?.materialStickersImage ? `${ getImageUrl(null) }/${selectedItem?.materialStickersImage.replace(/\\/g, "/")}` : null || selectedItem.stickers?.materialStickersImage ? `${ getImageUrl(null) }/${selectedItem.stickers?.materialStickersImage.replace(/\\/g, "/")}` : null;
           setStickerData((prev) => ({
             ...prev,
             sticker: id,
@@ -333,7 +334,7 @@ const UpdateMaterialOrder = () => {
           break;
         case "vouchers":
           selectedItem = selectedVouchers.find((s) => s._id === id);
-          const VoucherUrl = selectedItem?.materialVouchersImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem?.materialVouchersImage.replace(/\\/g, "/")}` : null || selectedItem.vouchers?.materialVouchersImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem.vouchers?.materialVouchersImage.replace(/\\/g, "/")}` : null;
+          const VoucherUrl = selectedItem?.materialVouchersImage ? `${ getImageUrl(null) }/${selectedItem?.materialVouchersImage.replace(/\\/g, "/")}` : null || selectedItem.vouchers?.materialVouchersImage ? `${ getImageUrl(null) }/${selectedItem.vouchers?.materialVouchersImage.replace(/\\/g, "/")}` : null;
           setVoucherData((prev) => ({
             ...prev,
             voucher: id,
@@ -343,7 +344,7 @@ const UpdateMaterialOrder = () => {
           break;
         case "card":
           selectedItem = selectedCard.find((s) => s._id === id);
-          const cardUrl = selectedItem?.materialCardImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem?.materialCardImage.replace(/\\/g, "/")}` : null || selectedItem.card?.materialCardImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem.card?.materialCardImage.replace(/\\/g, "/")}` : null;
+          const cardUrl = selectedItem?.materialCardImage ? `${ getImageUrl(null) }/${selectedItem?.materialCardImage.replace(/\\/g, "/")}` : null || selectedItem.card?.materialCardImage ? `${ getImageUrl(null) }/${selectedItem.card?.materialCardImage.replace(/\\/g, "/")}` : null;
           setCardData((prev) => ({
             ...prev,
             card: id,
@@ -353,7 +354,7 @@ const UpdateMaterialOrder = () => {
           break;
         case "material":
           selectedItem = selectedMaterial.find((s) => s._id === id);
-          const imageUrl = selectedItem?.materialName?.materialNameImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem?.materialName?.materialNameImage.replace(  /\\/g, "/" )}` : null || selectedItem?.material?.materialName?.materialNameImage ? `${ process.env.REACT_APP_API_URL_FOR_IMAGE }/${selectedItem?.material?.materialName?.materialNameImage.replace(/\\/g, "/")}` : null;
+          const imageUrl = selectedItem?.materialName?.materialNameImage ? `${ getImageUrl(null) }/${selectedItem?.materialName?.materialNameImage.replace(  /\\/g, "/" )}` : null || selectedItem?.material?.materialName?.materialNameImage ? `${ getImageUrl(null) }/${selectedItem?.material?.materialName?.materialNameImage.replace(/\\/g, "/")}` : null;
           setMaterialData((prev) => ({
             ...prev,
             materialName: selectedItem?.materialName?.materialName,

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 
@@ -143,7 +144,7 @@ const BiddedProductTransactionAdmin = () => {
                                                             {productData ? (
                                                                 <>
                                                                     <img
-                                                                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${productData.mainImage}`}
+                                                                        src={getImageUrl(productData.mainImage)}
                                                                         className="rounded-circle avatar"
                                                                         alt=""
                                                                         style={{

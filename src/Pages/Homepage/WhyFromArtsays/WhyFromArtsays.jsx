@@ -1,30 +1,30 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
 import WhyFromSkeleton from "../../../Component/Skeleton/WhyFromSkeleton";
 import { useNavigate } from "react-router-dom";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const WhyFromArtsays = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hoveredCard, setHoveredCard] = useState(null);
   const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) return;
 
-        const sectionRes = await getAPI(
-          `/api/homepage-sections/why-buy-artsays/${homepage._id}`
-        );
-        if (!sectionRes.data.success || !sectionRes.data.data)
-          throw new Error("Why From Artsays section not found");
+          const sectionRes = await getAPI(
+            `/api/homepage-sections/why-buy-artsays/${homepage._id}`
+          );
+          if (!sectionRes?.data?.success || !sectionRes?.data?.data) return;
 
-        setData(sectionRes.data.data);
-      } catch (err) {
+          setData(sectionRes.data.data);
+        } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
@@ -35,7 +35,7 @@ const WhyFromArtsays = () => {
   }, []);
 
   if (loading) return <div><WhyFromSkeleton/></div>;
-  if (!data) return <div>No 'Why Buy from Artsays' section available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gradient-to-b from-white via-gray-50 to-white font-[poppins] py-16 md:py-24 px-4 md:px-6 overflow-hidden">
@@ -46,7 +46,7 @@ const WhyFromArtsays = () => {
             <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
               {data.heading}
             </h1>
-            <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+            <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
               {data.description}
             </p>
           </div>
@@ -87,7 +87,7 @@ const WhyFromArtsays = () => {
                   <div className="absolute -inset-4 bg-gradient-to-br from-amber-100 to-orange-50 rounded-full blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-gray-50 to-white rounded-3xl flex items-center justify-center shadow-inner border border-gray-100 group-hover:border-[#6F4D34]/20 transition-colors duration-500">
                     <img
-                      src={`${imageBaseURL}/${card.icon}`}
+                      src={getImageUrl(card.icon)}
                       alt={card.heading}
                       className="w-12 h-12 md:w-14 md:h-14 object-contain transform group-hover:scale-110 transition-transform duration-500"
                     />

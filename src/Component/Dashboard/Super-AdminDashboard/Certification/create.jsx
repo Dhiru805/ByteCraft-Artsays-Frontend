@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import getAPI from "../../../../api/getAPI";
 import postAPI from "../../../../api/postAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 function CreateCertification() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function CreateCertification() {
 
   const typeOptions = [
     { value: "Artist", label: "Artist" },
-    { value: "Seller", label: "Seller" },
+    { value: "seller", label: "Seller" },
   ];
 
   const certificationProviderOptions = [
@@ -203,7 +204,7 @@ function CreateCertification() {
           navigate("/super-admin/certification");
         } else if (result?.paymentUrl) {
           toast.info("Payment Link sent on mail");
-             navigate("/super-admin/certification");
+          navigate("/super-admin/certification");
         } else {
           toast.success("Certification request created successfully");
           navigate("/super-admin/certification");
@@ -257,7 +258,7 @@ function CreateCertification() {
           <div className="card">
             <div className="body">
               <form onSubmit={handleSubmit}>
-                {}
+                {/* Type */}
                 <div className="form-group mb-3">
                   <label className="form-label">Type *</label>
                   <Select
@@ -272,7 +273,7 @@ function CreateCertification() {
                   />
                 </div>
 
-                {}
+                {/* User */}
                 <div className="form-group mb-3">
                   <label className="form-label">User *</label>
                   <Select
@@ -298,7 +299,7 @@ function CreateCertification() {
                   )}
                 </div>
 
-                {}
+                {/* Product */}
                 <div className="form-group mb-3">
                   <label className="form-label">Product *</label>
                   <Select
@@ -315,14 +316,14 @@ function CreateCertification() {
                   />
                 </div>
 
-                {}
+                {/* Selected product preview */}
                 {selectedProduct && (
                   <div className="form-group mb-4">
                     <label className="form-label">Selected Product</label>
                     <div className="d-flex align-items-center gap-3 p-3 bg-light rounded">
                       {selectedProduct.mainImage && (
                         <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                          src={getImageUrl(selectedProduct.mainImage)}
                           alt={selectedProduct.productName}
                           style={{
                             width: "90px",
@@ -337,15 +338,14 @@ function CreateCertification() {
                           {selectedProduct.productName}
                         </div>
                         <small className="text-muted">
-                          {selectedProduct.mainCategory?.mainCategoryName ||
-                            "—"}
+                          {selectedProduct.mainCategory?.mainCategoryName || "—"}
                         </small>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {}
+                {/* Certifications */}
                 <div className="form-group mb-3">
                   <label className="form-label">Certifications *</label>
                   <Select
@@ -360,7 +360,7 @@ function CreateCertification() {
                   />
                 </div>
 
-                {}
+                {/* Provider */}
                 <div className="form-group mb-3">
                   <label className="form-label">Provider *</label>
                   <Select
@@ -378,7 +378,7 @@ function CreateCertification() {
                   />
                 </div>
 
-                {}
+                {/* Pay or Free */}
                 <div className="form-group mb-4">
                   <label className="form-label">Certification Type *</label>
                   <Select

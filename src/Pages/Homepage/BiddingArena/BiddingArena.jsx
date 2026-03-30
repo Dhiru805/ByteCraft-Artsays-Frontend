@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
 import BiddingArenaSkeleton from "../../../Component/Skeleton/BiddingArenaSkeleton";
 import "../../store/products/product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const BiddingArena = () => {
   const [data, setData] = useState(null);
@@ -12,7 +13,6 @@ const BiddingArena = () => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-  const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   /* ---------------- STATUS HELPERS ---------------- */
   const getFinalStatus = (item) => {
@@ -47,17 +47,19 @@ const BiddingArena = () => {
   /* ---------------- FETCH HOME + BIDS ---------------- */
   useEffect(() => {
     const fetchAll = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) return;
 
-        const [arenaRes, bidRes, badgeRes] = await Promise.all([
-          getAPI(`/api/homepage-sections/bidding-arena/${homepage._id}`),
-          getAPI("/api/bidding/products/all", {}, true, false),
-          getAPI(`/api/products/approved-with-badges`, {}, true, false),
-        ]);
+          const [arenaRes, bidRes, badgeRes] = await Promise.all([
+            getAPI(`/api/homepage-sections/bidding-arena/${homepage._id}`),
+            getAPI("/api/bidding/products/all", {}, true, false),
+            getAPI(`/api/products/approved-with-badges`, {}, true, false),
+          ]);
 
-        setData(arenaRes.data.data);
+          if (arenaRes?.data?.data) setData(arenaRes.data.data);
 
         const list = Array.isArray(bidRes?.data) ? bidRes.data : [];
         const badgeData = badgeRes?.data?.data || [];
@@ -144,7 +146,7 @@ const BiddingArena = () => {
             <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
               {data.heading || "Bidding Arena"}
             </h1>
-            <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+            <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
               {data.description || "Bid on exclusive masterpieces and secure your favorite artworks."}
             </p>
           </div>
@@ -184,7 +186,7 @@ const BiddingArena = () => {
                 {/* Image Container */}
                 <div className="relative aspect-[5/5] overflow-hidden bg-[#F8F9FA]">
                   <img
-                    src={`${imageBaseURL}${item.product?.mainImage}`}
+                    src={getImageUrl(item.product?.mainImage)}
                     alt={item.artworkName}
                     className={`w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 ${isEnded ? 'grayscale-[0.5] blur-[2px]' : ''}`}
                   />
@@ -228,7 +230,7 @@ const BiddingArena = () => {
                     <div className="flex -space-x-1.5">
                       {item.product?.badges?.map((img, idx) => (
                         <div key={idx}>
-                          <img src={`${imageBaseURL}${img}`} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                          <img src={getImageUrl(img)} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
                         </div>
                       ))}
                     </div>

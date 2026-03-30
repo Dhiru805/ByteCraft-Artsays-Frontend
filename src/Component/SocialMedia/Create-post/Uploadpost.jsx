@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+﻿import React, { useState, useEffect, useMemo, useRef } from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import getAPI from "../../../../src/api/getAPI";
 import postAPI from "../../../../src/api/postAPI";
 import Sidebar from "../Sidebar/Sidebar";
@@ -334,7 +335,7 @@ const Uploadpost = () => {
             <div className="w-full flex items-center justify-start gap-3">
               <img
                 src={
-                  `${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile?.profilePhoto}` ||
+                  getImageUrl(profile?.profilePhoto) ||
                   `${DEFAULT_PROFILE_IMAGE}`
                 }
                 className="w-12 rounded-full"
@@ -343,8 +344,8 @@ const Uploadpost = () => {
               <p className="text-lg font-medium">{profile?.username}</p>
               {profile?.verified?.length > 0 && (
                 <img
-                  src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${profile.verified[profile.verified.length - 1]?.badgeImage
-                    }`}
+                  src={getImageUrl(profile.verified[profile.verified.length - 1]?.badgeImage
+                    )}
                   className="inline-block ml-1 w-4 h-4 object-contain"
                   alt={
                     profile.verified[profile.verified.length - 1]?.badgeName ||
@@ -376,7 +377,7 @@ const Uploadpost = () => {
                       className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100"
                     >
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`}
+                        src={getImageUrl(user.profilePhoto)}
                         alt={user.username}
                         className="w-8 h-8 rounded-full"
                       />
@@ -457,7 +458,7 @@ const Uploadpost = () => {
                       <img
                         src={
                           user?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user?.profilePhoto}`
+                            ? getImageUrl(user?.profilePhoto)
                             : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt={user?.username}

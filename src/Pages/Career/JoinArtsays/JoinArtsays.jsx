@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import getAPI from "../../../api/getAPI"; 
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const JoinArtsays = () => {
   const [page, setPage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const base = process.env.REACT_APP_API_URL_FOR_IMAGE;
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -71,7 +70,7 @@ const JoinArtsays = () => {
           >
             <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-2xl">
               <img
-                src={`${base}/${card.image}`}
+                src={getImageUrl(card.image)}
                 alt={card.text}
                 className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
               />

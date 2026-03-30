@@ -79,7 +79,7 @@ const Footer = () => {
         title: "FOR ARTISTS",
         links: [
           { label: "Why Artsays", to: "/why-artsays" },
-          { label: "AI Art Verification", to: "/commission" },
+          { label: "AI Art Verification", to: "https://ai.artsays.in" },
           { label: "Careers", to: "/career" },
           { label: "How to Sell", to: "/how-to-sell" },
           { label: "Blog / Art Journal", to: "/blogs" },
@@ -142,16 +142,16 @@ const Footer = () => {
 
         {/* Brand Header */}
         <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-7 md:!p-8 border border-gray-800/60">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <div className="w-full md:items-start sm:items-center">
               <Link to="/">
-                <Logo className="logo h-10 w-auto mb-3" />
+                <Logo className="w-auto h-10 mb-3 logo" />
               </Link>
-              <p className="text-white text-lg font-semibold tracking-tight">
+              <p className="text-lg font-semibold tracking-tight text-white">
                 When Art Speaks, Value Grows
               </p>
             </div>
-            <p className="md:max-w-2xl text-sm text-white leading-relaxed md:text-right">
+            <p className="text-sm leading-relaxed text-white md:max-w-2xl md:text-right">
               Artsays is a global art marketplace connecting artists, collectors,
               and galleries. Discover original paintings, sculptures, and digital
               art — authenticated, insured, and delivered with care.
@@ -160,7 +160,7 @@ const Footer = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
 
             {/* Left Column - Newsletter, Contact, Social, Partners — Unified Card */}
             <div className="lg:col-span-4">
@@ -172,7 +172,7 @@ const Footer = () => {
                 <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#FB5934]/5 rounded-full blur-2xl group-hover:bg-[#FB5934]/10 transition-all duration-500"></div>
                 <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-[#FB5934]/3 rounded-full blur-xl"></div>
 
-                <div className="relative p-7 space-y-0">
+                <div className="relative space-y-0 p-7">
 
                   {/* ── Stay Updated ── */}
                   <div className="pb-3">
@@ -221,22 +221,22 @@ const Footer = () => {
                       Contact Us
                     </h3>
                     <div className="space-y-2.5">
-                      <a href="tel:+918668367265" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
+                      {/* <a href="tel:+918668367265" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
                           <img src="/assets/footer/call.svg" alt="call" width="14" height="14" />
                         </span>
                         <div>
                           <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Phone</span>
-                          <span className="text-white text-sm group-hover/contact:text-white transition-colors">+91 8668 36 7265</span>
+                          <span className="text-sm text-white transition-colors group-hover/contact:text-white">+91 8668 36 7265</span>
                         </div>
-                      </a>
-                      <a href="mailto:contact@artsays.in" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
+                      </a> */}
+                      <a href="mailto:support@artsays.in" className="flex items-center gap-3 group/contact  hover:border-[#FB5934]/20 transition-all duration-200">
                         <span className="w-8 h-8 bg-[#161616] rounded-lg flex items-center justify-center flex-shrink-0 group-hover/contact:bg-[#FB5934]/10 transition-colors">
                           <img src="/assets/footer/mail.svg" alt="mail" width="14" height="14" />
                         </span>
                         <div>
                           <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Email</span>
-                          <span className="text-white text-sm group-hover/contact:text-white transition-colors">contact@artsays.in</span>
+                          <span className="text-sm text-white transition-colors group-hover/contact:text-white">support@artsays.in</span>
                         </div>
                       </a>
                       <div className="flex items-center gap-3 ">
@@ -245,7 +245,7 @@ const Footer = () => {
                         </span>
                         <div>
                           <span className="text-gray-300 text-[10px] uppercase tracking-wider font-medium block leading-none mb-0.5">Address</span>
-                          <span className="text-white text-sm leading-snug">Pune, Pimpri Chinchwad, Maharashtra, India</span>
+                          <span className="text-sm leading-snug text-white">Pimpri Chinchwad (Pune), Maharashtra, India</span>
                         </div>
                       </div>
                     </div>
@@ -284,13 +284,13 @@ const Footer = () => {
                       Partner With Us
                     </h3>
                     <div className="space-y-1.5">
-                      <Link to="/partner" className="flex items-center gap-2 text-white hover:pl-2 text-sm transition-colors group/partner">
+                      <Link to="/partner" className="flex items-center gap-2 text-sm text-white transition-colors hover:pl-2 group/partner">
                         <svg className="w-3.5 h-3.5 text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                         Become a Gallery Partner
                       </Link>
-                      <Link to="/corporate" className="flex items-center gap-2 text-white hover:pl-2 text-sm transition-colors group/partner">
+                      <Link to="/corporate" className="flex items-center gap-2 text-sm text-white transition-colors hover:pl-2 group/partner">
                         <svg className="w-3.5 h-3.5 text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
@@ -329,7 +329,7 @@ const Footer = () => {
               </div>
 
                   {/* Trust & Promise - Unified */}
-                    <div className="mt-8 pt-8 border-t border-gray-800/40">
+                    <div className="pt-8 mt-8 border-t border-gray-800/40">
                       <div className="relative overflow-hidden rounded-2xl bg-[#0d0d0d] border border-gray-800/40 group hover:border-gray-700/50 transition-all duration-300">
                         {/* Top accent */}
                         <div className="h-[2px] bg-gradient-to-r from-transparent via-[#FB5934]/60 to-transparent"></div>
@@ -340,16 +340,16 @@ const Footer = () => {
                             <div className="flex items-center gap-3">
                               <div className="relative">
                                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FB5934] to-[#e04a28] flex items-center justify-center">
-                                  <HiShieldCheck className="text-white text-lg" />
+                                  <HiShieldCheck className="text-lg text-white" />
                                 </div>
                                 <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0d0d0d]"></span>
                               </div>
                               <div>
-                                <h3 className="text-white text-lg font-bold">Secure Payments & Trust Badges</h3>
+                                <h3 className="text-lg font-bold text-white">Secure Payments & Trust Badges</h3>
                                 <p className="text-white text-[11px]">Your transactions are protected & verified</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-3 flex-wrap">
+                            <div className="flex flex-wrap items-center gap-3">
                               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold rounded-full border border-emerald-500/20">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                                 100% Safe Transactions
@@ -362,7 +362,7 @@ const Footer = () => {
                           </div>
 
                           {/* Content: Payments + Promise side by side */}
-                          <div className="flex flex-col md:flex-row gap-5">
+                          <div className="flex flex-col gap-5 md:flex-row">
                             {/* Payment Methods */}
                             <div className="flex-1">
                               <h4 className="text-white text-xs font-semibold uppercase tracking-[0.15em] mb-3 md:!mb-5">Accepted Payment Methods</h4>
@@ -383,8 +383,8 @@ const Footer = () => {
                             </div>
 
                             {/* Divider */}
-                            <div className="hidden md:block w-px bg-gradient-to-b from-transparent via-gray-800/60 to-transparent"></div>
-                            <div className="md:hidden h-px bg-gradient-to-r from-transparent via-gray-800/60 to-transparent"></div>
+                            <div className="hidden w-px md:block bg-gradient-to-b from-transparent via-gray-800/60 to-transparent"></div>
+                            <div className="h-px md:hidden bg-gradient-to-r from-transparent via-gray-800/60 to-transparent"></div>
 
                             {/* Artsays Promise */}
                             <div className="flex-1">
@@ -400,7 +400,7 @@ const Footer = () => {
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                       </svg>
                                     </span>
-                                    <span className="text-white text-xs group-hover/item:pl-2 transition-colors">{item}</span>
+                                    <span className="text-xs text-white transition-colors group-hover/item:pl-2">{item}</span>
                                   </div>
                                 ))}
                               </div>
@@ -442,7 +442,7 @@ const Footer = () => {
                           <path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z" />
                         </svg>
                       </span>
-                      <span className="text-white text-sm font-semibold">{main.mainCategoryName}</span>
+                      <span className="text-sm font-semibold text-white">{main.mainCategoryName}</span>
                       <span className="text-[10px] text-gray-500 bg-[#161616] px-2 py-0.5 rounded-full">
                         {main.children.length} {main.children.length === 1 ? 'category' : 'categories'}
                       </span>
@@ -458,7 +458,7 @@ const Footer = () => {
                   {/* Expanded: Categories & SubCategories */}
                   {expandedMain === main._id && main.children.length > 0 && (
                     <div className="px-4 pb-4 border-t border-gray-800/30">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-3">
+                      <div className="grid grid-cols-1 gap-3 pt-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                         {main.children.map((cat) => (
                           <div key={cat._id} className="space-y-2">
                             <Link
@@ -523,10 +523,10 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="footer-card bg-[#0a0a0a] rounded-[2rem] p-3 md:!p-6 border border-gray-800/60">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
+          <div className="flex flex-col items-center justify-between gap-3 md:flex-row">
             <div className="flex items-center gap-2.5 text-white text-xs">
               <img
-                className="h-4 w-auto rounded-sm object-contain"
+                className="object-contain w-auto h-4 rounded-sm"
                 src="/assets/footer/ind.png"
                 alt="India Flag"
                 width="24"

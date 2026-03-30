@@ -86,6 +86,7 @@ const CategoryTable = ({
             try {
                 const response = await fetch("/api/import-product-categories", {
                     method: "POST",
+                    headers: { "x-requested-with": "XMLHttpRequest" },
                     body: formData,
                 });
 

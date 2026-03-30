@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import getAPI from "../../../../api/getAPI";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import useUserType from "../../urlconfig";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 function ViewCertification() {
   const navigate = useNavigate();
   const { id } = useParams();
   const userType = useUserType();
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
   const [certification, setCertification] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -119,7 +120,7 @@ function ViewCertification() {
                   <img
                     src={
                       certification.productId?.mainImage
-                        ? `${BASE_URL}${certification.productId.mainImage}`
+                        ? getImageUrl(certification.productId.mainImage)
                         : DEFAULT_PROFILE_IMAGE
                     }
                     alt={certification.productId?.productName || "Product"}
@@ -174,10 +175,10 @@ function ViewCertification() {
                         <th>Certification Price</th>
                         <td>₹{certification.certificationPrice || "N/A"}</td>
                       </tr>
-                      <tr>
-                        <th>Transaction ID</th>
-                        <td>{certification.easebuzzTxnId || "N/A"}</td>
-                      </tr>
+                        <tr>
+                          <th>Order ID</th>
+                          <td>{certification.cfOrderId || "N/A"}</td>
+                        </tr>
                       <tr>
                         <th>Created At</th>
                         <td>

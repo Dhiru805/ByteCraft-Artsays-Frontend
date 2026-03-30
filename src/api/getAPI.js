@@ -24,19 +24,22 @@ async function getAPI(
       requestConfig.params = config.params; 
     }
 
-    const response = await axiosInstance.get(url, requestConfig);
+      const response = await axiosInstance.get(url, requestConfig);
 
-    if (response.status === 200) {
-      return {
-        message: response.data.message,
-        hasError: response.data.hasError,
-        data: response.data,
-      };
-    }
-    } catch (error) {
-      console.error("Error during API request:", error.response ? error.response.data : error.message);
-      throw error;
-    }
+      if (response.status === 200) {
+        return {
+          message: response.data.message,
+          hasError: response.data.hasError,
+          data: response.data,
+        };
+      }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          return null;
+        }
+        console.error("Error during API request:", error.response ? error.response.data : error.message);
+        throw error;
+      }
 }
 
 export default getAPI;

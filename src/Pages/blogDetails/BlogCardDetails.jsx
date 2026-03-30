@@ -15,6 +15,7 @@ import "./BlogCardDetails.css";
 import getAPI from "../../api/getAPI";
 import putAPI from "../../api/putAPI";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 function BlogCardDetails() {
     const [open, setOpen] = useState(true);
@@ -253,7 +254,7 @@ function BlogCardDetails() {
                     <meta property="og:description" content={blogDetails.summary} />
                     <meta property="og:url" content={window.location.href} />
                     {blogDetails.blogImage && (
-                        <meta property="og:image" content={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${blogDetails.blogImage.replace(/\\/g, "/")}`} />
+                        <meta property="og:image" content={getImageUrl(blogDetails.blogImage.replace(/\\/g, "/"))} />
                     )}
                 </Helmet>
             )}

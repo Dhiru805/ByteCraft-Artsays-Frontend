@@ -1,6 +1,7 @@
-import React from "react";
+﻿import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 const ViewInsurance = () => {
   const { state } = useLocation();
@@ -19,7 +20,7 @@ const ViewInsurance = () => {
     );
   }
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
 
   const formatDate = (dateString) => {
     if (!dateString) return "—";
@@ -79,7 +80,7 @@ const ViewInsurance = () => {
                     <img
                       src={
                         insurance.productId?.mainImage
-                          ? `${BASE_URL}${insurance.productId.mainImage}`
+                          ? getImageUrl(insurance.productId.mainImage)
                           : DEFAULT_PROFILE_IMAGE
                       }
                       alt="Product"
@@ -181,10 +182,10 @@ const ViewInsurance = () => {
                           </span>
                         </td>
                       </tr>
-                      <tr>
-                        <th>Transaction ID:</th>
-                        <td>{insurance.easebuzzTxnId || "—"}</td>
-                      </tr>
+                        <tr>
+                          <th>Transaction ID:</th>
+                          <td>{insurance.cfOrderId || "—"}</td>
+                        </tr>
                       <tr>
                         <th>Date:</th>
                         <td>{formatDate(insurance.createdAt)}</td>
@@ -196,7 +197,7 @@ const ViewInsurance = () => {
               </div>
 
               {}
-              {insurance.easebuzzResponse && (
+              {insurance.cfPaymentData && (
                 <>
                   <hr className="my-4" />
                   <h5>Payment Information</h5>
@@ -208,12 +209,12 @@ const ViewInsurance = () => {
                           <tr>
                             <th width="160">Transaction ID:</th>
                             <td>
-                              {insurance.easebuzzResponse.easepayid || "—"}
+                              {insurance.cfPaymentData.cf_payment_id || insurance.cfPaymentData.easepayid || "—"}
                             </td>
                           </tr>
                           <tr>
                             <th>Transaction Date:</th>
-                            <td>{insurance.easebuzzResponse.addedon || "—"}</td>
+                            <td>{insurance.cfPaymentData.payment_time || insurance.cfPaymentData.addedon || "—"}</td>
                           </tr>
                           <tr>
                             <th>Payment Mode:</th>
@@ -230,14 +231,14 @@ const ViewInsurance = () => {
                             <th width="160">Amount Paid:</th>
                             <td>
                               <strong>
-                                ₹{insurance.easebuzzResponse.net_amount_debit}
+                                ₹{insurance.cfPaymentData.payment_amount || insurance.cfPaymentData.net_amount_debit}
                               </strong>
                             </td>
                           </tr>
                           <tr>
                             <th>Status Message:</th>
                             <td className="text-success">
-                              {insurance.easebuzzResponse.error_Message || "—"}
+                              {insurance.cfPaymentData.payment_message || insurance.cfPaymentData.error_Message || "—"}
                             </td>
                           </tr>
                         </tbody>

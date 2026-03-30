@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Search, ChevronRight, Info, HelpCircle } from "lucide-react";
 import axiosInstance from "../../../api/axiosConfig";
 import CommissionContentSkeliton from "../../../Component/Skeleton/Home/Account/CommissionContentSkeliton";
 import "../../store/products/product.css";
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 const AffiliateBPContent = () => {
     const [pageData, setPageData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         const fetchPublishedPage = async () => {
@@ -144,7 +144,7 @@ const AffiliateBPContent = () => {
                                         {article.bannerImage && (
                                             <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl">
                                                 <img
-                                                    src={`${imageBaseURL}/${article.bannerImage}`}
+                                                    src={getImageUrl(article.bannerImage)}
                                                     alt={article.articleHeading}
                                                     className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                                                 />
@@ -208,7 +208,7 @@ const AffiliateBPContent = () => {
                                         >
                                             <div className="relative w-full aspect-square mb-6 overflow-hidden rounded-2xl bg-gray-50 p-6">
                                                 <img
-                                                    src={`${imageBaseURL}/${card.cardImage}`}
+                                                    src={getImageUrl(card.cardImage)}
                                                     alt={card.cardTitle}
                                                     className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                                                 />

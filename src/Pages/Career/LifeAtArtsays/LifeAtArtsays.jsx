@@ -4,6 +4,7 @@ import { ChevronRight, Upload, CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const LifeAtArtsays = () => {
   const { slug } = useParams();
@@ -25,7 +26,7 @@ const LifeAtArtsays = () => {
   const [setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const base = process.env.REACT_APP_API_URL_FOR_IMAGE;
+
 
   const fetchData = async () => {
     try {
@@ -289,7 +290,7 @@ const LifeAtArtsays = () => {
             >
               <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-2xl">
                 <img
-                  src={card.image ? `${base}/${card.image}` : "/placeholder.png"}
+                    src={card.image ? getImageUrl(card.image) : "/placeholder.png"}
                   alt={card.text}
                   className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                 />
@@ -303,7 +304,7 @@ const LifeAtArtsays = () => {
 
         <div className="order-1 lg:order-2 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 overflow-hidden flex items-center justify-center">
           <img
-            src={section3?.sectionImage ? `${base}/${section3.sectionImage}` : "/herosectionimg/lifeAt.svg"}
+              src={section3?.sectionImage ? getImageUrl(section3.sectionImage) : "/herosectionimg/lifeAt.svg"}
             alt="Life At Artsays"
             className="max-w-full h-auto object-contain hover:scale-105 transition-transform duration-700"
           />

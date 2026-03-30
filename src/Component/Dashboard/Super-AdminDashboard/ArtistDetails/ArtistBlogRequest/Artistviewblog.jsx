@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import getAPI from '../../../../../api/getAPI';
 import { Link } from 'react-router-dom';
 import ConfirmationDialog from '../../../ConfirmationDialog';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton"
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 function ViewDetails() {
   const location = useLocation();
@@ -11,7 +12,7 @@ function ViewDetails() {
   const [blogs, setBlogs] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBlogToDelete, setSelectedBlogToDelete] = useState(null);
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
   const navigate = useNavigate();
 const[loading,setLoading]=useState(false);
 
@@ -78,7 +79,7 @@ if(loading)return <ProductRequestSkeleton/>
                     <div className="img-post" >
                       <img
                         className="d-block object-fit-cover"
-                        src={blog.blogImage ? `${BASE_URL}/${blog.blogImage.replace(/\\/g, "/")}` : "/placeholder.jpg"}
+                        src={blog.blogImage ? getImageUrl(blog.blogImage.replace(/\\/g, "/")) : "/placeholder.jpg"}
                         alt={blog.blogName}
                       />
                     </div>

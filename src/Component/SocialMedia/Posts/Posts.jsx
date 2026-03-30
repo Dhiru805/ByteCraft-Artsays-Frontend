@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+﻿import React, { useEffect, useState, useRef, useCallback } from "react";
+import { getImageUrl } from '../../../utils/getImageUrl';
 import "../Sidebar/Side-post-sugg.css";
 import getAPI from "../../../api/getAPI";
 import postAPI from "../../../api/postAPI";
@@ -54,7 +55,7 @@ const SponsoredFeedSlider = ({ ads }) => {
       <div className="flex items-center justify-between px-3 py-2.5 border-b border-gray-100">
         <div className="flex items-center gap-2.5">
           <img
-            src={ad.userId?.profilePhoto ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${ad.userId.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+            src={ad.userId?.profilePhoto ? getImageUrl(ad.userId.profilePhoto) : DEFAULT_PROFILE_IMAGE}
             alt={ad.userId?.name || "Seller"}
             className="w-8 h-8 rounded-full object-cover border border-gray-200"
           />
@@ -74,7 +75,7 @@ const SponsoredFeedSlider = ({ ads }) => {
       <div className="relative w-full aspect-square bg-gray-50 cursor-pointer group" onClick={() => handleAdClick(ad)}>
           {image ? (
             <img
-              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${image}`}
+              src={getImageUrl(image)}
               alt={ad.productName}
             className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
           />
@@ -229,7 +230,7 @@ const CommentInput = ({ post, userId, setPosts, inputRef }) => {
               <img
                 src={
                   user.profilePhoto
-                    ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.profilePhoto}`
+                    ? getImageUrl(user.profilePhoto)
                     : DEFAULT_PROFILE_IMAGE
                 }
                 alt={user.username}
@@ -240,7 +241,7 @@ const CommentInput = ({ post, userId, setPosts, inputRef }) => {
                   {user.username}
                   {user.verified?.length > 0 && (
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${user.verified[user.verified.length - 1]?.badgeImage}`}
+                      src={getImageUrl(user.verified[user.verified.length - 1]?.badgeImage)}
                       className="inline-block ml-1 w-4 h-4 object-contain"
                       alt="verified"
                     />
@@ -804,7 +805,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                 {activePost.images?.length > 0 ? (
                   <div className="w-full h-full relative flex items-center justify-center">
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.images[activeImageIndex]}`}
+                      src={getImageUrl(activePost.images[activeImageIndex])}
                       alt="post"
                       className="h-full w-full "
                     />
@@ -862,7 +863,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       <img
                         src={
                           activePost.user?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`
+                            ? getImageUrl(activePost.user?.profilePhoto)
                             : `${DEFAULT_PROFILE_IMAGE}`
                         }
                         alt="profile"
@@ -873,10 +874,10 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                           {activePost.user?.username}
                           {activePost.user.verified?.length > 0 && (
                             <img
-                              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user.verified[
+                              src={getImageUrl(activePost.user.verified[
                                 activePost.user.verified.length - 1
                               ]?.badgeImage
-                                }`}
+                                )}
                               className="inline-block ml-1 w-5 h-5 object-contain"
                               alt={
                                 activePost.user.verified[
@@ -913,7 +914,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                         <img
                           src={
                             activePost.user?.profilePhoto
-                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost?.user?.profilePhoto}`
+                              ? getImageUrl(activePost?.user?.profilePhoto)
                               : `${DEFAULT_PROFILE_IMAGE}`
                           }
                           alt="profile"
@@ -1007,7 +1008,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                 <img
                   src={
                     activePost.user?.profilePhoto
-                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user?.profilePhoto}`
+                      ? getImageUrl(activePost.user?.profilePhoto)
                       : `${DEFAULT_PROFILE_IMAGE}`
                   }
                   alt="profile"
@@ -1018,10 +1019,10 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                     {activePost.user?.username}
                     {activePost.user.verified?.length > 0 && (
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${activePost.user.verified[
+                        src={getImageUrl(activePost.user.verified[
                           activePost.user.verified.length - 1
                         ]?.badgeImage
-                          }`}
+                          )}
                         className="inline-block ml-1 w-6 h-6 object-contain"
                         alt={
                           activePost.user.verified[
@@ -1053,7 +1054,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                         <img
                           src={
                             comment?.user?.profilePhoto
-                              ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${comment?.user?.profilePhoto}`
+                              ? getImageUrl(comment?.user?.profilePhoto)
                               : `${DEFAULT_PROFILE_IMAGE}`
                           }
                           alt="profile"
@@ -1396,7 +1397,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                 <img
                   src={
                     post.user?.profilePhoto
-                      ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user?.profilePhoto}`
+                      ? getImageUrl(post.user?.profilePhoto)
                       : `${DEFAULT_PROFILE_IMAGE}`
                   }
                   alt="profile"
@@ -1415,9 +1416,9 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
 
                     {post.user.verified?.length > 0 && (
                       <img
-                        src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.verified[post.user.verified.length - 1]
+                        src={getImageUrl(post.user.verified[post.user.verified.length - 1]
                           ?.badgeImage
-                          }`}
+                          )}
                         className="inline-block ml-1 w-5 h-5 object-contain"
                         alt={
                           post.user.verified[post.user.verified.length - 1]
@@ -1643,8 +1644,8 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
               {post.images && post.images.length > 0 && (
                 <>
                   <img
-                    src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.images[post.activeImageIndex || 0]
-                      }`}
+                    src={getImageUrl(post.images[post.activeImageIndex || 0]
+                      )}
                     alt="Post content"
                     className="w-full h-full rounded-lg "
                   />
@@ -1773,9 +1774,9 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                   {post.user.username}{" "}
                   {post.user.verified?.length > 0 && (
                     <img
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${post.user.verified[post.user.verified.length - 1]
+                      src={getImageUrl(post.user.verified[post.user.verified.length - 1]
                         ?.badgeImage
-                        }`}
+                        )}
                       className="inline-block ml-1 w-5 h-5 object-contain"
                       alt={
                         post.user.verified[post.user.verified.length - 1]
@@ -1860,7 +1861,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       <img
                         src={
                           c?.profilePhoto
-                            ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${c.profilePhoto}`
+                            ? getImageUrl(c.profilePhoto)
                             : DEFAULT_PROFILE_IMAGE
                         }
                         alt={c.username || "user"}

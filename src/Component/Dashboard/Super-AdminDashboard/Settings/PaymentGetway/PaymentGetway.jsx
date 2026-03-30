@@ -125,7 +125,7 @@ export default function PaymentGatewaySettings() {
                 <div className="col-md-6">
                   <div className="form-group mb-3">
                     <label className="form-label">
-                      Key <span className="text-danger">*</span>
+                      ID <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -143,7 +143,7 @@ export default function PaymentGatewaySettings() {
                 <div className="col-md-6">
                   <div className="form-group mb-3">
                     <label className="form-label">
-                      Salt <span className="text-danger">*</span>
+                      Key <span className="text-danger">*</span>
                     </label>
                     <div className="position-relative">
                       <input

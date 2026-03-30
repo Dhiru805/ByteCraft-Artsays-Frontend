@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../../api/getAPI';
 import putAPI from '../../../../../../api/putAPI';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 const AccountVerification = ({ userId }) => {
     const [verificationType, setVerificationType] = useState('');
@@ -9,7 +10,7 @@ const AccountVerification = ({ userId }) => {
     const [file, setFile] = useState(null);
     const [filePreview, setFilePreview] = useState(null);
     const [fileType, setFileType] = useState('');
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
     useEffect(() => {
         const fetchVerificationData = async () => {
@@ -21,7 +22,7 @@ const AccountVerification = ({ userId }) => {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
-                        setFilePreview(`${BASE_URL}/${data.documentFile}`);
+                        setFilePreview(getImageUrl(data.documentFile));
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }

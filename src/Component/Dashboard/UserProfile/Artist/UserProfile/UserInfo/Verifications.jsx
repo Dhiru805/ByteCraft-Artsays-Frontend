@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../../api/getAPI';
 import putAPI from '../../../../../../api/putAPI';
+import { getImageUrl } from "../../../../../../utils/getImageUrl";
 
 const AccountVerification = ({ userId }) => {
     const [verificationType, setVerificationType] = useState('');
@@ -23,7 +24,7 @@ const AccountVerification = ({ userId }) => {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
-                        setFilePreview(`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${data.documentFile}`);
+                        setFilePreview(getImageUrl(data.documentFile));
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }

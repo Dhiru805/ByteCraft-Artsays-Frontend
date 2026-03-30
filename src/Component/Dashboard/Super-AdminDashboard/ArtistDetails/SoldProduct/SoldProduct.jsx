@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import getAPI from "../../../../../api/getAPI";
 import { useNavigate } from "react-router-dom";
 import useUserType from "../../../urlconfig";
 import ProductRequestSkeleton from "../../../../../Component/Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 const SoldProduct = () => {
   const [products, setProducts] = useState([]);
@@ -14,7 +15,7 @@ const SoldProduct = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
   const navigate = useNavigate();
   const userType = useUserType();
 
@@ -167,7 +168,7 @@ const SoldProduct = () => {
                           <td>{product.artistName}</td>
                           <td className="d-flex align-items-center">
                             <img
-                              src={`${BASE_URL}${product.mainImage}`}
+                              src={getImageUrl(product.mainImage)}
                               className="rounded-circle avatar mr-2"
                               alt={product.productName}
                               onClick={() => handleImageClick(product)}
@@ -275,7 +276,7 @@ const SoldProduct = () => {
                   &times;
                 </button>
                 <img
-                  src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+                  src={getImageUrl(currentImages[currentImageIndex])}
                   className="img-fluid w-100"
                   alt="Preview"
                   style={{ maxHeight: '80vh', objectFit: 'contain' }}

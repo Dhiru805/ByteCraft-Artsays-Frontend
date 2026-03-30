@@ -21,8 +21,9 @@ import {
 } from "lucide-react";
 import { FaTruckFast } from "react-icons/fa6";
 import { BsCheckLg } from "react-icons/bs";
+import { getImageUrl } from "../../../../../../../utils/getImageUrl";
 
-const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE || "";
+const BASE_URL = getImageUrl(null) || "";
 
 const buildImageUrl = (path) => {
   if (!path) return "/images/placeholder.jpg";

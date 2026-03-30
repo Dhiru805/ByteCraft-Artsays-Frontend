@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from '../../../../ConfirmationDialog';
 import useUserType from '../../../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../../Constants/ConstantsVariables";
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRequest, updateBuyerRequestStatus, userId }) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedBuyerRequestToDelete, setSelectedBuyerRequestToDelete] = useState(null);
     const [selectedRequestDescription, setSelectedRequestDescription] = useState(null);
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
 
     const navigate = useNavigate();
     const userType = useUserType();
@@ -136,7 +137,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={request?.Buyer?.id?.profilePhoto ? `${BASE_URL}${request.Buyer.id.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+                                                            src={request?.Buyer?.id?.profilePhoto ? getImageUrl(request.Buyer.id.profilePhoto) : DEFAULT_PROFILE_IMAGE}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{
@@ -152,7 +153,7 @@ function BuyerManageTable({ buyerRequests, setBuyerRequests, handleRejectBuyerRe
                                                     </td>
                                                     <td>
                                                         <img
-                                                            src={request?.Artist?.id?.profilePhoto ? `${BASE_URL}${request.Artist.id.profilePhoto}` : DEFAULT_PROFILE_IMAGE}
+                                                            src={request?.Artist?.id?.profilePhoto ? getImageUrl(request.Artist.id.profilePhoto) : DEFAULT_PROFILE_IMAGE}
                                                             className="rounded-circle avatar"
                                                             alt=""
                                                             style={{

@@ -5,6 +5,8 @@ import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:3001";
+
 
   export default function ChatBox({ closeBox, parentMessages, parentSetMessages, parentSessionId, endSession }) {
     const navigate = useNavigate();
@@ -68,7 +70,7 @@ import { useNavigate } from "react-router-dom";
         return;
       }
       try {
-        const { data } = await axios.get(`http://localhost:3001/auth/user/${userId}`);
+          const { data } = await axios.get(`${API_BASE}/auth/user/${userId}`);
         if (mounted) setUserName(data?.name || "");
       } catch (err) {
         console.error(err);
@@ -84,7 +86,7 @@ import { useNavigate } from "react-router-dom";
       
       const fetchHistory = async () => {
         try {
-          const { data } = await axios.get(`http://localhost:3001/api/gemini/session/${sessionId}`);
+            const { data } = await axios.get(`${API_BASE}/api/gemini/session/${sessionId}`);
             if (data?.messages?.length > 0) {
               const formatted = data.messages.map(m => ({
                 sender: m.role === 'arty' ? 'bot' : 'user',
@@ -117,7 +119,7 @@ import { useNavigate } from "react-router-dom";
 
       // Save greeting to DB if logged in
         if (userId && sessionId) {
-          axios.post("http://localhost:3001/api/gemini/save-message", {
+            axios.post(`${API_BASE}/api/gemini/save-message`, {
             sessionId,
             role: "arty",
             text: greeting,
@@ -141,7 +143,7 @@ import { useNavigate } from "react-router-dom";
       localStorage.setItem("arty_last_activity", Date.now().toString());
   
       try {
-        const res = await axios.post("http://localhost:3001/api/gemini/ask", {
+          const res = await axios.post(`${API_BASE}/api/gemini/ask`, {
             question: text,
             sessionId: sessionId || localStorage.getItem("arty_session_id"),
             userId: userId || null,

@@ -1,4 +1,5 @@
-import React from "react";
+﻿import React from "react";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import { useLocation, useNavigate } from "react-router-dom";
 
 const PreviewReport = () => {
@@ -69,7 +70,7 @@ const PreviewReport = () => {
                   {report.post.images.map((img, idx) => (
                     <img
                       key={idx}
-                      src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`}
+                      src={getImageUrl(img)}
                       alt="Post"
                       className="rounded border"
                       style={{
@@ -80,7 +81,7 @@ const PreviewReport = () => {
                       }}
                       onClick={() =>
                         window.open(
-                          `${process.env.REACT_APP_API_URL_FOR_IMAGE}${img}`,
+                          getImageUrl(img),
                           "_blank"
                         )
                       }

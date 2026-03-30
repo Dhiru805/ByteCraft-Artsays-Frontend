@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import putAPI from "../../../../api/putAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const CareersUpdate = () => {
   const navigate = useNavigate();
@@ -78,7 +79,7 @@ const CareersUpdate = () => {
       },
     });
 
-     const base = process.env.REACT_APP_API_URL_FOR_IMAGE;
+     const base = getImageUrl(null);
     setSection1CardPreviews(
       (page.section1?.cards || []).map((c) =>
         c.image ? `${base}/${c.image}` : null

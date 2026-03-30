@@ -5,6 +5,7 @@ import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 
 import HeroImgChallenges from './hero-img/hero-img';
 import ChallengesContent from './ChallengesContent/ChallengesContent'
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const Challenge = () => {
   const [seoData, setSeoData] = useState({
@@ -32,7 +33,7 @@ const Challenge = () => {
               "art challenges, painting contest, creative competition, artsays challenges",
         metaAuthor: meta.metaAuthor || "Artsays",
         metaImage: meta.metaImage
-          ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}${meta.metaImage}`
+          ? getImageUrl(meta.metaImage)
           : "/default-meta-image.jpg",
       });
     } catch (error) {

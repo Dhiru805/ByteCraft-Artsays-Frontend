@@ -5,6 +5,7 @@ import getAPI from "../../../../api/getAPI";
 import Select from "react-select";
 import putAPI from "../../../../api/putAPI";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 function UpdateCelebrity() {
 
@@ -255,7 +256,7 @@ function UpdateCelebrity() {
                                             />
                                         ) : celebrity?.profilePicture ? (
                                             <img
-                                                src={celebrity.profilePicture}
+                                                src={getImageUrl(celebrity.profilePicture)}
                                                 alt={celebrity.artistName || "Profile"}
                                                 style={{
                                                     width: '150px',

@@ -26,8 +26,8 @@ const MembershipSuccessPage = () => {
         const res = await getAPI(`/api/membership/orders?userId=${userId}`, {}, true, true);
         const orders = res?.data?.orders || [];
         const matchedOrder = orders.find(
-          (o) => o.easebuzzTxnId === txnid && o.status === "Paid"
-        );
+            (o) => o.cfOrderId === txnid && o.status === "Paid"
+          );
         if (matchedOrder) {
           setOrderDetails(matchedOrder);
         }
@@ -38,7 +38,7 @@ const MembershipSuccessPage = () => {
 
     if (txnid) fetchOrderDetails();
 
-    sessionStorage.removeItem("easebuzzPayment");
+    sessionStorage.removeItem("cashfreePayment");
   }, [location.search]);
 
   return (

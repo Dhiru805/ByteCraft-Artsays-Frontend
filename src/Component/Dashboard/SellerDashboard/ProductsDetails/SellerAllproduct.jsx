@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../urlconfig';
 import { DEFAULT_PROFILE_IMAGE } from "../../../../Constants/ConstantsVariables";
 import ConfirmationDialog from '../../ConfirmationDialog';
 import ShippingAddressModal from './ShippingAddressModal';
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 
 const ApprovedProduct = () => {
@@ -17,7 +18,7 @@ const ApprovedProduct = () => {
     const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
     const [selectedProductId, setSelectedProductId] = useState(null);
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
     const navigate = useNavigate();
     const userType = useUserType();
     const [showPopup, setShowPopup] = useState(false);
@@ -184,7 +185,7 @@ const ApprovedProduct = () => {
                                                 </td>
                                                 <td>
                                                     <img
-                                                        src={product.mainImage ? `${BASE_URL}${product.mainImage}` : DEFAULT_PROFILE_IMAGE}
+                                                        src={product.mainImage ? getImageUrl(product.mainImage) : DEFAULT_PROFILE_IMAGE}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         onClick={() => handleImageClick(product)}
@@ -357,7 +358,7 @@ const ApprovedProduct = () => {
                             &#10094;
                         </button>
                         <img
-                            src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+                            src={getImageUrl(currentImages[currentImageIndex])}
                             alt="Popup"
                             style={{
                                 width: '100%',

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getImageUrl } from "../../../utils/getImageUrl";
 import { GoDotFill } from "react-icons/go";
 import { FaCrown } from "react-icons/fa";
 import { 
@@ -23,36 +24,43 @@ const HomeChallenges = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+      const fetchAllData = async () => {
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) {
+            setLoading(false);
+            return;
+          }
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) {
+            setLoading(false);
+            return;
+          }
 
-        const challengesRes = await getAPI(
-          `/api/homepage-sections/challenges/${homepage._id}`
-        );
-        if (challengesRes.data.success && challengesRes.data.data) {
-          setHomepageChallenges(challengesRes.data.data);
-        }
+          const challengesRes = await getAPI(
+            `/api/homepage-sections/challenges/${homepage._id}`
+          );
+          if (challengesRes?.data?.success && challengesRes?.data?.data) {
+            setHomepageChallenges(challengesRes.data.data);
+          }
 
-        const detailedRes = await getAPI("/api/getchallengedata");
-        if (detailedRes?.hasError === false && detailedRes?.data?.data?.challenges) {
-          const allChallenges = detailedRes?.data?.data?.challenges || [];
-          const liveChallenges = allChallenges.filter(challenge => challenge.status === "live");
-          const sortedChallenges = liveChallenges.sort((a, b) => {
-            const dateA = new Date(a.createdAt);
-            const dateB = new Date(b.createdAt);
-            return dateB - dateA;
-          });
-          setDetailedChallenges(sortedChallenges.length > 0 ? [sortedChallenges[0]] : []);
+          const detailedRes = await getAPI("/api/getchallengedata");
+          if (detailedRes?.hasError === false && detailedRes?.data?.data?.challenges) {
+            const allChallenges = detailedRes?.data?.data?.challenges || [];
+            const liveChallenges = allChallenges.filter(challenge => challenge.status === "live");
+            const sortedChallenges = liveChallenges.sort((a, b) => {
+              const dateA = new Date(a.createdAt);
+              const dateB = new Date(b.createdAt);
+              return dateB - dateA;
+            });
+            setDetailedChallenges(sortedChallenges.length > 0 ? [sortedChallenges[0]] : []);
+          }
+        } catch (err) {
+          console.error("Error fetching HomeChallenges data:", err);
+        } finally {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error("Error fetching HomeChallenges data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
     fetchAllData();
   }, []);
@@ -90,7 +98,7 @@ const HomeChallenges = () => {
               <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
                 {homepageChallenges.heading}
               </h1>
-              <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+              <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
                 {homepageChallenges.description}
               </p>
             </div>
@@ -104,8 +112,7 @@ const HomeChallenges = () => {
         )}
 
         <div className="space-y-6">
-          {detailedChallenges.length > 0 ? (
-            detailedChallenges.map((challenge, index) => (
+          {detailedChallenges.length > 0 && detailedChallenges.map((challenge, index) => (
               <div
                 key={challenge._id || index}
                 className={`flex flex-col lg:flex-row gap-8 bg-white p-6 md:p-8 rounded-[32px] shadow-sm border border-gray-100 transition-all hover:shadow-xl group ${
@@ -115,7 +122,7 @@ const HomeChallenges = () => {
                 {/* Image Section */}
                   <div className="w-full lg:w-2/5 aspect-[4/3] overflow-hidden rounded-2xl bg-[#F5F5F5] flex items-center justify-center relative">
                     <img
-                      src={challenge?.bannerImage?.startsWith("http") ? challenge.bannerImage : `${process.env.REACT_APP_API_URL_FOR_IMAGE}${challenge.bannerImage}`}
+                      src={getImageUrl(challenge?.bannerImage)}
                       alt={challenge?.title}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
                     />
@@ -250,18 +257,7 @@ const HomeChallenges = () => {
                   )}
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-gray-300">
-              <p className="text-gray-500 font-medium">No live challenges at the moment.</p>
-              <button 
-                onClick={() => navigate('/challenges')}
-                className="mt-4 text-[#6F4D34] font-bold hover:underline"
-              >
-                View all challenges
-              </button>
-            </div>
-          )}
+            ))}
         </div>
       </div>
     </div>

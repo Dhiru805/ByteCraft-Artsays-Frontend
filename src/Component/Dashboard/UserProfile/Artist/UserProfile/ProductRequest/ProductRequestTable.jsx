@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useConfirm } from '../../../../StatusConfirm';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../../../api/getAPI';
@@ -6,6 +6,7 @@ import putAPI from '../../../../../../../api/putAPI';
 // import ConfirmationDialog from '../../ConfirmationDialog';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../../urlconfig';
+import { getImageUrl } from '../../../../../../utils/getImageUrl';
 
 
 const ProductRequest = ({userId}) => {
@@ -143,8 +144,8 @@ const ProductRequest = ({userId}) => {
                                                     <img
                                                         src={
                                                             product.userId.profilePhoto
-                                                                ? `${BASE_URL}${product.userId.profilePhoto}`
-                                                                : 'DashboardAssets/assets/images/user.png'
+                                                                ? getImageUrl(product.userId.profilePhoto)
+                                                                  : '/DashboardAssets/assets/images/user.png'
                                                         }
                                                         className="rounded-circle avatar"
                                                         alt=""

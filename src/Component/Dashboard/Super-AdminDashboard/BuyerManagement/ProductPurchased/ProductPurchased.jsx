@@ -1,9 +1,10 @@
-
+﻿
 import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { useNavigate } from 'react-router-dom';
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 // Buyer view labels for order status
 const BUYER_STATUS_LABELS = {
@@ -49,7 +50,7 @@ const SoldProduct = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+  const BASE_URL = getImageUrl(null);
   const navigate = useNavigate();
 
   // Fetch buyer sold products
@@ -144,7 +145,7 @@ const filteredProducts = products.filter(product => {
 
   // Image popup
   const handleImageClick = (product) => {
-    const src = product.mainImage?.startsWith('http') ? product.mainImage : `${BASE_URL}${product.mainImage}`;
+    const src = product.mainImage?.startsWith('http') ? product.mainImage : getImageUrl(product.mainImage);
     setCurrentImages([src]);
     setCurrentImageIndex(0);
     setShowPopup(true);
@@ -232,7 +233,7 @@ const filteredProducts = products.filter(product => {
                       <td>{product.buyerName}</td>
                       <td>
                         <img
-                          src={`${BASE_URL}${product.mainImage}`}
+                          src={getImageUrl(product.mainImage)}
                           className="rounded-circle avatar"
                           alt=""
                           style={{

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const ViewOrder = () => {
   const { id } = useParams();
@@ -162,12 +163,8 @@ const ViewOrder = () => {
                             <label>Material Image</label>
                             <div className="mt-2">
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }/${formData.material?.materialName?.materialNameImage?.replace(
-                                    /\\/g,
-                                    "/"
-                                  )}`}
-                                alt="Material Name Preview"
+                                  src={getImageUrl(formData.material?.materialName?.materialNameImage?.replace(/\\/g, "/"))}
+                                  alt="Material Name Preview"
                                 className="img-thumbnail"
                                 style={{ maxHeight: "200px" }}
                               />
@@ -273,11 +270,7 @@ const ViewOrder = () => {
                             <label>Stamp Image</label>
                             <div className="mt-2">
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }/${formData.stamp?.materialStampImage?.replace(
-                                    /\\/g,
-                                    "/"
-                                  )}`}
+                                src={getImageUrl(formData.stamp?.materialStampImage?.replace(/\\/g, "/"))}
                                 alt="Material Name Preview"
                                 className="img-thumbnail"
                                 style={{ maxHeight: "200px" }}
@@ -317,11 +310,7 @@ const ViewOrder = () => {
                             <label>Sticker Image</label>
                             <div className="mt-2">
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }/${formData.stickers?.materialStickersImage?.replace(
-                                    /\\/g,
-                                    "/"
-                                  )}`}
+                                src={getImageUrl(formData.stickers?.materialStickersImage?.replace(/\\/g, "/"))}
                                 alt="Material Name Preview"
                                 className="img-thumbnail"
                                 style={{ maxHeight: "200px" }}
@@ -361,11 +350,7 @@ const ViewOrder = () => {
                             <label>Voucher Image</label>
                             <div className="mt-2">
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }/${formData.vouchers?.materialVouchersImage?.replace(
-                                    /\\/g,
-                                    "/"
-                                  )}`}
+                                src={getImageUrl(formData.vouchers?.materialVouchersImage?.replace(/\\/g, "/"))}
                                 alt="Material Name Preview"
                                 className="img-thumbnail"
                                 style={{ maxHeight: "200px" }}
@@ -408,11 +393,7 @@ const ViewOrder = () => {
                             <label>Card Image</label>
                             <div className="mt-2">
                               <img
-                                src={`${process.env.REACT_APP_API_URL_FOR_IMAGE
-                                  }/${formData.card?.materialCardImage?.replace(
-                                    /\\/g,
-                                    "/"
-                                  )}`}
+                                src={getImageUrl(formData.card?.materialCardImage?.replace(/\\/g, "/"))}
                                 alt="Material Name Preview"
                                 className="img-thumbnail"
                                 style={{ maxHeight: "200px" }}

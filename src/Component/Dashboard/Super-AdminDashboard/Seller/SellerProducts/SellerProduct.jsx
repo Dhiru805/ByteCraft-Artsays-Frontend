@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import useUserType from '../../../urlconfig';
 import ConfirmationDialog from '../../../ConfirmationDialog';
 import { LuGavel } from "react-icons/lu";
 import ProductRequestSkeleton from "../../../../Skeleton/artist/ProductRequestSkeleton";
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 
 const ProductRequest = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage, setProductsPerPage] = useState(10);
 
-    const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+    const BASE_URL = getImageUrl(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [showPopup, setShowPopup] = useState(false);
     const [currentImages, setCurrentImages] = useState([]);
@@ -194,7 +195,7 @@ const[loading,setLoading]=useState(false);
                                                     {product.userId.name} {product.userId.lastName}</td>
                                                 <td>
                                                     <img
-                                                        src={`${BASE_URL}${product.mainImage}`}
+                                                        src={getImageUrl(product.mainImage)}
                                                         className="rounded-circle avatar"
                                                         alt=""
                                                         onClick={() => handleImageClick(product)}
@@ -347,7 +348,7 @@ const[loading,setLoading]=useState(false);
 
                         {/* Image */}
                         <img
-                            src={`${BASE_URL}${currentImages[currentImageIndex]}`}
+                            src={getImageUrl(currentImages[currentImageIndex])}
                             alt="Popup"
                             style={{
                                 width: '100%',

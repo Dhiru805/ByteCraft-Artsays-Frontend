@@ -498,21 +498,20 @@ exhibitionplan:{
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
   const handleDelete = async () => {
     const config = DELETE_CONFIG[deleteType];
-      console.log("Deleting policy ID:", id);
-console.log("DELETE URL:", config.getEndpoint(id));
 
     if (!config) {
-      console.error("Invalid delete type.");
+      console.error("Invalid delete type:", deleteType);
       toast.error("Invalid delete type.");
       return;
     }
 
-    const endpoint = config.getEndpoint(id);
     if (!id) {
       console.error(`${config.idKey} is missing.`);
       toast.error(`${config.idKey} is required.`);
       return;
     }
+
+    const endpoint = config.getEndpoint(id);
 
     try {
       const response = await deleteAPI(endpoint);

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import postAPI from "../../../../../api/postAPI";
 import getAPI from "../../../../../api/getAPI";
+import { getImageUrl } from "../../../../../utils/getImageUrl";
 
 const WhyArtsaysDifferentCreate = () => {
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ const WhyArtsaysDifferentCreate = () => {
                             hexColor: c.hexColor || c.color || "#000000",
                             icon: null,
                             existingIcon: c.icon
-                                ? `${process.env.REACT_APP_API_URL_FOR_IMAGE || `${process.env.REACT_APP_API_URL}`}/${c.icon.replace(/\\/g, "/")}`
+                                ? `${getImageUrl(null) || `${process.env.REACT_APP_API_URL}`}/${c.icon.replace(/\\/g, "/")}`
                                 : null,
                         }))
                         : [{ title: "", description: "", hexColor: "#000000", icon: null, existingIcon: null }];

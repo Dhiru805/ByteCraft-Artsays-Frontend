@@ -5,11 +5,12 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import getAPI from "../../../../api/getAPI";
 import postAPI from "../../../../api/postAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 function CreateCertification() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    userType: localStorage.getItem("userType") || "Seller",
+    userType: localStorage.getItem("userType") || "seller",
     userId: localStorage.getItem("userId") || "",
     productId: "",
     mainCategories: [],
@@ -125,28 +126,15 @@ function CreateCertification() {
           certificationId: certId,
           certificationProvider: formData.certificationProvider,
           estimatedDays: cert ? cert.estimatedDays : 0,
-          certificationPrice: cert.price||99,
+          certificationPrice: cert.price || 99,
         };
       });
 
       const response = await postAPI("/api/create-certification", submissionData, {}, true);
-      // if (!response.hasError) {
-      //   toast.success("Certification(s) created successfully!");
-      //   setFormData({
-      //     userType: localStorage.getItem("userType") || "Seller",
-      //     userId: localStorage.getItem("userId") || "",
-      //     productId: "",
-      //     mainCategories: [],
-      //     certifications: [],
-      //     certificationProvider: "",
-      //   });
-      //   navigate("/seller/certification");
-      // } 
-      
-       if (response?.data?.data?.paymentUrl) {
-              window.location.href = response.data.data.paymentUrl;
-            }
-      else {
+
+      if (response?.data?.data?.paymentUrl) {
+        window.location.href = response.data.data.paymentUrl;
+      } else {
         toast.error(`Failed to create certifications: ${response.message}`);
       }
     } catch (error) {
@@ -167,7 +155,7 @@ function CreateCertification() {
 
   const certificationOptions = certifications.map((cert) => ({
     value: cert._id,
-     label: `${cert.certificationName} ₹${cert.price ||99}`,
+    label: `${cert.certificationName} ₹${cert.price || 99}`,
   }));
 
   return (
@@ -178,7 +166,7 @@ function CreateCertification() {
             <h2>Create Certification</h2>
             <ul className="breadcrumb">
               <li className="breadcrumb-item">
-                <span onClick={() => navigate("/super-admin/dashboard")} style={{ cursor: "pointer" }}>
+                <span onClick={() => navigate("/seller/dashboard")} style={{ cursor: "pointer" }}>
                   <i className="fa fa-dashboard"></i>
                 </span>
               </li>
@@ -213,7 +201,7 @@ function CreateCertification() {
                     <label>Product Details</label>
                     <div className="d-flex align-items-center">
                       <img
-                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}/${selectedProduct.mainImage}`}
+                        src={getImageUrl(selectedProduct.mainImage)}
                         alt={selectedProduct.productName}
                         className="img-thumbnail mr-3"
                         style={{ maxWidth: "100px", maxHeight: "100px" }}
@@ -263,7 +251,7 @@ function CreateCertification() {
                             <tr key={cert._id}>
                               <td>{cert.certificationName}</td>
                               <td>{cert.estimatedDays}</td>
-                               <td>{cert.price}</td>
+                              <td>{cert.price}</td>
                             </tr>
                           ) : null;
                         })}

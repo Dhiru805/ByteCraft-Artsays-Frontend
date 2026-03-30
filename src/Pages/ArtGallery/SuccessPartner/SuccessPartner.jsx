@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import getAPI from "../../../api/getAPI";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const SuccessPartner = () => {
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const API_IMG_BASE = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
   useEffect(() => {
     const fetchPartners = async () => {
@@ -59,7 +59,7 @@ const SuccessPartner = () => {
                   <img
                     src={
                       partner.profilePhoto
-                        ? `${API_IMG_BASE}${partner.profilePhoto}`
+                        ? getImageUrl(partner.profilePhoto)
                         : "/default-profile.png"
                     }
                     alt={partner.userName || "Partner"}

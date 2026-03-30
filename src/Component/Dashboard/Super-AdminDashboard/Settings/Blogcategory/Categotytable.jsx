@@ -333,9 +333,10 @@ function BlogCategoryTable({ categories, setCategories, refreshCategories }) {
       formData.append("file", selectedFile);
 
       const response = await fetch("/api/import-blog-categories", {
-        method: "POST",
-        body: formData,
-      });
+          method: "POST",
+          headers: { "x-requested-with": "XMLHttpRequest" },
+          body: formData,
+        });
 
       if (!response.ok) throw new Error("Import failed");
 

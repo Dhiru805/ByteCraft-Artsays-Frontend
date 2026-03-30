@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import putAPI from '../../../../../../../api/putAPI';
@@ -7,6 +7,7 @@ import postAPI from '../../../../../../../api/postAPI';
 import { DEFAULT_PROFILE_IMAGE } from './constant';
 import PersonalInformationSkeleton from '../../../../../../../Component/Skeleton/Home/Account/PersonalInformationSkeleton';
 import { FaCheck } from 'react-icons/fa';
+import { getImageUrl } from '../../../../../../../utils/getImageUrl';
 
 export const AccountForm = () => {
   const fileInputRef = useRef(null);
@@ -74,9 +75,9 @@ export const AccountForm = () => {
         setOriginalEmail(userData.email || '');
         setOriginalPhone(userData.phone || '');
 
-        const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
+        const BASE_URL = getImageUrl(null);
         const profilePhotoUrl = userData.profilePhoto
-          ? `${BASE_URL}${userData.profilePhoto}`
+          ? getImageUrl(userData.profilePhoto)
           : DEFAULT_PROFILE_IMAGE;
         setProfileImage(profilePhotoUrl);
         localStorage.setItem('profilePhoto', profilePhotoUrl);

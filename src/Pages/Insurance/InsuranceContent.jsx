@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { ChevronRight, HelpCircle, Star } from "lucide-react";
 import axiosInstance from "../../api/axiosConfig";
 import InsuranceContentSkeliton from "../../Component/Skeleton/Home/Account/InsuranceContentSkeliton";
 import "../store/products/product.css";
+import { getImageUrl } from '../../utils/getImageUrl';
 
 const InsuranceContent = () => {
     const [pageData, setPageData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const imageBaseURL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
     useEffect(() => {
         const fetchPublishedPage = async () => {
@@ -131,7 +131,7 @@ const InsuranceContent = () => {
                                     {card.image && (
                                         <div className="w-full aspect-video rounded-2xl overflow-hidden mb-4">
                                             <img 
-                                                src={`${imageBaseURL}/${card.image}`} 
+                                                src={getImageUrl(card.image)} 
                                                 alt={card.title} 
                                                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                                             />
@@ -147,7 +147,51 @@ const InsuranceContent = () => {
                             ))}
                         </div>
 
-                        {/* Insurance Plans (Section 3) */}
+                          {/* How to Get Insured (Section 2) */}
+                          {(pageData.section2Cards || []).length > 0 && (
+                              <div className="space-y-6 pt-2">
+                                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                                      <h2 className="text-3xl font-bold text-gray-900">
+                                          {pageData.section2Heading || "How to Get Insured?"}
+                                      </h2>
+                                      <div className="w-24 h-1.5 bg-[#6F4D34] rounded-full mt-3 mb-4" />
+                                      {pageData.section2Description && (
+                                          <p className="text-gray-600 leading-relaxed">
+                                              {pageData.section2Description}
+                                          </p>
+                                      )}
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                      {(pageData.section2Cards || []).map((card, index) => (
+                                          <div key={index} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all group flex flex-col">
+                                              {card.image && (
+                                                  <div className="w-full aspect-video rounded-2xl overflow-hidden mb-4">
+                                                      <img
+                                                          src={getImageUrl(card.image)}
+                                                          alt={card.title}
+                                                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                                                      />
+                                                  </div>
+                                              )}
+                                              <div className="flex items-center gap-3 mb-3">
+                                                  <div className="w-8 h-8 rounded-full bg-[#6F4D34]/10 flex items-center justify-center shrink-0">
+                                                      <span className="text-sm font-black text-[#6F4D34]">{index + 1}</span>
+                                                  </div>
+                                                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#6F4D34] transition-colors">
+                                                      {card.title}
+                                                  </h3>
+                                              </div>
+                                              <p className="text-gray-600 leading-relaxed">
+                                                  {card.description}
+                                              </p>
+                                          </div>
+                                      ))}
+                                  </div>
+                              </div>
+                          )}
+
+                          {/* Insurance Plans (Section 3) */}
                         <div className="space-y-6 pt-8">
                             <div className="bg-white p-8 rounded-2xl shadow-sm mb-4 border border-gray-100">
                                 <h2 className="text-3xl font-bold text-gray-900">{pageData.section3Heading}</h2>

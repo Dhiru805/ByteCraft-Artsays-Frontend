@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../../../../../utils/getImageUrl';
 import getAPI from '../../../../../api/getAPI';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
@@ -7,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 const BiddedProduct = () => {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [itemsPerPage] = useState(5);
     const [productsPerPage, setProductsPerPage] = useState(10);
     const [searchTerm, setSearchTerm] = useState('');
     
@@ -29,53 +30,6 @@ useEffect(() => {
     }
 }, []);
 
-    // useEffect(() => {
-    //     const fetchProducts = async () => {
-    //         try {
-    //             const result = await getAPI("/api/getbiddedproduct", {}, true, false);
-    //             if (result && result.data && Array.isArray(result.data.biddedProducts)) {
-    //                 setProducts(result.data.biddedProducts);
-    //             } else {
-    //                 console.error("API response does not contain an array:", result.data);
-    //                 setProducts([]);
-    //             }
-
-    //         } catch (error) {
-    //             console.error("Error fetching products:", error);
-    //             setProducts([]);
-    //         }
-    //     };
-
-    //     fetchProducts();
-    // }, []);
-// useEffect(() => {
-//     if (!artistId) return;
-
-//     const fetchData = async () => {
-//         try {
-//             const result = await getAPI(
-//                 `/api/artist-bidded-products/${artistId}`,
-//                 {},
-//                 true,
-//                 false
-//             );
-
-//             console.log("Artist Bidded Products:", result.data);
-
-//             if (result?.data?.data && Array.isArray(result.data.data)) {
-//                 setProducts(result.data.data);
-//             } else {
-//                 console.error("Invalid format:", result);
-//                 setProducts([]);
-//             }
-//         } catch (error) {
-//             console.error("Error fetching artist bidded products:", error);
-//             setProducts([]);
-//         }
-//     };
-
-//     fetchData();
-// }, [artistId]);
 useEffect(() => {
   const fetchBiddedProducts = async () => {
     try {
@@ -124,10 +78,6 @@ useEffect(() => {
         setCurrentPage(1);
     };
 
-//  const filteredProducts = products.filter(product =>
-//         product?.buyer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//         product?.buyer?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-//     );
 
 const filteredProducts = products.filter(item =>
   item.product?.productName
@@ -137,11 +87,6 @@ const filteredProducts = products.filter(item =>
 
 
     const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-    // const displayedProducts = filteredProducts.slice(
-    //     (currentPage - 1) * productsPerPage,
-    //     currentPage * productsPerPage
-    // );
 
     const paginatedProducts = filteredProducts.slice(
         (currentPage - 1) * itemsPerPage,
@@ -209,64 +154,7 @@ const filteredProducts = products.filter(item =>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
-                                    {/* <tbody>
-                                        {paginatedProducts.length === 0 ? (
-                                            <tr>
-                                                <td colSpan="6" className="text-center">
-                                                    No data available
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            paginatedProducts.map((product, index) => {
-                                                const productData = product.product?.product;
-                                                const buyer = product.buyer;
-                                                return (
-                                                    <tr key={product._id}>
-                                                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                                                        <td>{buyer.name} {buyer.lastName}</td>
-                                                        <td>
-                                                            {productData ? (
-                                                                <>
-                                                                    <img
-                                                                          src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${productData.mainImage}`}
-                                                                        className="rounded-circle avatar"
-                                                                        alt=""
-                                                                        style={{
-                                                                            width: '30px',
-                                                                            height: '30px',
-                                                                            objectFit: 'cover',
-                                                                            marginRight: '10px'
-                                                                        }}
-                                                                    />
-                                                                    {productData.productName}
-                                                                </>
-                                                            ) : (
-                                                                "No Product Data"
-                                                            )}
-                                                        </td>
-                                                        <td>
-                                                            {productData
-                                                                ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' })
-                                                                    .format(product.totalPrice)
-                                                                    .replace(/\.00$/, '')
-                                                                : 'N/A'}
-                                                        </td>
-                                                        <td>
-                                                            {new Date(product.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                                        </td>
-                                                        <td>
-                                                            <button className="btn btn-sm btn-outline-info mr-2"
-                                                                onClick={() => navigate(`/Dashboard/biddedproduct/productdetails/${productData._id}`)}
-                                                            >
-                                                                <i className="fa fa-eye"></i>
-                                                            </button>
-
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })
-                                        )}
-                                    </tbody> */}
+                                   
 
                                     <tbody>
   {paginatedProducts.length === 0 ? (
@@ -285,7 +173,7 @@ const filteredProducts = products.filter(item =>
 
           <td>
             <img
-              src={`${process.env.REACT_APP_API_URL_FOR_IMAGE}${product.mainImage}`}
+              src={getImageUrl(product.mainImage)}
               className="rounded-circle avatar"
               alt=""
               style={{

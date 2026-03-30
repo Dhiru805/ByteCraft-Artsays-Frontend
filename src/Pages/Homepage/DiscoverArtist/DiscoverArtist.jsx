@@ -561,19 +561,19 @@ const DiscoverArtist = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const pageRes = await getAPI("/api/homepage/published");
-        const homepage = pageRes.data.data;
-        if (!homepage?._id) throw new Error("No published homepage found");
+        try {
+          const pageRes = await getAPI("/api/homepage/published");
+          if (!pageRes) return;
+          const homepage = pageRes?.data?.data;
+          if (!homepage?._id) return;
 
-        const sectionRes = await getAPI(
-          `/api/homepage-sections/discover-artist/${homepage._id}`
-        );
-        if (!sectionRes.data.success || !sectionRes.data.data)
-          throw new Error("Discover Artist section not found");
+          const sectionRes = await getAPI(
+            `/api/homepage-sections/discover-artist/${homepage._id}`
+          );
+          if (!sectionRes?.data?.success || !sectionRes?.data?.data) return;
 
-        setData(sectionRes.data.data);
-      } catch (err) {
+          setData(sectionRes.data.data);
+        } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
@@ -584,7 +584,7 @@ const DiscoverArtist = () => {
   }, []);
 
   if (loading) return <div><DiscoverArtistSkeleton/></div>;
-  if (!data) return <div>No Discover Artist section available</div>;
+  if (!data) return null;
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
@@ -595,7 +595,7 @@ const DiscoverArtist = () => {
             <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
               {data.heading}
             </h1>
-            <p className="text-gray-500 text-lg max-w-2xl font-medium leading-relaxed">
+            <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
               {data.description}
             </p>
           </div>

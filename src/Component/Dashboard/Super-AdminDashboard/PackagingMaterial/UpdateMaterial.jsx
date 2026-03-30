@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import getAPI from "../../../../api/getAPI";
 import putAPI from "../../../../api/putAPI";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const UpdateMaterial = () => {
      const { id } = useParams();
@@ -68,7 +69,7 @@ const UpdateMaterial = () => {
            });
            setMaterialNameImagePreview(
              data?.materialName?.materialNameImage
-               ? `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${data.materialName.materialNameImage.replace(/\\/g, "/")}`
+               ? getImageUrl(data.materialName.materialNameImage.replace(/\\/g, "/"))
                : null
            );
          } catch (err) {
@@ -136,7 +137,7 @@ useEffect(() => {
         if (!imagePath) return null;
 
         // Convert Windows backslashes to forward slashes
-        return `${process.env.REACT_APP_API_URL_FOR_IMAGE}/${imagePath.replace(/\\/g, "/")}`;
+        return getImageUrl(imagePath.replace(/\\/g, "/"));
     } catch (err) {
         console.error("Failed to fetch image:", err);
         return null;

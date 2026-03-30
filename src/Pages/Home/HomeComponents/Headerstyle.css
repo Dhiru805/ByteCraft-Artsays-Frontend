@@ -364,16 +364,24 @@
   transform: translateY(-2px);
 }
 
-/* skeleton while loading */
+/* skeleton while loading — compositor-only shimmer */
 .mad-skeleton {
   height: 220px;
-  background: linear-gradient(90deg, #f3ece8 25%, #ede5e0 50%, #f3ece8 75%);
-  background-size: 200% 100%;
+  position: relative;
+  overflow: hidden;
+  background: #f3ece8;
+}
+.mad-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
   animation: madShimmer 1.4s infinite;
+  will-change: transform;
 }
 @keyframes madShimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .mad-img-wrap {

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import postAPI from "../../../../api/postAPI";
 import getAPI from "../../../../api/getAPI";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 const CreateOrder = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -315,12 +316,7 @@ const handleSubmit = async (e) => {
         case "material":
           selectedItem = selectedMaterial.find((s) => s._id === id);
           imageUrl = selectedItem?.materialName?.materialNameImage
-            ? `${
-                process.env.REACT_APP_API_URL_FOR_IMAGE
-              }/${selectedItem.materialName.materialNameImage.replace(
-                /\\/g,
-                "/"
-              )}`
+            ? getImageUrl(selectedItem.materialName.materialNameImage.replace(/\\/g,"/"))
             : null;
           setMaterialData((prev) => ({
             ...prev,
