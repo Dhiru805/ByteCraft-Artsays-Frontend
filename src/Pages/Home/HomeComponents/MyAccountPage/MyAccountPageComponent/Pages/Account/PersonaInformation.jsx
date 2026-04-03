@@ -30,7 +30,6 @@ export const AccountForm = () => {
   const [originalEmail, setOriginalEmail] = useState('');
   const [originalPhone, setOriginalPhone] = useState('');
 
-  const [allUsernames, setAllUsernames] = useState([]);
   const [usernameStatus, setUsernameStatus] = useState('');
   const [usernameMsg, setUsernameMsg] = useState('');
   const [usernameError, setUsernameError] = useState('');
@@ -92,20 +91,6 @@ export const AccountForm = () => {
     fetchProfile();
   }, []);
 
-  useEffect(() => {
-    const fetchUsernames = async () => {
-      try {
-        const res = await getAPI('/auth/all-usernames', {}, true, false);
-        if (res.data?.usernames) {
-          setAllUsernames(res.data.usernames.map(u => u.toLowerCase()));
-        }
-      } catch (err) {
-        console.error('Failed to fetch usernames:', err);
-      }
-    };
-    fetchUsernames();
-  }, []);
-
   const checkUsernameAvailability = (value) => {
     if (usernameTimerRef.current) clearTimeout(usernameTimerRef.current);
     const trimmed = value.trim().toLowerCase();
@@ -117,6 +102,12 @@ export const AccountForm = () => {
     }
     if (!usernameRegex.test(trimmed)) {
       setUsernameError('Only letters (a-z), numbers (0-9), periods (.) and underscores (_) allowed');
+      setUsernameStatus('');
+      setUsernameMsg('');
+      return;
+    }
+    if (trimmed.length < 3) {
+      setUsernameError('Username must be at least 3 characters');
       setUsernameStatus('');
       setUsernameMsg('');
       return;
@@ -135,16 +126,22 @@ export const AccountForm = () => {
     }
     setUsernameStatus('checking');
     setUsernameMsg('Checking availability...');
-    usernameTimerRef.current = setTimeout(() => {
-      const taken = allUsernames.includes(trimmed);
-      if (taken) {
+    const userId = localStorage.getItem('userId');
+    usernameTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await getAPI(`/auth/check-username?username=${encodeURIComponent(trimmed)}&currentUserId=${userId}`);
+        if (res.data?.available === true) {
+          setUsernameStatus('available');
+          setUsernameMsg('Username is available');
+        } else {
+          setUsernameStatus('taken');
+          setUsernameMsg(res.data?.message || 'Username is already taken');
+        }
+      } catch (err) {
         setUsernameStatus('taken');
-        setUsernameMsg('Username is already taken');
-      } else {
-        setUsernameStatus('available');
-        setUsernameMsg('Username is available');
+        setUsernameMsg('Could not check username availability');
       }
-    }, 300);
+    }, 500);
   };
 
   const handleUsernameChange = (e) => {

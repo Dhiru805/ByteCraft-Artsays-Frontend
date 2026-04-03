@@ -26,11 +26,12 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
   const [imageError, setImageError] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [allUsernames, setAllUsernames] = useState([]);
   const [originalUsername, setOriginalUsername] = useState('');
   const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [usernameError, setUsernameError] = useState('');
   const usernameCheckTimeout = useRef(null);
+  const usernameRegex = /^[a-z0-9._]*$/;
   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
 
   const [emailVerified, setEmailVerified] = useState(false);
@@ -269,48 +270,69 @@ const handleDeleteImage = async () => {
   };
   
     useEffect(() => {
-    const fetchUsernames = async () => {
-      try {
-        const res = await getAPI('/auth/all-usernames'); 
-        setAllUsernames(res.data?.usernames || []);
-        console.log("All usernames from backend:", res.data?.usernames || []);
-      } catch (err) {
-        console.error("Failed to fetch usernames", err);
-      }
-    };
-
-    fetchUsernames();
-  }, []);
-
+    if (profileData.username) {
+      setOriginalUsername(profileData.username.trim().toLowerCase());
+    }
+  }, [profileData.username]);
 
   const handleLiveUsernameCheck = (username) => {
     const typed = username.trim().toLowerCase();
 
     if (!typed) {
       setUsernameAvailable(null);
+      setUsernameError('');
       return;
     }
 
+    if (!usernameRegex.test(typed)) {
+      setUsernameError('Only letters (a-z), numbers (0-9), periods (.) and underscores (_) allowed');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+
+    if (typed.length < 3) {
+      setUsernameError('Username must be at least 3 characters');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+
+    if (typed.length > 30) {
+      setUsernameError('Username cannot exceed 30 characters');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+
+    if (typed === originalUsername) {
+      setUsernameAvailable(null);
+      setUsernameError('');
+      setUsernameCheckLoading(false);
+      return;
+    }
+
+    setUsernameError('');
     setUsernameCheckLoading(true);
     if (usernameCheckTimeout.current) {
       clearTimeout(usernameCheckTimeout.current);
     }
 
-    usernameCheckTimeout.current = setTimeout(() => {
-      const isTaken = allUsernames
-        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername) // ignore user's current username
-        .some((uname) => uname.trim().toLowerCase() === typed);
-
-      setUsernameAvailable(!isTaken);
-      setUsernameCheckLoading(false);
-    }, 300);
+    usernameCheckTimeout.current = setTimeout(async () => {
+      try {
+        const res = await getAPI(`/auth/check-username?username=${encodeURIComponent(typed)}&currentUserId=${userId}`);
+        setUsernameAvailable(res.data?.available === true);
+        if (res.data?.message && res.data?.available === false) {
+          setUsernameError(res.data.message);
+        }
+      } catch (err) {
+        setUsernameError('Could not check username availability');
+        setUsernameAvailable(null);
+      } finally {
+        setUsernameCheckLoading(false);
+      }
+    }, 500);
   };
-
-  useEffect(() => {
-    if (profileData.username) {
-      setOriginalUsername(profileData.username.trim().toLowerCase());
-    }
-  }, [profileData.username]);
 
   const openShippingModal = () => {
     setIsShippingModalOpen(true);
@@ -590,13 +612,19 @@ const handleDeleteImage = async () => {
                   handleLiveUsernameCheck(lowercaseValue);
                 }}
               />
-              {usernameCheckLoading && (
+              <small className="text-muted d-block" style={{ fontSize: '11px' }}>
+                {(profileData.username || '').length}/30 — Only letters (a-z), numbers, periods (.) and underscores (_)
+              </small>
+              {usernameError && (
+                <small className="text-danger d-block">{usernameError}</small>
+              )}
+              {usernameCheckLoading && !usernameError && (
                 <small className="text-muted">Checking availability...</small>
               )}
-              {usernameAvailable === true && (
+              {!usernameError && !usernameCheckLoading && usernameAvailable === true && (
                 <small className="text-success">Username is available</small>
               )}
-              {usernameAvailable === false && (
+              {!usernameError && !usernameCheckLoading && usernameAvailable === false && (
                 <small className="text-danger">Username is already taken</small>
               )}
            

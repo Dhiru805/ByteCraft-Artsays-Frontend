@@ -90,7 +90,6 @@ const ArtistInfo = ({ userId, loading }) => {
 
     const [load, setLoad] = useState(false);
 
-    console.log(formData)
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("Form data to be submitted:", formData);
