@@ -188,7 +188,7 @@ const Sidebar = () => {
         subTabs: [],
       },
       {
-        label: "Product Purchased",
+        label: "Order Purchased",
         tabId: "ptp1",
         icon: "fa fa-cart-plus",
         path: `/super-admin/purchasetable`,
