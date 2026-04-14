@@ -7,7 +7,7 @@ import putAPI from "../../../../api/putAPI";
 import { useConfirm } from '../../StatusConfirm';
 import { getImageUrl } from "../../../../utils/getImageUrl";
 
-const VerifyModal = ({ artist, onClose, refreshArtists }) => {
+const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
     const [filePreview, setFilePreview] = useState(null);
     const [fileType, setFileType] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,7 +53,7 @@ const VerifyModal = ({ artist, onClose, refreshArtists }) => {
             } else if (status === 'Unverified') {
                 toast.error('User status is Unverified');
             }
-            refreshArtists();
+            onStatusUpdate && onStatusUpdate(userId, status);
             onClose();
         } catch (error) {
             console.error("Error updating user status:", error);
