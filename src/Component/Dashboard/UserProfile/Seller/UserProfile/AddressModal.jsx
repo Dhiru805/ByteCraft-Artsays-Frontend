@@ -74,16 +74,9 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
     state: "",
     country: "",
     pincode: "",
+    phone: "",
   });
 
-  const [pincodeStatus, setPincodeStatus] = useState({
-    checked: false,
-    isServiceable: false,
-    message: "",
-    loading: false,
-  });
-
-  const [lastCheckedPincode, setLastCheckedPincode] = useState("");
   const [error, setError] = useState("");
   const [isSetDefaultDialogOpen, setIsSetDefaultDialogOpen] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -139,88 +132,13 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
     }
   };
 
-  const checkPincodeAvailability = async () => {
-    const pin = newAddress.pincode.trim();
-
-    if (!pin || !/^\d{6}$/.test(pin)) {
-      setPincodeStatus({
-        checked: true,
-        isServiceable: false,
-        message: "Please enter valid 6-digit pincode",
-        loading: false,
-      });
-      return;
-    }
-
-    if (pin === lastCheckedPincode && pincodeStatus.checked) return;
-
-    setPincodeStatus((prev) => ({ ...prev, loading: true }));
-
-    try {
-      const response = await getAPI(
-        `/api/check-pincode/${pin}`,
-        {},
-        true,
-        false,
-      );
-
-      if (response.hasError) {
-        throw new Error(response.message);
-      }
-
-      const { isServiceable, city, state, country } = response.data.data;
-
-      setPincodeStatus({
-        checked: true,
-        isServiceable,
-        message: isServiceable
-          ? "Service available ✓"
-          : "Delivery not available ✗",
-        loading: false,
-      });
-
-      setLastCheckedPincode(pin);
-
-      if (isServiceable && city && state && country) {
-        setNewAddress((prev) => ({
-          ...prev,
-          city: prev.city || city,
-          state: prev.state || state,
-          country: prev.country || country,
-        }));
-      }
-    } catch (err) {
-      setPincodeStatus({
-        checked: true,
-        isServiceable: false,
-        message: "Could not verify pincode",
-        loading: false,
-      });
-    }
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewAddress((prev) => ({ ...prev, [name]: value }));
-
-    if (name === "pincode") {
-      setPincodeStatus({
-        checked: false,
-        isServiceable: false,
-        message: "",
-        loading: false,
-      });
-      setLastCheckedPincode("");
-    }
   };
 
   const handleCreateAddress = async (e) => {
     e.preventDefault();
-
-    if (!pincodeStatus.isServiceable) {
-      setError("Please verify pincode availability first");
-      return;
-    }
 
     setLoading(true);
     try {
@@ -241,20 +159,14 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
           state: "",
           country: "",
           pincode: "",
+          phone: "",
         });
-        setPincodeStatus({
-          checked: false,
-          isServiceable: false,
-          message: "",
-          loading: false,
-        });
-        setLastCheckedPincode("");
         toast.success("Address added successfully");
       } else {
         setError(response.message);
       }
     } catch (err) {
-      setError("Failed to create address");
+      setError(err?.response?.data?.message || 'Failed to create address.');
     } finally {
       setLoading(false);
     }
@@ -324,6 +236,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
       state: '',
       country: '',
       pincode: '',
+      phone: '',
     });
     setError('');
   };
@@ -507,7 +420,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
             </div>
 
             <div className="form-group">
-              <label>Address Line 2</label>
+              <label>Address Line 2 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 name="addressLine2"
@@ -518,7 +431,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
             </div>
 
             <div className="form-group">
-              <label>Landmark</label>
+              <label>Landmark <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 name="landmark"
@@ -575,40 +488,28 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
                 <label>
                   Pincode <span style={{ color: "red" }}>*</span>
                 </label>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    name="pincode"
-                    className="form-control mx-2"
-                    value={newAddress.pincode}
-                    onChange={handleInputChange}
-                    required
-                    pattern="\d{6}"
-                    maxLength={6}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={checkPincodeAvailability}
-                    disabled={pincodeStatus.loading}
-                  >
-                    {pincodeStatus.loading
-                      ? "Checking..."
-                      : "Check Availability"}
-                  </button>
-                </div>
-                {pincodeStatus.checked && (
-                  <small
-                    className={
-                      pincodeStatus.isServiceable
-                        ? "text-success"
-                        : "text-danger"
-                    }
-                  >
-                    {pincodeStatus.message}
-                  </small>
-                )}
+                <input
+                  type="text"
+                  name="pincode"
+                  className="form-control"
+                  value={newAddress.pincode}
+                  onChange={handleInputChange}
+                  required
+                  pattern="\d{6}"
+                  maxLength={6}
+                />
               </div>
+            </div>
+
+            <div className="form-group">
+              <label>Phone</label>
+              <input
+                type="text"
+                name="phone"
+                className="form-control"
+                value={newAddress.phone}
+                onChange={handleInputChange}
+              />
             </div>
 
             <div className="d-flex justify-content-end">
@@ -623,7 +524,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={loading || !pincodeStatus.isServiceable}
+                disabled={loading}
               >
                 Save Address
               </button>

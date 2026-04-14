@@ -481,6 +481,17 @@ export const AccountForm = () => {
         <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Account Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {profileData?.artsaysId && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Buyer ID</label>
+                <input
+                  type="text"
+                  value={profileData.artsaysId}
+                  readOnly
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-100 cursor-default font-bold tracking-widest text-gray-700 outline-none"
+                />
+              </div>
+            )}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Username *</label>
                   <input

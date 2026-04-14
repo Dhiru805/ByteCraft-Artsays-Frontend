@@ -296,6 +296,7 @@ function ArtistManageTable() {
                     <thead className="thead-dark">
                       <tr>
                         <th>#</th>
+                        <th>AAID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -311,6 +312,9 @@ function ArtistManageTable() {
                             <h6 className="mb-0">
                               {(currentPage - 1) * productsPerPage + index + 1}
                             </h6>
+                          </td>
+                          <td>
+                            <span className="phone">{artist.artsaysId || '-'}</span>
                           </td>
                           <td>
                               <img

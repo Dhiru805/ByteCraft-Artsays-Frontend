@@ -82,10 +82,8 @@ const ArtistInfo = ({ userId, loading }) => {
     };
 
     const handleMultiSelectChange = (selectedOptions, field) => {
-        if (selectedOptions && selectedOptions.length > 0) {
-            const values = selectedOptions.map(option => capitalize(option.value));
-            setFormData(prevState => ({ ...prevState, [field]: values }));
-        }
+        const values = selectedOptions ? selectedOptions.map(option => capitalize(option.value)) : [];
+        setFormData(prevState => ({ ...prevState, [field]: values }));
     };
 
     const [load, setLoad] = useState(false);
@@ -131,8 +129,7 @@ const ArtistInfo = ({ userId, loading }) => {
             'Art Categories': formData.artCategories.length,
             'Medium Used': formData.mediumUsed.length,
             'Years of Experience': formData.yearsOfExperience,
-            'Portfolio Link': formData.portfolioLink,
-            'Achievements': formData.achievements.length
+            'Portfolio Link': formData.portfolioLink
         };
 
         Object.entries(requiredMap).forEach(([label, value]) => {

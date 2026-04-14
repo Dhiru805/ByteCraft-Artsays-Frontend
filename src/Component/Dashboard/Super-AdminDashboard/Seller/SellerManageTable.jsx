@@ -299,6 +299,7 @@ if(loading)return <ProductRequestSkeleton/>
                     <thead className="thead-dark">
                       <tr>
                         <th>#</th>
+                        <th>ASID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -311,6 +312,9 @@ if(loading)return <ProductRequestSkeleton/>
                       {displayedSellers.map((seller, index) => (
                         <tr key={seller._id}>
                           <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
+                          <td>
+                            <span className="phone">{seller.artsaysId || '-'}</span>
+                          </td>
                           <td>
                               <img
                                 src={

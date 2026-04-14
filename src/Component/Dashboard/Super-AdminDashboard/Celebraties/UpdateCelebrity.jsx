@@ -53,17 +53,20 @@ function UpdateCelebrity() {
         }
     };
 
-    // Fetching artists data
+    // Fetching artists and sellers data
     const fetchArtists = async () => {
         try {
-            const response = await getAPI("/api/users-by-type?userType=Artist")
+            const [artistRes, sellerRes] = await Promise.all([
+                getAPI("/api/users-by-type?userType=Artist"),
+                getAPI("/api/users-by-type?userType=Seller"),
+            ]);
 
-            if (response?.hasError === false) {
-                setArtistsData(response?.data?.data)
-            }
-            else {
-                console.log(response)
-            }
+            const artists = artistRes?.hasError === false ? artistRes?.data?.data || [] : [];
+            const sellers = sellerRes?.hasError === false ? sellerRes?.data?.data || [] : [];
+            setArtistsData([
+                ...artists.map(u => ({ ...u, _userType: "Artist" })),
+                ...sellers.map(u => ({ ...u, _userType: "Seller" })),
+            ]);
         }
         catch (error) {
             console.log(error)
@@ -75,16 +78,18 @@ function UpdateCelebrity() {
     }, []);
 
     const artistNames = artistsData.map(artist => ({
-        label: `${artist.name} ${artist.lastName}`,
+        label: `${artist.name} ${artist.lastName}${artist.artsaysId ? ` (${artist.artsaysId})` : ''}`,
         value: artist._id,
-        name: `${artist.name} ${artist.lastName}`
+        name: `${artist.name} ${artist.lastName}`,
+        userType: artist._userType
     }));
 
     const handleCelebritySelection = (selectedOption) => {
         setCelebrityData(prev => ({
             ...prev,
             celebrityId: selectedOption ? selectedOption.value : "",
-            celebrityName: selectedOption ? selectedOption.label : ""
+            celebrityName: selectedOption ? selectedOption.name : "",
+            profession: selectedOption ? selectedOption.userType : prev.profession
         }))
     };
 
@@ -172,10 +177,11 @@ function UpdateCelebrity() {
                                         <input
                                             type="text"
                                             className="form-control"
-                                            placeholder="Enter your profession"
+                                            placeholder="Auto-filled from selection"
                                             name="profession"
                                             value={celebrityData.profession}
-                                            onChange={handleCelebrityData}
+                                            readOnly
+                                            style={{ background: '#f4f4f4', cursor: 'default' }}
                                         />
                                     </div>
                                 </div>

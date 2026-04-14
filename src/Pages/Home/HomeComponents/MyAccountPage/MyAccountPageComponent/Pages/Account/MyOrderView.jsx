@@ -443,11 +443,11 @@ const OrderView = () => {
     const cancelStepDateMap = {
       "Ordered": createdAt ? new Date(createdAt).toLocaleDateString() : "—",
       "Delivered": order.DeliveredAt ? new Date(order.DeliveredAt).toLocaleDateString() : "—",
-      "Cancelled": order.CancelledAt ? new Date(order.CancelledAt).toLocaleDateString() : (order.updatedAt ? new Date(order.updatedAt).toLocaleDateString() : "—"),
+      "Cancelled": order.cancelledAt ? new Date(order.cancelledAt).toLocaleDateString() : (order.updatedAt ? new Date(order.updatedAt).toLocaleDateString() : "—"),
       "Return Requested": order.ReturnRequestedAt ? new Date(order.ReturnRequestedAt).toLocaleDateString() : "—",
       "Refund Approved": order.RefundApprovedAt ? new Date(order.RefundApprovedAt).toLocaleDateString() : "—",
-      "Refund Initiated": order.RefundInitiatedAt ? new Date(order.RefundInitiatedAt).toLocaleDateString() : "—",
-      "Refund Successful": order.RefundSuccessfulAt ? new Date(order.RefundSuccessfulAt).toLocaleDateString() : "—",
+      "Refund Initiated": (order.refundInitiatedAt || order.RefundInitiatedAt) ? new Date(order.refundInitiatedAt || order.RefundInitiatedAt).toLocaleDateString() : "—",
+      "Refund Successful": (order.refundSuccessfulAt || order.refundCompletedAt || order.RefundSuccessfulAt) ? new Date(order.refundSuccessfulAt || order.refundCompletedAt || order.RefundSuccessfulAt).toLocaleDateString() : "—",
     };
 
     // Find active index in cancel/refund flow

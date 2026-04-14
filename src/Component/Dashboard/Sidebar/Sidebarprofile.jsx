@@ -196,15 +196,15 @@ const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, Handletoggl
               ))}
             </ul>
           </div>
-          <hr />
-          <ul className="row list-unstyled">
+          {/* <hr /> */}
+          {/* <ul className="row list-unstyled">
             {stats.map((stat, index) => (
               <li className="col-4" key={index}>
                 <small>{stat.label}</small>
                 <h6>{stat.value}</h6>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
       </div>
     </div>
