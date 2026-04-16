@@ -30,7 +30,6 @@ export const AccountForm = () => {
   const [originalEmail, setOriginalEmail] = useState('');
   const [originalPhone, setOriginalPhone] = useState('');
 
-  const [allUsernames, setAllUsernames] = useState([]);
   const [usernameStatus, setUsernameStatus] = useState('');
   const [usernameMsg, setUsernameMsg] = useState('');
   const [usernameError, setUsernameError] = useState('');
@@ -92,20 +91,6 @@ export const AccountForm = () => {
     fetchProfile();
   }, []);
 
-  useEffect(() => {
-    const fetchUsernames = async () => {
-      try {
-        const res = await getAPI('/auth/all-usernames', {}, true, false);
-        if (res.data?.usernames) {
-          setAllUsernames(res.data.usernames.map(u => u.toLowerCase()));
-        }
-      } catch (err) {
-        console.error('Failed to fetch usernames:', err);
-      }
-    };
-    fetchUsernames();
-  }, []);
-
   const checkUsernameAvailability = (value) => {
     if (usernameTimerRef.current) clearTimeout(usernameTimerRef.current);
     const trimmed = value.trim().toLowerCase();
@@ -117,6 +102,12 @@ export const AccountForm = () => {
     }
     if (!usernameRegex.test(trimmed)) {
       setUsernameError('Only letters (a-z), numbers (0-9), periods (.) and underscores (_) allowed');
+      setUsernameStatus('');
+      setUsernameMsg('');
+      return;
+    }
+    if (trimmed.length < 3) {
+      setUsernameError('Username must be at least 3 characters');
       setUsernameStatus('');
       setUsernameMsg('');
       return;
@@ -135,16 +126,22 @@ export const AccountForm = () => {
     }
     setUsernameStatus('checking');
     setUsernameMsg('Checking availability...');
-    usernameTimerRef.current = setTimeout(() => {
-      const taken = allUsernames.includes(trimmed);
-      if (taken) {
+    const userId = localStorage.getItem('userId');
+    usernameTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await getAPI(`/auth/check-username?username=${encodeURIComponent(trimmed)}&currentUserId=${userId}`);
+        if (res.data?.available === true) {
+          setUsernameStatus('available');
+          setUsernameMsg('Username is available');
+        } else {
+          setUsernameStatus('taken');
+          setUsernameMsg(res.data?.message || 'Username is already taken');
+        }
+      } catch (err) {
         setUsernameStatus('taken');
-        setUsernameMsg('Username is already taken');
-      } else {
-        setUsernameStatus('available');
-        setUsernameMsg('Username is available');
+        setUsernameMsg('Could not check username availability');
       }
-    }, 300);
+    }, 500);
   };
 
   const handleUsernameChange = (e) => {
@@ -484,6 +481,17 @@ export const AccountForm = () => {
         <div className="bg-white rounded-[2rem] p-6 md:p-8 border border-gray-100 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-50/50 transition-all duration-500">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Account Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {profileData?.artsaysId && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Buyer ID</label>
+                <input
+                  type="text"
+                  value={profileData.artsaysId}
+                  readOnly
+                  className="w-full border border-gray-200 px-4 py-3 rounded-2xl bg-gray-100 cursor-default font-bold tracking-widest text-gray-700 outline-none"
+                />
+              </div>
+            )}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Username *</label>
                   <input

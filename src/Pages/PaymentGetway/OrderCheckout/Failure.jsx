@@ -281,7 +281,7 @@ const FailurePage = () => {
         {}
          <button
         onClick={() =>
-  navigate("/social-media/profile")
+  navigate("/my-account/my-orders")
 }
           style={{
             padding: "14px 24px",

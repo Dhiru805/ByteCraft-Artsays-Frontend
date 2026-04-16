@@ -717,15 +717,20 @@ const CelebrityContent = () => {
                 <h1 className="text-4xl md:text-7xl font-black text-white leading-tight drop-shadow-xl mb-3">
                   {celebrity?.artistName || ""}
                 </h1>
-                <button
-                  onClick={handleFollowToggle}
-                  className={`mb-2 px-6 py-2 rounded-full font-bold transition-all transform active:scale-95 ${follow
-                      ? "bg-white/10 text-white border border-white/20 hover:bg-white/20"
-                      : "bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:bg-[#ffffff] shadow-lg shadow-[#6F4D34]/20"
-                    }`}
-                >
-                  {follow ? "Unfollow" : "Follow"}
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleFollowToggle}
+                    className={`mb-2 px-6 py-2 rounded-full font-bold transition-all transform active:scale-95 ${follow
+                        ? "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+                        : "bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:bg-[#ffffff] shadow-lg shadow-[#6F4D34]/20"
+                      }`}
+                  >
+                    {follow ? "Unfollow" : "Follow"}
+                  </button>
+                  {celebrity?.artsaysId && (
+                    <span className="mb-2 text-white/80 text-sm font-semibold tracking-wide">({celebrity.artsaysId})</span>
+                  )}
+                </div>
               </div>
 
               <div className="max-w-2xl mb-6 space-y-4">

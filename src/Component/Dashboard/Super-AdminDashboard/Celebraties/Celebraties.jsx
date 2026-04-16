@@ -198,6 +198,7 @@ const[loading,setLoading]=useState(true);
                                     <thead className="thead-dark">
                                         <tr>
                                             <th>#</th>
+                                            <th>AAID/ASID</th>
                                             <th>Name</th>
                                             <th>Profession</th>
                                             <th>Experience</th>
@@ -210,6 +211,7 @@ const[loading,setLoading]=useState(true);
                                             displayedCelebrities.map((celebrity, index) => (
                                                 <tr key={celebrity._id}>
                                                     <td>{(currentPage - 1) * celebratiesPerPage + index + 1}</td>
+                                                    <td><span className="phone">{celebrity.artsaysId || '-'}</span></td>
                                                     <td>{celebrity.artistName}</td>
                                                     <td>{celebrity.profession}</td>
                                                     <td>{celebrity.yearsActiveInArt}</td>

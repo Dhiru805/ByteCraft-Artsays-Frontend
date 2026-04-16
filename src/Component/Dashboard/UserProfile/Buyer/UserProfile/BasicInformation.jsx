@@ -191,6 +191,18 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       <div className="body">
         <h5 className="mb-2">Basic Information</h5>
         <hr className="mt-1" />
+        {profileData.artsaysId && (
+          <div className="form-group mb-3">
+            <label>Buyer ID</label>
+            <input
+              type="text"
+              className="form-control"
+              value={profileData.artsaysId}
+              readOnly
+              style={{ background: '#f4f4f4', cursor: 'default', fontWeight: 600, letterSpacing: 1 }}
+            />
+          </div>
+        )}
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">

@@ -45,11 +45,9 @@ const UserProfileForm = () => {
       localStorage.setItem('userId', location.state._id);
     }
   }, [location.state]);
-console.log("profiledataaaaaaaaaaaaaaaaaa",profileData)
   const fetchProfile = async () => {
     try {
       const result = await getAPI(`/auth/userid/${userId}`, {}, true, false);
-      console.log("fetchprofileeedata in proffffffffffff",result)
       if (result.data.user) {
         const userData = result.data.user;
         const formattedBirthdate = userData.birthdate ? new Date(userData.birthdate).toISOString().split('T')[0] : '';

@@ -569,6 +569,7 @@ const NavBar = () => {
   const [searchTab, setSearchTab] = useState("Artworks");
   const [scrolled, setScrolled] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
   const megaTimer = useRef(null);
   const searchRef = useRef(null);
@@ -660,6 +661,19 @@ const NavBar = () => {
   useEffect(() => {
     if (location.pathname === "/artsays-community/notification") setUnreadCount(0);
   }, [location.pathname]);
+
+  // cart count (Buyer only)
+  useEffect(() => {
+    if (!userId || localStorage.getItem("userType") !== "Buyer") return;
+    const fetchCartCount = async () => {
+      try {
+        const res = await getAPI(`/api/cart/${userId}`, {}, true, false);
+        const items = res?.data?.items || res?.data?.cartItems || res?.data?.cart || [];
+        setCartCount(Array.isArray(items) ? items.length : 0);
+      } catch { }
+    };
+    fetchCartCount();
+  }, [userId, location.pathname]);
 
   // click outside
   useEffect(() => {
@@ -798,9 +812,14 @@ const NavBar = () => {
                     userId={userId}
                     onUnreadChange={(count) => setUnreadCount(count)}
                   />
-                  <button className="nav-icon-btn" onClick={() => navigate(`/my-account/my-cart/${userId}`)} title="Cart">
-                    <ShoppingCart size={18} />
-                  </button>
+                  <div style={{ position: "relative", display: "inline-flex" }}>
+                    <button className="nav-icon-btn" onClick={() => navigate(`/my-account/my-cart/${userId}`)} title="Cart">
+                      <ShoppingCart size={18} />
+                    </button>
+                    {cartCount > 0 && (
+                      <span className="nav-cart-badge">{cartCount > 99 ? "99+" : cartCount}</span>
+                    )}
+                  </div>
                 </>
               )}
 
@@ -1055,19 +1074,6 @@ const NavBar = () => {
               <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
             </>)}
 
-            {/* Super-Admin */}
-            {isLoggedIn && Usertype === "Super-Admin" && (<>
-              <div className="mob-item" onClick={() => { dashboardRoute(); setShowSidebar(false); }}><FaUser className="mob-icon" /> My Dashboard</div>
-              <Link to="/blogs" className="mob-item" onClick={() => setShowSidebar(false)}><MdLibraryAdd className="mob-icon" /> Blog</Link>
-              <div className="mob-sep" />
-              {!isSuperAdminSub && (
-                <Link to="/artsays-community" className="mob-item mob-item-comm" onClick={() => setShowSidebar(false)}>
-                    <img src={artLogo} style={{ width: 18, height: 18, marginRight: 10 }} alt="" />
-                    Switch to Community
-                  </Link>
-                )}
-                <div className="mob-item mob-item-logout" onClick={handleSignOut}><BiLogOut className="mob-icon" /> Logout</div>
-              </>)}
             </>)}
         </div>
       </div>
@@ -1146,13 +1152,18 @@ const NavBar = () => {
             {/* Slot 3 — Raised Cart (Buyer) / Raised Create (Artist|Seller) / Community (Guest|Super-Admin) */}
             {isLoggedIn && Usertype === "Buyer" && (
               <div className="mbn-create-wrap">
-                <button
-                  className="mbn-create-btn"
-                  onClick={() => navigate(`/my-account/my-cart/${userId}`)}
-                  aria-label="Cart"
-                >
-                  <ShoppingCart size={22} />
-                </button>
+                <div style={{ position: "relative", display: "inline-flex" }}>
+                  <button
+                    className="mbn-create-btn"
+                    onClick={() => navigate(`/my-account/my-cart/${userId}`)}
+                    aria-label="Cart"
+                  >
+                    <ShoppingCart size={22} />
+                  </button>
+                  {cartCount > 0 && (
+                    <span className="nav-cart-badge">{cartCount > 99 ? "99+" : cartCount}</span>
+                  )}
+                </div>
               </div>
             )}
             {isLoggedIn && (Usertype === "Artist" || Usertype === "Seller") && (

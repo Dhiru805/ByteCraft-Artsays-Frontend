@@ -218,13 +218,12 @@ const Setting = () => {
   const [deleteAccount, setDeleteAccount] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
 
-  const [allUsernames, setAllUsernames] = useState([]);
-  const [originalUsername, setOriginalUsername] = useState('');
-  const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
-  const [usernameAvailable, setUsernameAvailable] = useState(null);
-  const [usernameError, setUsernameError] = useState('');
-  const usernameCheckTimeout = useRef(null);
-  const usernameRegex = /^[a-z0-9._]*$/;
+    const [originalUsername, setOriginalUsername] = useState('');
+    const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
+    const [usernameAvailable, setUsernameAvailable] = useState(null);
+    const [usernameError, setUsernameError] = useState('');
+    const usernameCheckTimeout = useRef(null);
+    const usernameRegex = /^[a-z0-9._]*$/;
 
   useEffect(() => {
     if (profile) {
@@ -237,18 +236,6 @@ const Setting = () => {
       setOriginalUsername(profile.username?.trim().toLowerCase() || '');
     }
   }, [profile]);
-
-  useEffect(() => {
-    const fetchUsernames = async () => {
-      try {
-        const res = await getAPI('/auth/all-usernames');
-        setAllUsernames(res.data?.usernames || []);
-      } catch (err) {
-        console.error("Failed to fetch usernames", err);
-      }
-    };
-    fetchUsernames();
-  }, []);
 
   const handleLiveUsernameCheck = (val) => {
     const typed = val.trim().toLowerCase();
@@ -263,9 +250,21 @@ const Setting = () => {
       setUsernameCheckLoading(false);
       return;
     }
+    if (typed.length < 3) {
+      setUsernameError('Username must be at least 3 characters');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
     if (typed.length > 30) {
       setUsernameError('Username cannot exceed 30 characters');
       setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+    if (typed === originalUsername) {
+      setUsernameAvailable(null);
+      setUsernameError('');
       setUsernameCheckLoading(false);
       return;
     }
@@ -274,13 +273,20 @@ const Setting = () => {
     if (usernameCheckTimeout.current) {
       clearTimeout(usernameCheckTimeout.current);
     }
-    usernameCheckTimeout.current = setTimeout(() => {
-      const isTaken = allUsernames
-        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername)
-        .some((uname) => uname.trim().toLowerCase() === typed);
-      setUsernameAvailable(!isTaken);
-      setUsernameCheckLoading(false);
-    }, 300);
+    usernameCheckTimeout.current = setTimeout(async () => {
+      try {
+        const res = await getAPI(`/auth/check-username?username=${encodeURIComponent(typed)}&currentUserId=${userId}`);
+        setUsernameAvailable(res.data?.available === true);
+        if (res.data?.message && res.data?.available === false) {
+          setUsernameError(res.data.message);
+        }
+      } catch (err) {
+        setUsernameError('Could not check username availability');
+        setUsernameAvailable(null);
+      } finally {
+        setUsernameCheckLoading(false);
+      }
+    }, 500);
   };
 
   const hasValidUsername =

@@ -1,6 +1,55 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import getAPI from "../../../api/getAPI";
+
+// Tabs allowed for unapproved artists/sellers (by label)
+const ALLOWED_UNAPPROVED = ["Dashboard", "Support"];
+
+const ApprovalPopup = ({ onClose, userType }) => {
+  const navigate = useNavigate();
+  const profilePath = userType ? `/${userType.toLowerCase()}/profile` : "/";
+  return (
+    <div
+      style={{
+        position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.55)",
+        display: "flex", justifyContent: "center", alignItems: "center",
+        zIndex: 99999,
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          backgroundColor: "#fff", borderRadius: 12, padding: "32px 28px",
+          maxWidth: 420, width: "90%", textAlign: "center",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ fontSize: 48, marginBottom: 12 }}>⏳</div>
+        <h4 style={{ marginBottom: 10, color: "#0A0A30", fontWeight: 700 }}>
+          Account Pending Approval
+        </h4>
+        <p style={{ color: "#555", marginBottom: 20, lineHeight: 1.6 }}>
+          Please <strong>complete your profile</strong> and submit it for review.
+          Once approved by the <strong>Artsays team</strong>, you will get full
+          access to all features.
+        </p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+          <button
+            className="btn btn-primary"
+            onClick={() => { navigate(profilePath); onClose(); }}
+          >
+            Go to Profile
+          </button>
+          <button className="btn btn-secondary" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Sidebar = () => {
   const location = useLocation();
@@ -16,8 +65,10 @@ const Sidebar = () => {
   const [activeSubTab, setActiveSubTab] = useState(null);
   const [globalVisibility, setGlobalVisibility] = useState(null);
   const [visibilityLoaded, setVisibilityLoaded] = useState(false);
+  const [showApprovalPopup, setShowApprovalPopup] = useState(false);
 
   const userrole = localStorage.getItem("userrole");
+  const status = localStorage.getItem("status");
 
   const menuConfig = {
     "Super-Admin": [
@@ -188,7 +239,7 @@ const Sidebar = () => {
         subTabs: [],
       },
       {
-        label: "Product Purchased",
+        label: "Order Purchased",
         tabId: "ptp1",
         icon: "fa fa-cart-plus",
         path: `/super-admin/purchasetable`,
@@ -545,6 +596,10 @@ const Sidebar = () => {
             subtabId: "stg19",
             path: `/super-admin/settings/logs`,
           },
+          {
+            label: "Custom Commission",
+            path: `/super-admin/settings/custom-commission`,
+          },
         ],
       },
       {
@@ -871,7 +926,7 @@ const Sidebar = () => {
 
     const roleMenu = menuConfig[roleKey] || [];
 
-    if (email === "shantu131201@gmail.com") {
+    if (email === "dhiraj.zope1997@gmail.com") {
       setFetchedTabs(menuConfig["Super-Admin"]);
       return;
     }
@@ -1044,29 +1099,47 @@ const Sidebar = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname, fetchedTabs]);
 
-  const handleTabToggle = (label, hasSubTabs) => {
-    // If it has subtabs, toggle expand; active will be set by location effect on navigate
+  const isUnapproved =
+    (userType === "Artist" || userType === "Seller") &&
+    status?.toLowerCase() !== "verified";
+
+  const handleTabToggle = (label, hasSubTabs, path, e) => {
+    if (isUnapproved && !ALLOWED_UNAPPROVED.includes(label)) {
+      e.preventDefault();
+      setShowApprovalPopup(true);
+      return;
+    }
     if (hasSubTabs) {
       setExpandedTab((prev) => (prev === label ? null : label));
     }
   };
 
+  const handleSubTabClick = (label, e) => {
+    if (isUnapproved) {
+      e.preventDefault();
+      setShowApprovalPopup(true);
+    }
+  };
+
   return (
-    <nav id="left-sidebar-nav" className="sidebar-nav">
-      <ul id="main-menu" className="metismenu">
-        {fetchedTabs.map(
-          (
-            item,
-            index, // Changed: Use fetchedTabs instead of menuItems
-          ) => (
+    <>
+      {showApprovalPopup && (
+        <ApprovalPopup
+          onClose={() => setShowApprovalPopup(false)}
+          userType={userType}
+        />
+      )}
+      <nav id="left-sidebar-nav" className="sidebar-nav">
+        <ul id="main-menu" className="metismenu">
+          {fetchedTabs.map((item, index) => (
             <li
               key={index}
               className={`menu-item ${isActive[item.label] ? "active" : ""}`}
             >
               <Link
                 to={item.path}
-                onClick={() =>
-                  handleTabToggle(item.label, item.subTabs.length > 0)
+                onClick={(e) =>
+                  handleTabToggle(item.label, item.subTabs.length > 0, item.path, e)
                 }
                 className={item.subTabs.length ? "has-arrow" : ""}
               >
@@ -1084,16 +1157,21 @@ const Sidebar = () => {
                       key={subIndex}
                       className={activeSubTab === subTab.path ? "active" : ""}
                     >
-                      <Link to={subTab.path}>{subTab.label}</Link>
+                      <Link
+                        to={subTab.path}
+                        onClick={(e) => handleSubTabClick(item.label, e)}
+                      >
+                        {subTab.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
               )}
             </li>
-          ),
-        )}
-      </ul>
-    </nav>
+          ))}
+        </ul>
+      </nav>
+    </>
   );
 };
 

@@ -301,6 +301,7 @@ useEffect(() => {
                     <thead className="thead-dark">
                       <tr>
                         <th>#</th>
+                        <th>ABID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -314,6 +315,9 @@ useEffect(() => {
                         <tr key={buyer._id}>
                           <td>
                             {(currentPage - 1) * productsPerPage + index + 1}
+                          </td>
+                          <td>
+                            <span className="phone">{buyer.artsaysId || '-'}</span>
                           </td>
                           <td>
                               <img

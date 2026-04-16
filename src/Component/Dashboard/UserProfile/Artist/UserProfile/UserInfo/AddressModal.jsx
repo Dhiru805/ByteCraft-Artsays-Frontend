@@ -74,6 +74,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
     state: '',
     country: '',
     pincode: '',
+    phone: '',
   });
   const [isSetDefaultDialogOpen, setIsSetDefaultDialogOpen] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
@@ -146,6 +147,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
 
   const handleCreateAddress = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     try {
       const response = await postAPI(
@@ -165,13 +167,14 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
           state: '',
           country: '',
           pincode: '',
+          phone: '',
         });
         setError('');
       } else {
         setError(response.message);
       }
     } catch (err) {
-      setError('Failed to create address.');
+      setError(err?.response?.data?.message || 'Failed to create address.');
     } finally {
       setLoading(false);
     }
@@ -250,6 +253,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
       state: '',
       country: '',
       pincode: '',
+      phone: '',
     });
     setError('');
   };
@@ -433,7 +437,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
             </div>
 
             <div className="form-group">
-              <label>Address Line 2</label>
+              <label>Address Line 2 <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 name="addressLine2"
@@ -444,7 +448,7 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
             </div>
 
             <div className="form-group">
-              <label>Landmark</label>
+              <label>Landmark <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 name="landmark"
@@ -454,53 +458,66 @@ const AddressModal = ({ isOpen, onClose,userId,fetchProfile}) => {
               />
             </div>
 
-            <div className="form-group">
-              <label>City *</label>
-              <input
-                type="text"
-                name="city"
-                className="form-control"
-                value={newAddress.city}
-                onChange={handleInputChange}
-                required
-              />
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label>City <span style={{ color: 'red' }}>*</span></label>
+                <input
+                  type="text"
+                  name="city"
+                  className="form-control"
+                  value={newAddress.city}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label>State <span style={{ color: 'red' }}>*</span></label>
+                <input
+                  type="text"
+                  name="state"
+                  className="form-control"
+                  value={newAddress.state}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-6 mb-3">
+                <label>Country <span style={{ color: 'red' }}>*</span></label>
+                <input
+                  type="text"
+                  name="country"
+                  className="form-control"
+                  value={newAddress.country}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="col-md-6 mb-3">
+                <label>Pincode <span style={{ color: 'red' }}>*</span></label>
+                <input
+                  type="text"
+                  name="pincode"
+                  className="form-control"
+                  value={newAddress.pincode}
+                  onChange={handleInputChange}
+                  required
+                  pattern="\d{6}"
+                  maxLength={6}
+                />
+              </div>
             </div>
 
             <div className="form-group">
-              <label>State *</label>
+              <label>Phone</label>
               <input
                 type="text"
-                name="state"
+                name="phone"
                 className="form-control"
-                value={newAddress.state}
+                value={newAddress.phone}
                 onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Country *</label>
-              <input
-                type="text"
-                name="country"
-                className="form-control"
-                value={newAddress.country}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Pincode *</label>
-              <input
-                type="text"
-                name="pincode"
-                className="form-control"
-                value={newAddress.pincode}
-                onChange={handleInputChange}
-                required
-                pattern="\d{6}"
-                title="Pincode must be a 6-digit number"
               />
             </div>
 

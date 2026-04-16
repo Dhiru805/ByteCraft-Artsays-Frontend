@@ -72,6 +72,12 @@ function ArtistManageTable() {
     setIsDeleteDialogOpen(false);
   };
 
+  const handleStatusUpdate = (artistId, newStatus) => {
+    setArtists((prev) =>
+      prev.map((a) => (a._id === artistId ? { ...a, status: newStatus } : a))
+    );
+  };
+
   const openDeleteDialog = (artist) => {
     setSelectedArtistToDelete(artist);
     setIsDeleteDialogOpen(true);
@@ -296,6 +302,7 @@ function ArtistManageTable() {
                     <thead className="thead-dark">
                       <tr>
                         <th>#</th>
+                        <th>AAID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -311,6 +318,9 @@ function ArtistManageTable() {
                             <h6 className="mb-0">
                               {(currentPage - 1) * productsPerPage + index + 1}
                             </h6>
+                          </td>
+                          <td>
+                            <span className="phone">{artist.artsaysId || '-'}</span>
                           </td>
                           <td>
                               <img
@@ -517,6 +527,7 @@ function ArtistManageTable() {
           artist={selectedArtist}
           onClose={() => setIsModalOpen(false)}
           refreshArtists={fetchArtists}
+          onStatusUpdate={handleStatusUpdate}
         />
       )}
       {isCreateArtistModalOpen && (

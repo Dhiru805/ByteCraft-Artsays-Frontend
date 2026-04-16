@@ -124,6 +124,7 @@ const ArtistCard = () => {
               username: user?.username || "",
               name: user?.name || user?.firstName || "",
               lastName: user?.lastName || "",
+              artsaysId: user?.artsaysId || "",
               badges: badgeEntry?.badges || [],
               mainCategoryName: mainCategory?.mainCategoryName || "Unknown",
               followers: followersArr,
@@ -259,7 +260,7 @@ const ArtistCard = () => {
       toast.error("Please login first to visit the store");
       return;
     }
-    navigate(`/social-media/profile/product-view?artistId=${artistId}`);
+    navigate(`/artsays-community/profile/product-view?artistId=${artistId}`);
   };
 
   const FilterSection = ({ title, icon: Icon, children }) => (
@@ -416,6 +417,9 @@ const ArtistCard = () => {
                             <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
                             <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">
                               @{artist.username || "artist"}
+                              {artist.artsaysId && (
+                                <span className="ml-1 normal-case font-semibold tracking-normal opacity-80">({artist.artsaysId})</span>
+                              )}
                             </span>
                           </div>
                           <div className="flex -space-x-1.5">

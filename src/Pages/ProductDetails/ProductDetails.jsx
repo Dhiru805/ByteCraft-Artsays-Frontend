@@ -11,15 +11,12 @@ import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../AuthContext";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import { getImageUrl } from '../../utils/getImageUrl';
-
+
 
 const resolveMediaUrl = (path) => {
   if (!path || typeof path !== "string") return "/images/placeholder.jpg";
-  if (/^https?:\/\//i.test(path) || path.startsWith("data:")) return path;
-  const normalized = path.replace(/\\/g, "/");
-  const leadingSlash = normalized.startsWith("/") ? normalized : `/${normalized}`;
-  const base = getImageUrl.endsWith("/") ? getImageUrl.slice(0, -1) : getImageUrl;
-  return `${base}${leadingSlash}`;
+  if (path.startsWith("data:")) return path;
+  return getImageUrl(path) || "/images/placeholder.jpg";
 };
 
 const offersData = [

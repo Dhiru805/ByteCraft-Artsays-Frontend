@@ -93,14 +93,17 @@ function CreateCelebrities() {
 
     const fetchArtistsData = async () => {
         try {
-            const response = await getAPI("/api/users-by-type?userType=Artist");
+            const [artistRes, sellerRes] = await Promise.all([
+                getAPI("/api/users-by-type?userType=Artist"),
+                getAPI("/api/users-by-type?userType=Seller"),
+            ]);
 
-            if (response?.hasError === false) {
-                setArtistsData(response?.data?.data)
-            }
-            else {
-                console.log(response)
-            }
+            const artists = artistRes?.hasError === false ? artistRes?.data?.data || [] : [];
+            const sellers = sellerRes?.hasError === false ? sellerRes?.data?.data || [] : [];
+            setArtistsData([
+                ...artists.map(u => ({ ...u, _userType: "Artist" })),
+                ...sellers.map(u => ({ ...u, _userType: "Seller" })),
+            ]);
         }
         catch (error) {
             console.log(error)
@@ -113,15 +116,17 @@ function CreateCelebrities() {
 
     const options = artistsData.map((artist) => ({
         value: artist._id,
-        label: artist.name + " " + artist.lastName,
-        name: artist.name + " " + artist.lastName
+        label: `${artist.name} ${artist.lastName}${artist.artsaysId ? ` (${artist.artsaysId})` : ''}`,
+        name: artist.name + " " + artist.lastName,
+        userType: artist._userType
     }));
 
     const handleArtistSelection = (selectedOption) => {
         setUserData({
             ...userData,
             artistId: selectedOption ? selectedOption.value : "",
-            artistName: selectedOption ? selectedOption.name : ""
+            artistName: selectedOption ? selectedOption.name : "",
+            profession: selectedOption ? selectedOption.userType : ""
         })
     };
 
@@ -173,10 +178,11 @@ function CreateCelebrities() {
                                         <input
                                             type="text"
                                             className="form-control"
-                                            placeholder="Enter your profession"
+                                            placeholder="Auto-filled from selection"
                                             name="profession"
                                             value={userData.profession}
-                                            onChange={handleUserData}
+                                            readOnly
+                                            style={{ background: '#f4f4f4', cursor: 'default' }}
                                             required
                                         />
                                     </div>

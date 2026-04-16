@@ -29,7 +29,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const actualImage = !localPreviewImage || imageError ? DEFAULT_PROFILE_IMAGE : localPreviewImage;
 
-  const [allUsernames, setAllUsernames] = useState([]);
   const [originalUsername, setOriginalUsername] = useState('');
   const [usernameCheckLoading, setUsernameCheckLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(null);
@@ -262,21 +261,6 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
     setter(!currentState);
   };
 
-  useEffect(() => {
-    const fetchUsernames = async () => {
-      try {
-        const res = await getAPI('/auth/all-usernames');
-        setAllUsernames(res.data?.usernames || []);
-        console.log("All usernames from backend:", res.data?.usernames || []);
-      } catch (err) {
-        console.error("Failed to fetch usernames", err);
-      }
-    };
-
-    fetchUsernames();
-  }, []);
-
-
   const handleLiveUsernameCheck = (username) => {
     const typed = username.trim().toLowerCase();
 
@@ -293,9 +277,24 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       return;
     }
 
+    if (typed.length < 3) {
+      setUsernameError('Username must be at least 3 characters');
+      setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+
     if (typed.length > 30) {
       setUsernameError('Username cannot exceed 30 characters');
       setUsernameAvailable(null);
+      setUsernameCheckLoading(false);
+      return;
+    }
+
+    // If unchanged from original, no need to check
+    if (typed === originalUsername) {
+      setUsernameAvailable(null);
+      setUsernameError('');
       setUsernameCheckLoading(false);
       return;
     }
@@ -306,14 +305,20 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       clearTimeout(usernameCheckTimeout.current);
     }
 
-    usernameCheckTimeout.current = setTimeout(() => {
-      const isTaken = allUsernames
-        .filter((uname) => uname && uname.trim().toLowerCase() !== originalUsername)
-        .some((uname) => uname.trim().toLowerCase() === typed);
-
-      setUsernameAvailable(!isTaken);
-      setUsernameCheckLoading(false);
-    }, 300);
+    usernameCheckTimeout.current = setTimeout(async () => {
+      try {
+        const res = await getAPI(`/auth/check-username?username=${encodeURIComponent(typed)}&currentUserId=${userId}`);
+        setUsernameAvailable(res.data?.available === true);
+        if (res.data?.message && res.data?.available === false) {
+          setUsernameError(res.data.message);
+        }
+      } catch (err) {
+        setUsernameError('Could not check username availability');
+        setUsernameAvailable(null);
+      } finally {
+        setUsernameCheckLoading(false);
+      }
+    }, 500);
   };
 
   useEffect(() => {
@@ -400,6 +405,18 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       <div className="body">
         <h5 className="mb-2">Basic Information</h5>
         <hr className="mt-1" />
+        {profileData.artsaysId && (
+          <div className="form-group mb-3">
+            <label>Artist ID</label>
+            <input
+              type="text"
+              className="form-control"
+              value={profileData.artsaysId}
+              readOnly
+              style={{ background: '#f4f4f4', cursor: 'default', fontWeight: 600, letterSpacing: 1 }}
+            />
+          </div>
+        )}
         <div className="row clearfix">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
@@ -775,6 +792,21 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
           disabled={loading || usernameAvailable === false}
           onClick={async (e) => {
             if (!validateRequired()) return;
+
+            // Final race-condition check: re-verify username is still available
+            const currentUsername = (profileData.username || '').trim().toLowerCase();
+            if (currentUsername && currentUsername !== originalUsername) {
+              try {
+                const checkRes = await getAPI(`/auth/check-username?username=${encodeURIComponent(currentUsername)}&currentUserId=${userId}`);
+                if (!checkRes.data?.available) {
+                  toast.error(checkRes.data?.message || 'Username is already taken. Please choose another.');
+                  return;
+                }
+              } catch {
+                toast.error('Could not verify username availability. Please try again.');
+                return;
+              }
+            }
 
             setLoading(true);
             try {

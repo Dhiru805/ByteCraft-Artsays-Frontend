@@ -1229,7 +1229,7 @@ const AdminWalletManagement = () => {
                                 <td className={`font-weight-bold ${txn.type === 'debit' ? 'text-danger' : 'text-success'}`}>
                                   {txn.type === 'debit' ? '-' : '+'}₹{(txn.amount || 0).toLocaleString()}
                                 </td>
-                                <td>₹{(txn.balanceAfter != null ? txn.balanceAfter : '-').toLocaleString()}</td>
+                                <td>{txn.balanceAfter != null ? `₹${Number(txn.balanceAfter).toLocaleString()}` : '-'}</td>
                                 <td><span className={`badge ${txn.status === 'success' ? 'badge-success' : txn.status === 'pending' ? 'badge-warning' : 'badge-secondary'}`}>{txn.status}</span></td>
                               </tr>
                             ))}

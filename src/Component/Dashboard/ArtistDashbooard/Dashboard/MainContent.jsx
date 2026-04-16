@@ -279,9 +279,9 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
             </ul>
           </div>
           <div className="col-lg-6 col-md-6 col-sm-12">
-            <div className="d-none d-md-flex flex-row-reverse">
+            <div className="flex-row-reverse d-none d-md-flex">
               <div className="page_action">
-                <Link to="/artist/product/product-upload" className="btn btn-primary mx-2">
+                <Link to="/artist/product/product-upload" className="mx-2 btn btn-primary">
                   <i className="fa fa-plus"></i> Add Product
                 </Link>
                 <Link to="/artist/custom-order" className="btn btn-secondary">
@@ -296,7 +296,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
       {/* ══════════════════════════════════════════════════════════
           ZONE 1 – TOP WIDGET METRIC CARDS
       ══════════════════════════════════════════════════════════ */}
-      <div className="row clearfix row-deck">
+      <div className="clearfix row row-deck">
 
         {/* Total Earnings */}
         <div className="col-lg-3 col-md-6 col-sm-6">
@@ -304,8 +304,8 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
             <div className="body">
               <div className="icon bg-light"><i className="fa fa-inr"></i></div>
               <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Total Earnings</div>
-                <h4 className="number mb-0">
+                <div className="mb-2 text text-uppercase">Total Earnings</div>
+                <h4 className="mb-0 number">
                   {loading ? "—" : fmt(totalEarnings)}
                 </h4>
                 <small>Wallet: {loading ? "—" : fmt(walletBalance)}</small>
@@ -320,8 +320,8 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
             <div className="body">
               <div className="icon bg-light"><i className="fa fa-shopping-basket"></i></div>
               <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Products Sold</div>
-                <h4 className="number mb-0">
+                <div className="mb-2 text text-uppercase">Products Sold</div>
+                <h4 className="mb-0 number">
                   {loading ? "—" : num(totalSold)}
                 </h4>
                 <small>{totalProducts} total listings</small>
@@ -336,8 +336,8 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
             <div className="body">
               <div className="icon bg-light"><i className="fa fa-picture-o"></i></div>
               <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Active Listings</div>
-                <h4 className="number mb-0">
+                <div className="mb-2 text text-uppercase">Active Listings</div>
+                <h4 className="mb-0 number">
                   {loading ? "—" : num(activeListings)}
                 </h4>
                 <small>{customRequests.length} custom requests</small>
@@ -352,8 +352,8 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
             <div className="body">
               <div className="icon bg-light"><i className="fa fa-users"></i></div>
               <div className="content text-light">
-                <div className="text mb-2 text-uppercase">Community Reach</div>
-                <h4 className="number mb-0">
+                <div className="mb-2 text text-uppercase">Community Reach</div>
+                <h4 className="mb-0 number">
                   {loading ? "—" : num(followers)}
                 </h4>
                 <small>{num(following)} following · {num(posts)} posts</small>
@@ -367,14 +367,14 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
       {/* ══════════════════════════════════════════════════════════
           ZONE 2 – QUICK ACTIONS
       ══════════════════════════════════════════════════════════ */}
-      <div className="row clearfix">
+      <div className="clearfix row">
         <div className="col-lg-12 col-md-12 col-sm-12">
           <div className="card">
             <div className="header">
               <h2>Quick Actions <small>Jump straight to what matters</small></h2>
             </div>
             <div className="body">
-              <div className="d-flex flex-wrap" style={{ gap: "10px" }}>
+              <div className="flex-wrap d-flex" style={{ gap: "10px" }}>
                 {[
                   { icon: "fa-plus", label: "Add Product", to: "/artist/product/product-upload", cls: "btn-primary" },
                   { icon: "fa-pencil", label: "Write a Blog", to: "/artist/bloglist/create-blog", cls: "btn-secondary" },
@@ -389,7 +389,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                     cls: "btn-warning"
                   },
                   { icon: "fa-paint-brush", label: "Custom Orders", to: "/artist/custom-order", cls: "btn-default" },
-                  { icon: "fa-circle", label: "Go Live", to: "/artsays-community/create-live", cls: "btn-danger" },
+                  // { icon: "fa-circle", label: "Go Live", to: "/artsays-community/create-live", cls: "btn-danger" },
                 ].map(({ icon, label, to, cls }) => (
                   <Link
                     key={label}
@@ -410,14 +410,14 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
       {/* ══════════════════════════════════════════════════════════
           ZONE 3 – NEW ORDERS + WALLET & CUSTOM ORDERS
       ══════════════════════════════════════════════════════════ */}
-      <div className="row clearfix row-deck">
+      <div className="clearfix row row-deck">
 
         {/* New Orders Table */}
         <div className="col-lg-7 col-md-12">
           <div className="card">
             <div className="header d-flex justify-content-between">
               <h2>New Orders <small>Freshly placed orders needing your attention</small></h2>
-              <div className="d-none d-md-block mt-3 text-right">
+              <div className="mt-3 text-right d-none d-md-block">
                 <Link to="/artist/product-purchase" className="btn btn-primary btn-sm">
                   View All Orders
                 </Link>
@@ -425,7 +425,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
             </div>
             <div className="body">
               <div className="table-responsive">
-                <table className="table table-hover mb-0">
+                <table className="table mb-0 table-hover">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -502,7 +502,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               </ul>
             </div>
             <div className="body">
-              <div className="d-flex align-items-center justify-content-between mb-3">
+              <div className="mb-3 d-flex align-items-center justify-content-between">
                 <div>
                   <p className="mb-0 text-muted font-12 text-uppercase">Wallet Balance</p>
                   <h3 className="mb-0" style={{ color: "#f59e0b", fontWeight: 800 }}>
@@ -516,7 +516,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               </div>
 
               {/* Legend */}
-              <div className="d-flex mb-3" style={{ gap: 14 }}>
+              <div className="mb-3 d-flex" style={{ gap: 14 }}>
                 {donutSegments.map((s) => (
                   <div key={s.label} className="d-flex align-items-center" style={{ gap: 5, fontSize: 11 }}>
                     <span style={{ width: 10, height: 10, borderRadius: 2, background: s.color, display: "inline-block" }}></span>
@@ -525,7 +525,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 ))}
               </div>
 
-              <p className="font-12 text-uppercase text-muted mb-1"><strong>Recent Transactions</strong></p>
+              <p className="mb-1 font-12 text-uppercase text-muted"><strong>Recent Transactions</strong></p>
               {loading ? (
                 <p className="text-muted">Loading...</p>
               ) : transactions.length === 0 ? (
@@ -548,9 +548,9 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 ))
               )}
 
-              <div className="d-flex flex-column mt-3" style={{ gap: 10 }}>
-                <Link to="/artist/wallet" className="btn btn-secondary btn-sm flex-fill text-center justify-content-center">View Wallet</Link>
-                <Link to="/artist/wallet" className="btn btn-primary btn-sm flex-fill text-center justify-content-center">Withdraw</Link>
+              <div className="mt-3 d-flex flex-column" style={{ gap: 10 }}>
+                <Link to="/artist/wallet" className="text-center btn btn-secondary btn-sm flex-fill justify-content-center">View Wallet</Link>
+                <Link to="/artist/wallet" className="text-center btn btn-primary btn-sm flex-fill justify-content-center">Withdraw</Link>
               </div>
             </div>
           </div>
@@ -558,7 +558,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
       </div>
 
       {/* Custom Orders + Membership Summary */}
-      <div className="row clearfix row-deck">
+      <div className="clearfix row row-deck">
         <div className="col-lg-6 col-md-12">
           {/* Custom Orders */}
           <div className="card">
@@ -571,14 +571,14 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               </div>
             </div>
             <div className="body">
-              <div className="row clearfix">
+              <div className="clearfix row">
                 {[
                   { label: "New Requests", value: crNew, badge: "badge-primary" },
                   { label: "In Discussion", value: crDiscussion, badge: "badge-warning" },
                   { label: "Ordered", value: crOrdered, badge: "badge-info" },
                   { label: "Completed", value: crCompleted, badge: "badge-success" },
                 ].map(({ label, value, badge }) => (
-                  <div key={label} className="col-6 text-center mb-3">
+                  <div key={label} className="mb-3 text-center col-6">
                     <h3 className="mb-0" style={{ fontWeight: 800 }}>
                       {loading ? "—" : value}
                     </h3>
@@ -596,14 +596,14 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               <h2>Membership Summary<small>Buyer purchased memberships and credits</small></h2>
             </div>
             <div className="body">
-              <div className="row clearfix">
+              <div className="clearfix row">
                 {[
                   { label: "Subscribers", value: loading ? "—" : num(socialProfile?.membershipsCount || 0), badge: "badge-info" },
                   { label: "Tips Received", value: loading ? "—" : fmt(tipTotal), badge: "badge-warning" },
                   { label: "Marketplace", value: loading ? "—" : fmt(marketplaceTotal), badge: "badge-success" },
                   { label: "Other Credits", value: loading ? "—" : fmt(membershipTotal), badge: "badge-primary" },
                 ].map(({ label, value, badge }) => (
-                  <div key={label} className="col-6 text-center mb-3">
+                  <div key={label} className="mb-3 text-center col-6">
                     <h3 className="mb-0 font-weight-bold">{value}</h3>
                     <span className={`badge ${badge}`}>{label}</span>
                   </div>
@@ -617,7 +617,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
       {/* ══════════════════════════════════════════════════════════
           ZONE 4 – COMMUNITY INSIGHTS + ENGAGEMENT ACTIVITY
       ══════════════════════════════════════════════════════════ */}
-      <div className="row clearfix row-deck">
+      <div className="clearfix row row-deck">
 
         {/* Community Insights */}
         <div className="col-lg-6 col-md-12">
@@ -633,14 +633,14 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               </ul>
             </div>
             <div className="body">
-              <div className="row clearfix">
+              <div className="clearfix row">
                 {[
                   { label: "Total Followers", value: loading ? "—" : num(followers), icon: "fa-users", color: "#8b5cf6" },
                   { label: "Following", value: loading ? "—" : num(following), icon: "fa-user-plus", color: "#6366f1" },
                   { label: "Total Posts", value: loading ? "—" : num(posts), icon: "fa-image", color: "#10b981" },
                   { label: "Profile Views", value: loading ? "—" : num(socialProfile?.profileViews || 0), icon: "fa-eye", color: "#f59e0b" },
                 ].map(({ label, value, icon, color }) => (
-                  <div key={label} className="col-6 mb-3">
+                  <div key={label} className="mb-3 col-6">
                     <div className="d-flex align-items-center" style={{ gap: 10 }}>
                       <div
                         style={{
@@ -663,7 +663,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
 
               {/* Profile row */}
               {!loading && socialProfile && (
-                <div className="d-flex align-items-center mb-3" style={{ gap: 12, padding: "10px 12px", background: "#f8faff", borderRadius: 8 }}>
+                <div className="mb-3 d-flex align-items-center" style={{ gap: 12, padding: "10px 12px", background: "#f8faff", borderRadius: 8 }}>
                   {socialProfile.profilePicture || socialProfile.profileImage ? (
                     <img
                       src={getImageUrl(socialProfile.profilePicture || socialProfile.profileImage)}
@@ -690,18 +690,18 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 </div>
               )}
 
-              <div className="d-flex flex-column mt-3" style={{ gap: 10 }}>
+              <div className="mt-3 d-flex flex-column" style={{ gap: 10 }}>
                 <Link
                   to={`/artsays-community/profile/${socialProfile?.username || socialProfile?.handle
                     ? (socialProfile.username || socialProfile.handle)
                     : `${firstName}_${lastName}_${userId}`
                     }`}
-                  className="btn btn-secondary btn-sm flex-fill text-center d-flex justify-content-center"
+                  className="text-center btn btn-secondary btn-sm flex-fill d-flex justify-content-center"
                 >
                   View Profile
                 </Link>
 
-                <Link to="/artsays-community/create-post" className="btn btn-primary btn-sm flex-fill text-center justify-content-center">Create Post</Link>
+                <Link to="/artsays-community/create-post" className="text-center btn btn-primary btn-sm flex-fill justify-content-center">Create Post</Link>
               </div>
             </div>
           </div>
@@ -720,7 +720,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                   { text: "Featured Artist Program is open", badge: "badge-success", link: "/artist/profile" },
                   { text: "Platform update: New analytics tools", badge: "badge-warning", link: "/artist/analytics" },
                 ].map((a, i) => (
-                  <li key={i} className="list-group-item d-flex justify-content-between align-items-center px-0">
+                  <li key={i} className="px-0 list-group-item d-flex justify-content-between align-items-center">
                     <Link to={a.link} style={{ color: "#1e293b", textDecoration: "none", fontSize: 13 }}>
                       {a.text}
                     </Link>
@@ -786,7 +786,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 .filter(Boolean)
                 .slice(0, 5)
                 .map((alert, i) => (
-                  <div key={i} className="alert alert-default d-flex align-items-start mb-2" style={{ padding: "10px 12px", borderRadius: 8 }}>
+                  <div key={i} className="mb-2 alert alert-default d-flex align-items-start" style={{ padding: "10px 12px", borderRadius: 8 }}>
                     <i className={`fa ${alert.icon} mr-2 mt-1`} style={{ fontSize: 16 }}></i>
                     <div style={{ flex: 1 }}>
                       <p className="mb-1" style={{ fontSize: 12 }}>{alert.text}</p>
@@ -799,12 +799,12 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
 
               {!loading && activeListings > 0 && totalSold > 0 && socialProfile && crNew === 0 && certifiedCount > 0 && (
                 <div className="text-center text-success" style={{ padding: "20px 0", fontSize: 13, fontWeight: 600 }}>
-                  <i className="fa fa-check-circle mr-1"></i> Everything looks great! Keep creating.
+                  <i className="mr-1 fa fa-check-circle"></i> Everything looks great! Keep creating.
                 </div>
               )}
 
               {loading && (
-                <p className="text-muted text-center">Loading alerts...</p>
+                <p className="text-center text-muted">Loading alerts...</p>
               )}
             </div>
           </div>
@@ -816,7 +816,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
       {/* ══════════════════════════════════════════════════════════
           ZONE 5 – ANALYTICS & INSIGHTS
       ══════════════════════════════════════════════════════════ */}
-      <div className="row clearfix row-deck">
+      <div className="clearfix row row-deck">
 
         {/* Revenue Breakdown */}
         <div className="col-lg-6 col-md-12">
@@ -825,7 +825,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               <h2>Revenue Breakdown <small>Earnings by source</small></h2>
             </div>
             <div className="body">
-              <div className="d-flex justify-content-start mb-4" style={{ gap: 24 }}>
+              <div className="mb-4 d-flex justify-content-start" style={{ gap: 24 }}>
                 <div>
                   <p className="mb-0 font-12 text-uppercase text-muted">Wallet Balance</p>
                   <h4>{loading ? "—" : fmt(walletBalance)}</h4>
@@ -840,11 +840,11 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 </div>
               </div>
 
-              <div className="d-flex align-items-center mb-4" style={{ gap: 20 }}>
+              <div className="mb-4 d-flex align-items-center" style={{ gap: 20 }}>
                 <Donut segments={donutSegments} size={90} stroke={15} />
                 <div style={{ flex: 1 }}>
                   {donutSegments.map((s) => (
-                    <div key={s.label} className="d-flex justify-content-between align-items-center mb-2">
+                    <div key={s.label} className="mb-2 d-flex justify-content-between align-items-center">
                       <div className="d-flex align-items-center" style={{ gap: 8 }}>
                         <span style={{ width: 12, height: 12, borderRadius: 2, background: s.color, display: "inline-block" }}></span>
                         <span style={{ fontSize: 13 }}>{s.label}</span>
@@ -856,14 +856,14 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               </div>
 
               <hr />
-              <div className="row clearfix mt-4">
+              <div className="clearfix mt-4 row">
                 {[
                   { label: "Marketplace", value: fmt(marketplaceTotal), color: "#6366f1" },
                   { label: "Memberships", value: fmt(membershipTotal), color: "#10b981" },
                   { label: "Tips Received", value: fmt(tipTotal), color: "#f59e0b" },
                   { label: "Total Sold", value: `${totalSold} items`, color: "#8b5cf6" },
                 ].map(({ label, value, color }) => (
-                  <div key={label} className="col-6 mb-2">
+                  <div key={label} className="mb-2 col-6">
                     <p className="mb-0 font-12 text-muted">{label}</p>
                     <h5 style={{ color, fontWeight: 800 }}>{loading ? "—" : value}</h5>
                   </div>
@@ -878,7 +878,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
           <div className="card">
             <div className="header d-flex justify-content-between">
               <h2>Engagement Activity <small>Tip & wallet credit history</small></h2>
-              <div className="d-none d-md-block text-right">
+              <div className="text-right d-none d-md-block">
                 <Link to="/community/notifications" className="btn btn-primary btn-sm">
                   View All Activity
                 </Link>
@@ -893,7 +893,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 </p>
               ) : (
                 <div className="table-responsive">
-                  <table className="table table-hover mb-0">
+                  <table className="table mb-0 table-hover">
                     <thead>
                       <tr>
                         <th>Type</th>
@@ -938,7 +938,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
       {/* ══════════════════════════════════════════════════════════
           ZONE 6 – BIDDING, TRUST & ACHIEVEMENTS
       ══════════════════════════════════════════════════════════ */}
-      <div className="row clearfix row-deck">
+      <div className="clearfix row row-deck">
 
         {/* Bidding Overview */}
         <div className="col-lg-4 col-md-6 col-sm-12">
@@ -954,7 +954,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               </ul>
             </div>
             <div className="body">
-              <table className="table table-hover mb-3">
+              <table className="table mb-3 table-hover">
                 <tbody>
                   {[
                     { label: "Products in Bidding", value: biddingProducts.length, badge: "badge-primary" },
@@ -975,7 +975,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                   ))}
                 </tbody>
               </table>
-              <Link to="/artist/bidding-products-table" className="btn btn-secondary btn-sm btn-block text-center justify-content-center">
+              <Link to="/artist/bidding-products-table" className="text-center btn btn-secondary btn-sm btn-block justify-content-center">
                 View Bidding Products
               </Link>
             </div>
@@ -989,7 +989,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               <h2>Trust & Credibility</h2>
             </div>
             <div className="body">
-              <table className="table table-hover mb-3">
+              <table className="table mb-3 table-hover">
                 <tbody>
                   {[
                     { icon: "fa-check-circle", label: "Certification Status", value: `${certifiedCount} Certified`, badge: "badge-success" },
@@ -1014,9 +1014,9 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
                 </tbody>
               </table>
               <div className="d-flex" style={{ gap: 8 }}>
-                <Link to="/artist/certification" className="btn btn-success btn-sm flex-fill text-center justify-content-center">Certification</Link>
-                <Link to="/artist/insurance" className="btn btn-primary btn-sm flex-fill text-center justify-content-center">Insurance</Link>
-                <Link to="/artsays-community/setting" state={{ tab: "verified" }} className="btn btn-warning btn-sm flex-fill text-center justify-content-center">Badge</Link>
+                <Link to="/artist/certification" className="text-center btn btn-success btn-sm flex-fill justify-content-center">Certification</Link>
+                <Link to="/artist/insurance" className="text-center btn btn-primary btn-sm flex-fill justify-content-center">Insurance</Link>
+                <Link to="/artsays-community/setting" state={{ tab: "verified" }} className="text-center btn btn-warning btn-sm flex-fill justify-content-center">Badge</Link>
               </div>
             </div>
           </div>
@@ -1034,7 +1034,7 @@ const res = await axios.get(`${API_URL}/auth/userid/${userId}`, { headers: authH
               ) : topProducts.length === 0 ? (
                 <p className="text-center text-muted">Upload products to see insights</p>
               ) : (
-                <table className="table table-hover mb-0">
+                <table className="table mb-0 table-hover">
                   <thead>
                     <tr>
                       <th>Product</th>

@@ -135,7 +135,14 @@ const AccountSecurityAgreement = ({ userId, loading }) => {
                         onChange={handleChange}
 
                     />
-                    <label className="mx-2">{checkboxLabels.agreeCommissionFees} <span style={{ color: 'red' }}>*</span></label>
+                    <label className="mx-2">
+                        Agree to&nbsp;
+                        <a href="/policy" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
+                            Commission Fees
+                        </a>
+                        &nbsp;(Platform commission percentage per sale)
+                        <span style={{ color: 'red' }}> *</span>
+                    </label>
                 </div>
                 <div className="form-group">
                     <input
@@ -144,7 +151,13 @@ const AccountSecurityAgreement = ({ userId, loading }) => {
                         checked={!!formData.agreeNoFakeArtwork}
                         onChange={handleChange}
                     />
-                    <label className="mx-2">{checkboxLabels.agreeNoFakeArtwork} <span style={{ color: 'red' }}>*</span></label>
+                    <label className="mx-2">
+                        Agree to&nbsp;
+                        <a href="/policy" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
+                            No Fake Artwork Policy
+                        </a>
+                        <span style={{ color: 'red' }}> *</span>
+                    </label>
                 </div>
                 <button type="button"
                     className="btn btn-primary mx-2"

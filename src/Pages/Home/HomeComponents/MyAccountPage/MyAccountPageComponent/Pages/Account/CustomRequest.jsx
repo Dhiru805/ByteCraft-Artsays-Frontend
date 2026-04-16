@@ -14,6 +14,7 @@ import NegotiateModal from "./NegotiateModal";
 import ViewBuyerRequest from "./ViewRequest";
 import { DEFAULT_PROFILE_IMAGE } from "./constant";
 import CreatableSelect from "react-select/creatable";
+import Select from "react-select";
 import { getImageUrl } from '../../../../../../../utils/getImageUrl';
 
 const BASE_URL = getImageUrl(null);
@@ -1054,31 +1055,44 @@ const AddCustomRequestForm = () => {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Select Artist <span className="text-rose-500">*</span>
                 </label>
-                <div className="relative">
-                  <select
-                    id="artistSelect"
-                    name="artist"
-                    value={artistId}
-                    onChange={(e) => {
-                      const selectedId = e.target.value;
-                      setArtistId(selectedId);
-                      const selectedArtist = artists.find(a => a._id === selectedId);
-                      setSelectedArtistName(selectedArtist ? `${selectedArtist.name} ${selectedArtist.lastName || ""}`.trim() : "");
-                    }}
-                    className="w-full appearance-none border border-gray-200 px-4 py-3 rounded-2xl bg-gray-50 focus:bg-white focus:border-[#5C4033] focus:ring-2 focus:ring-[#5C4033]/10 transition-all duration-300 outline-none cursor-pointer"
-                    required
-                  >
-                    <option value="">Choose an Artist</option>
-                    {artists.map((artist) => (
-                      <option key={artist._id} value={artist._id}>
-                        {artist.name} {artist.lastName}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
-                  </div>
-                </div>
+                <Select
+                  inputId="artistSelect"
+                  placeholder="Choose an Artist"
+                  options={artists.map((a) => ({
+                    value: a._id,
+                    label: `${a.name} ${a.lastName || ''}${a.artsaysId ? ` (${a.artsaysId})` : ''}`.trim(),
+                  }))}
+                  value={artistId ? { value: artistId, label: (() => { const a = artists.find(x => x._id === artistId); return a ? `${a.name} ${a.lastName || ''}${a.artsaysId ? ` (${a.artsaysId})` : ''}`.trim() : ''; })() } : null}
+                  onChange={(opt) => {
+                    setArtistId(opt ? opt.value : '');
+                    const a = artists.find(x => x._id === (opt ? opt.value : ''));
+                    setSelectedArtistName(a ? `${a.name} ${a.lastName || ''}`.trim() : '');
+                  }}
+                  isClearable
+                  isSearchable
+                  styles={{
+                    control: (base, state) => ({
+                      ...base,
+                      borderRadius: '1rem',
+                      borderColor: state.isFocused ? '#5C4033' : '#e5e7eb',
+                      backgroundColor: state.isFocused ? '#fff' : '#f9fafb',
+                      boxShadow: state.isFocused ? '0 0 0 2px rgba(92,64,51,0.1)' : base.boxShadow,
+                      padding: '4px 4px',
+                      minHeight: '48px',
+                      cursor: 'pointer',
+                      '&:hover': { borderColor: '#5C4033' },
+                    }),
+                    menu: (base) => ({ ...base, borderRadius: '1rem', zIndex: 50 }),
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isSelected ? '#5C4033' : state.isFocused ? '#f5ede9' : '#fff',
+                      color: state.isSelected ? '#fff' : '#374151',
+                      cursor: 'pointer',
+                    }),
+                    placeholder: (base) => ({ ...base, color: '#9ca3af' }),
+                    indicatorSeparator: () => ({ display: 'none' }),
+                  }}
+                />
               </div>
 
               <div>
