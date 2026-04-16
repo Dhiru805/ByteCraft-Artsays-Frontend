@@ -11,7 +11,7 @@ const ProductView = () => {
 
   return (
     <div className="flex flex-col bg-[#fff]">
-      <main className="flex flex-row gap-4 w-[96%] mx-auto">
+      <main className="grid grid-cols-12 gap-2 p-2">
         <Sidebar />
         <Profile shareprofileid={artistId} />
         <Suggestion />
