@@ -67,13 +67,13 @@ const ProductCard = ({ product, getImageUrl, likedProducts, onWishlist, onCart, 
         {/* Sold Out */}
         {soldOut && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-            <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
-              <span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span>
+            <div className="px-6 py-2 transform bg-white border rounded-lg shadow-2xl border-white/50 -rotate-12">
+              <span className="text-xl font-black tracking-wider text-red-600 uppercase">Sold Out</span>
             </div>
           </div>
         )}
         {/* Edition badge */}
-        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+        <div className="absolute z-10 flex flex-col gap-2 top-4 left-4">
           {product.editionType && (
             <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
               {product.editionType}
@@ -83,15 +83,15 @@ const ProductCard = ({ product, getImageUrl, likedProducts, onWishlist, onCart, 
         {/* Heart */}
         <button
           onClick={(e) => { e.stopPropagation(); onWishlist(product._id); }}
-          className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+          className="absolute z-10 p-3 transition-all transform rounded-full shadow-sm top-4 right-4 bg-white/80 backdrop-blur-md hover:bg-white hover:text-red-500 hover:scale-110 group/heart"
         >
           <Heart size={18} className={`transition-colors ${likedProducts[product._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
         </button>
-        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute inset-0 transition-opacity duration-500 opacity-0 pointer-events-none bg-black/5 group-hover:opacity-100" />
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-grow p-3 gap-3">
+      <div className="flex flex-col flex-grow gap-3 p-3">
         {/* Artist + badges */}
         <div className="flex items-center gap-1">
           <div className="flex items-center gap-2">
@@ -136,50 +136,52 @@ const ProductCard = ({ product, getImageUrl, likedProducts, onWishlist, onCart, 
         <div className="flex items-center justify-between mt-auto border-t border-gray-50">
           <div className="flex items-center gap-2">
             {hasDiscount && (
-              <span className="text-lg text-gray-400 line-through font-bold">
+              <span className="text-lg font-bold text-gray-400 line-through">
                 ₹{(product.marketPrice || 0).toLocaleString()}
               </span>
             )}
-            <span className="text-2xl font-black text-gray-900 tracking-tighter">
+            <span className="text-2xl font-black tracking-tighter text-gray-900">
               ₹{displayPrice.toLocaleString()}
             </span>
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="grid grid-cols-5 gap-2">
-          <button
-            onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; onCart(product._id); }}
-            disabled={soldOut}
-            className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
-            title="Add to Cart"
-          >
-            <div className="relative">
-              <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
-              {(() => {
-                const cartItem = cartItems.find((i) => i.product?._id === product._id);
-                return cartItem && cartItem.quantity > 0 ? (
-                  <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
-                    {cartItem.quantity}
-                  </span>
-                ) : null;
-              })()}
-            </div>
-          </button>
-          <button
-            onClick={async (e) => {
-              e.stopPropagation();
-              if (!ensureBuyer()) return;
-              if (soldOut) return;
-              await onCart(product._id);
-              navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
-            }}
-            disabled={soldOut}
-            className="col-span-4 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] rounded-2xl font-black text-[12px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:!bg-[#ffffff] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-gray-100 transform active:scale-95 flex items-center justify-center overflow-hidden relative"
-          >
-            <span className="relative z-10">Buy Now</span>
-          </button>
-        </div>
+        {userType !== "Artist" && userType !== "Seller" && (
+          <div className="grid grid-cols-5 gap-2">
+            <button
+              onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; onCart(product._id); }}
+              disabled={soldOut}
+              className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm"
+              title="Add to Cart"
+            >
+              <div className="relative">
+                <ShoppingCart size={20} className="transition-transform group-hover/cart:scale-110" />
+                {(() => {
+                  const cartItem = cartItems.find((i) => i.product?._id === product._id);
+                  return cartItem && cartItem.quantity > 0 ? (
+                    <span className="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-lg border-2 border-white flex items-center justify-center">
+                      {cartItem.quantity}
+                    </span>
+                  ) : null;
+                })()}
+              </div>
+            </button>
+            <button
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (!ensureBuyer()) return;
+                if (soldOut) return;
+                await onCart(product._id);
+                navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
+              }}
+              disabled={soldOut}
+              className="col-span-4 h-[48px] bg-[#6F4D34] text-white hover:!text-[#6F4D34] rounded-2xl font-black text-[12px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:!bg-[#ffffff] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-gray-100 transform active:scale-95 flex items-center justify-center overflow-hidden relative"
+            >
+              <span className="relative z-10">Buy Now</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -201,23 +203,23 @@ const BidCard = ({ item, getImageUrl, navigate }) => {
         <img
           src={getImageUrl(p.mainImage)}
           alt={name}
-          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+          className="object-contain w-full h-full transition-transform duration-700 group-hover:scale-110"
           onError={(e) => { e.target.src = "/assets/home/biditemurl.jpg"; }}
         />
-        <div className="absolute top-5 left-5 z-10">
+        <div className="absolute z-10 top-5 left-5">
           <span className="bg-[#6F4D34] text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">Bid</span>
         </div>
       </div>
-      <div className="flex flex-col flex-grow p-6 gap-4">
+      <div className="flex flex-col flex-grow gap-4 p-6">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
           <span className="text-[#6F4D34] text-[10px] font-black uppercase tracking-widest">{artist}</span>
         </div>
         <h3 className="text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors">{name}</h3>
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+        <div className="flex items-center justify-between pt-4 mt-auto border-t border-gray-50">
           <div className="flex flex-col">
             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Starting Bid</span>
-            <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{startingPrice.toLocaleString()}</span>
+            <span className="text-2xl font-black tracking-tighter text-gray-900">₹{startingPrice.toLocaleString()}</span>
           </div>
         </div>
         <button
@@ -275,10 +277,10 @@ const SkeletonCard = () => (
   <div className="bg-white rounded-[24px] border border-gray-100 overflow-hidden animate-pulse">
     <div className="aspect-[5/5] bg-gray-100" />
     <div className="p-3 space-y-3">
-      <div className="h-2 bg-gray-100 rounded-full w-1/2" />
-      <div className="h-4 bg-gray-100 rounded-full w-3/4" />
-      <div className="h-2 bg-gray-100 rounded-full w-1/3" />
-      <div className="h-12 bg-gray-100 rounded-2xl mt-2" />
+      <div className="w-1/2 h-2 bg-gray-100 rounded-full" />
+      <div className="w-3/4 h-4 bg-gray-100 rounded-full" />
+      <div className="w-1/3 h-2 bg-gray-100 rounded-full" />
+      <div className="h-12 mt-2 bg-gray-100 rounded-2xl" />
     </div>
   </div>
 );
@@ -286,7 +288,8 @@ const SkeletonCard = () => (
 // ─── MAIN PAGE ───────────────────────────────────────────────
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const navigate = useNavigate();
+
 
   const [inputVal, setInputVal] = useState(searchParams.get("q") || "");
   const [query, setQuery] = useState(searchParams.get("q") || "");
@@ -348,13 +351,13 @@ const SearchPage = () => {
         setArtists(Array.isArray(al) ? al : []);
 
         if (userId && userType === "Buyer") {
-          try { setCartItems((await getAPI(`/api/cart/${userId}`))?.data?.items || []); } catch {}
+          try { setCartItems((await getAPI(`/api/cart/${userId}`))?.data?.items || []); } catch { }
           try {
             const wRes = await getAPI(`/api/wishlist/${userId}`);
             const wMap = {};
             (wRes?.data?.items || []).forEach((i) => { const id = i.product?._id || i.product; if (id) wMap[id] = true; });
             setLikedProducts(wMap);
-          } catch {}
+          } catch { }
         }
       } catch (e) {
         console.error("Search load error:", e);
@@ -367,7 +370,7 @@ const SearchPage = () => {
 
   const refreshCart = async () => {
     if (!userId || userType !== "Buyer") return;
-    try { setCartItems((await getAPI(`/api/cart/${userId}`))?.data?.items || []); } catch {}
+    try { setCartItems((await getAPI(`/api/cart/${userId}`))?.data?.items || []); } catch { }
   };
 
   const handleWishlist = async (productId) => {
@@ -382,7 +385,7 @@ const SearchPage = () => {
         toast.success("Added to Wishlist");
       }
       setLikedProducts((prev) => ({ ...prev, [productId]: !isLiked }));
-    } catch {}
+    } catch { }
   };
 
   const handleCart = async (productId) => {
@@ -444,21 +447,21 @@ const SearchPage = () => {
         </div>
         <div className="relative z-10 container mx-auto px-6 md:px-12 max-w-[1440px] py-14 md:py-20">
           <span className="inline-block px-3 py-1 bg-white text-[#6F4D34] rounded-full text-[10px] font-black tracking-widest uppercase mb-4">Search</span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3 text-white leading-tight drop-shadow-lg">
+          <h1 className="mb-3 text-3xl font-extrabold leading-tight text-white sm:text-4xl md:text-5xl drop-shadow-lg">
             Discover Art, Bids &amp; Artists
           </h1>
-          <p className="text-sm sm:text-base text-white/80 mb-8">Search across all products, auctions, categories and artists</p>
+          <p className="mb-8 text-sm sm:text-base text-white/80">Search across all products, auctions, categories and artists</p>
 
           {/* Search bar */}
-          <form onSubmit={handleSubmit} className="flex items-center bg-white rounded-2xl overflow-hidden shadow-xl max-w-2xl">
-            <div className="flex items-center flex-1 px-5 gap-3">
+          <form onSubmit={handleSubmit} className="flex items-center max-w-2xl overflow-hidden bg-white shadow-xl rounded-2xl">
+            <div className="flex items-center flex-1 gap-3 px-5">
               <Search size={20} className="text-gray-400 shrink-0" />
               <input
                 type="text"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
                 placeholder="Search your next Masterpiece NOW!"
-                className="flex-1 px-4 py-3 text-md md:text-lg text-gray-600 focus:outline-none bg-transparent"
+                className="flex-1 px-4 py-3 text-gray-600 bg-transparent text-md md:text-lg focus:outline-none"
                 autoFocus
               />
               {inputVal && (
@@ -478,7 +481,7 @@ const SearchPage = () => {
       <div className="container mx-auto px-4 md:px-12 max-w-[1440px] py-10">
 
         {/* Tabs */}
-        <div className="flex items-center gap-3 flex-wrap mb-8">
+        <div className="flex flex-wrap items-center gap-3 mb-8">
           {TABS.map((tab) => (
             <button
               key={tab}
@@ -502,14 +505,14 @@ const SearchPage = () => {
 
         {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) : paged.length === 0 ? (
           <div className="py-32 text-center bg-white rounded-[40px] border border-dashed border-gray-200 shadow-sm">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 rounded-full mb-6 text-gray-300"><Search size={48} /></div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No results found</h3>
-            <p className="text-gray-500 max-w-sm mx-auto mb-8">
+            <div className="inline-flex items-center justify-center w-24 h-24 mb-6 text-gray-300 rounded-full bg-gray-50"><Search size={48} /></div>
+            <h3 className="mb-2 text-2xl font-bold text-gray-900">No results found</h3>
+            <p className="max-w-sm mx-auto mb-8 text-gray-500">
               {query ? `We couldn't find anything matching "${query}". Try different keywords.` : "Start typing to search products, bids, artists and more."}
             </p>
             {query && (
@@ -520,9 +523,9 @@ const SearchPage = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-                {paged.map(({ type, data }, index) => {
-                  if (type === "store") return <ProductCard key={`store-${data._id}`} product={data} getImageUrl={getImageUrl} likedProducts={likedProducts} onWishlist={handleWishlist} onCart={handleCart} cartItems={cartItems} navigate={navigate} index={index} />;
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {paged.map(({ type, data }, index) => {
+                if (type === "store") return <ProductCard key={`store-${data._id}`} product={data} getImageUrl={getImageUrl} likedProducts={likedProducts} onWishlist={handleWishlist} onCart={handleCart} cartItems={cartItems} navigate={navigate} index={index} />;
                 if (type === "bid") return <BidCard key={`bid-${data._id}`} item={data} getImageUrl={getImageUrl} navigate={navigate} />;
                 return <ArtistCard key={`artist-${data._id}`} artist={data} getImageUrl={getImageUrl} navigate={navigate} />;
               })}
@@ -530,10 +533,10 @@ const SearchPage = () => {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center mt-12 pb-12">
+              <div className="flex justify-center pb-12 mt-12">
                 <nav className="flex items-center gap-2 p-2 bg-white border border-gray-200 rounded-[32px] shadow-sm">
-                  <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)} className="p-4 rounded-2xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"><ChevronLeft size={28} /></button>
-                  <div className="flex items-center px-4 gap-1">
+                  <button disabled={currentPage === 1} onClick={() => setCurrentPage((p) => p - 1)} className="p-4 text-gray-500 transition-colors rounded-2xl hover:bg-gray-50 disabled:opacity-30"><ChevronLeft size={28} /></button>
+                  <div className="flex items-center gap-1 px-4">
                     {Array.from({ length: totalPages }).map((_, i) => {
                       const pg = i + 1;
                       if (totalPages > 7 && pg !== 1 && pg !== totalPages && (pg < currentPage - 1 || pg > currentPage + 1)) {
@@ -545,7 +548,7 @@ const SearchPage = () => {
                       );
                     })}
                   </div>
-                  <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)} className="p-4 rounded-2xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"><ChevronRight size={28} /></button>
+                  <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((p) => p + 1)} className="p-4 text-gray-500 transition-colors rounded-2xl hover:bg-gray-50 disabled:opacity-30"><ChevronRight size={28} /></button>
                 </nav>
               </div>
             )}

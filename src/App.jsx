@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Routes from "./Routes/Routes";
 import { ToastContainer, toast } from "react-toastify";
@@ -22,6 +22,21 @@ const AppContent = () => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const userId = localStorage.getItem("userId");
+
+  const [preloaderDone, setPreloaderDone] = useState(() => {
+    const hasSeen = localStorage.getItem("hasSeenPreloader");
+    const isBot = /Lighthouse|PageSpeed|Googlebot|bingbot|yandex|baiduspider|facebookexternalhit|twitterbot/i.test(
+      window.navigator.userAgent
+    );
+    return !!hasSeen || isBot || location.pathname !== "/";
+  });
+
+  useEffect(() => {
+    if (!preloaderDone) {
+      const timer = setTimeout(() => setPreloaderDone(true), 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [preloaderDone]);
 
   const isDashboard =
     location.pathname.startsWith("/super-admin") ||
@@ -83,7 +98,7 @@ const AppContent = () => {
         theme="light"
         limit={5}
       />
-       <CookieConsent />
+       {preloaderDone && <CookieConsent />}
        {!isDashboard && <ChatIcon />}
        <WonBidPopup userId={userId} isAuthenticated={isAuthenticated} />
       <FeedbackPopup />

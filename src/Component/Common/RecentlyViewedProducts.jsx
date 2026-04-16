@@ -176,7 +176,7 @@ const RecentlyViewedProducts = () => {
               <Clock size={18} color="#fff" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+              <h2 className="text-xl font-bold tracking-tight text-gray-900">
                 Recently Viewed
               </h2>
               <p className="text-xs text-gray-500">Pick up where you left off</p>
@@ -209,7 +209,7 @@ const RecentlyViewedProducts = () => {
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="flex gap-3 overflow-x-auto pb-2"
+          className="flex gap-3 pb-2 overflow-x-auto"
           style={{ scrollSnapType: "x mandatory", scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <style>{`.rv-scroll::-webkit-scrollbar { display: none; }`}</style>
@@ -244,14 +244,14 @@ const RecentlyViewedProducts = () => {
                   {/* Sold Out Overlay */}
                   {isOutOfStock && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-                      <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
-                        <span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span>
+                      <div className="px-6 py-2 transform bg-white border rounded-lg shadow-2xl border-white/50 -rotate-12">
+                        <span className="text-xl font-black tracking-wider text-red-600 uppercase">Sold Out</span>
                       </div>
                     </div>
                   )}
 
                   {/* Badges */}
-                  <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                  <div className="absolute z-10 flex flex-col gap-2 top-4 left-4">
                     {product.editionType && (
                       <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
                         {product.editionType}
@@ -268,7 +268,7 @@ const RecentlyViewedProducts = () => {
                   {/* Heart */}
                   <button
                     onClick={(e) => handleWishlist(e, product._id)}
-                    className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+                    className="absolute z-10 p-3 transition-all transform rounded-full shadow-sm top-4 right-4 bg-white/80 backdrop-blur-md hover:bg-white hover:text-red-500 hover:scale-110 group/heart"
                   >
                     <Heart
                       size={18}
@@ -280,11 +280,11 @@ const RecentlyViewedProducts = () => {
                     />
                   </button>
 
-                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <div className="absolute inset-0 transition-opacity duration-500 opacity-0 pointer-events-none bg-black/5 group-hover:opacity-100" />
                 </div>
 
                 {/* Content */}
-                <div className="flex flex-col flex-grow p-3 gap-3">
+                <div className="flex flex-col flex-grow gap-3 p-3">
                   {/* Artist */}
                   <div className="flex items-center gap-1">
                     <div className="flex items-center gap-2">
@@ -321,17 +321,18 @@ const RecentlyViewedProducts = () => {
                   <div className="flex items-center justify-between mt-auto border-t border-gray-50">
                     <div className="flex items-center gap-2">
                       {hasDiscount && (
-                        <span className="text-lg text-gray-400 line-through font-bold">
+                        <span className="text-lg font-bold text-gray-400 line-through">
                           ₹{(product.marketPrice || 0).toLocaleString()}
                         </span>
                       )}
-                      <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                      <span className="text-2xl font-black tracking-tighter text-gray-900">
                         ₹{(product.finalPrice || 0).toLocaleString()}
                       </span>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
+                  {userType !== "Artist" && userType !== "Seller" && (
                   <div className="grid grid-cols-5 gap-2">
                     <button
                       onClick={(e) => addToCart(e, product._id)}
@@ -368,6 +369,7 @@ const RecentlyViewedProducts = () => {
                       </span>
                     </button>
                   </div>
+                   )}
                 </div>
               </div>
             );

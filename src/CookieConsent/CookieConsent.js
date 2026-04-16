@@ -247,7 +247,7 @@ const CookieConsent = () => {
           transition={{ duration: 0.35 }}
           className="fixed bottom-6 z-[9999] max-w-3xl w-[92%] md:w-[1440px] justify-self-center"
         >
-          <div className="backdrop-blur-3xl backdrop-saturate-200 bg-black/90 border border-white/10 rounded-2xl p-4 shadow-xl">
+          <div className="p-4 bg-white border shadow-xl backdrop-blur-3xl backdrop-saturate-200 border-white/10 rounded-2xl">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 mt-1">
                 <div className="w-12 h-12 rounded-xl bg-[#48372D] shadow-inner">
@@ -267,8 +267,8 @@ const CookieConsent = () => {
               <div className="flex-1">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-sm md:text-base font-semibold text-dark">Artsays Cookies - Crafted for Creators & Collectors</h3>
-                    <p className="text-xs md:text-sm text-dark mt-1">Cookies help power bidding, deliver your Certificate of Authenticity (COA), and personalise the marketplace experience. Manage preferences anytime.</p>
+                    <h3 className="text-sm font-semibold md:text-base text-dark">Artsays Cookies - Crafted for Creators & Collectors</h3>
+                    <p className="mt-1 text-xs md:text-sm text-dark">Cookies help power bidding, deliver your Certificate of Authenticity (COA), and personalise the marketplace experience. Manage preferences anytime.</p>
                   </div>
 
                   <button
@@ -278,13 +278,13 @@ const CookieConsent = () => {
                     title="Close"
                     type="button"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </button>
                 </div>
 
-                <div className="mt-4 flex gap-3 items-center">
+                <div className="flex items-center gap-3 mt-4">
                   <button
                     onClick={acceptAll}
                     className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#48372D] text-white font-bold shadow hover:scale-[1.01] active:scale-95 transition-transform"
@@ -295,7 +295,7 @@ const CookieConsent = () => {
 
                   <button
                     onClick={() => setShowPrefs(true)}
-                    className="inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl border border-dark text-dark text-sm"
+                    className="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm border rounded-xl border-dark text-dark"
                     type="button"
                   >
                     Manage
@@ -304,14 +304,14 @@ const CookieConsent = () => {
 
                 <div className="mt-3 flex items-center justify-between text-[11px] text-dark">
                   <span>Read our <a href="/privacy" className="underline">Privacy Policy</a> and <a href="/coa" className="underline">COA Process</a></span>
-                  <button onClick={rejectAll} className="text-dark text-xs underline" type="button">Reject</button>
+                  <button onClick={rejectAll} className="text-xs underline text-dark" type="button">Reject</button>
                 </div>
 
                 {/* Preferences panel */}
                 <div className={`mt-4 ${showPrefs ? "block" : "hidden"}`}>
-                  <div className="mt-2 p-3 rounded-lg bg-white/3 border border-white/6">
+                  <div className="p-3 mt-2 border rounded-lg bg-white/3 border-white/6">
                     <h4 className="text-sm font-semibold text-dark">Cookie Preferences - Artsays</h4>
-                    <p className="text-xs text-dark mt-1">Select what you allow. Functional cookies are required for COA, bidding, and secure account actions.</p>
+                    <p className="mt-1 text-xs text-dark">Select what you allow. Functional cookies are required for COA, bidding, and secure account actions.</p>
 
                     <div className="mt-3 space-y-3">
                       <div className="flex items-center justify-between">
@@ -374,7 +374,7 @@ const CookieConsent = () => {
 
                       <div className="flex items-center gap-2 mt-2">
                         <button onClick={savePreferences} className="flex-1 py-2 rounded-lg bg-[#48372D] text-white font-medium" type="button">Save Preferences</button>
-                        <button onClick={() => setShowPrefs(false)} className="py-2 px-3 rounded-lg border border-dark text-white/90" type="button">Cancel</button>
+                        <button onClick={() => setShowPrefs(false)} className="px-3 py-2 border rounded-lg border-dark text-white/90" type="button">Cancel</button>
                       </div>
 
                       <div className="mt-3 text-[11px] text-dark">

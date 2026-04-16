@@ -117,10 +117,10 @@ const Homepage = () => {
 
       <Hero homepageId={homepageId} onReady={handleHeroReady} />
       {heroReady && <BrowseCategories homepageId={homepageId} />}
-      <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8" />
+      <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
       <WhyFromArtsays />
       <BiddingArena />
-      <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8" />
+      <SponsoredProducts placement="homepage" title="Promoted Products" layout="row" />
       <HowToBuy />
       <DiscoverArtist />
       <WhyArtsaysDifferent />

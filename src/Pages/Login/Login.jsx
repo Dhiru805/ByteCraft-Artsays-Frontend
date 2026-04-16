@@ -343,7 +343,7 @@ const Login = () => {
             <p className="login-right-subtitle">
               Let's get you all set up so you can start creating your first onboarding experience.
             </p>
-            <Link to="/register" className="login-signup-btn">
+            <Link to="/artist-seller-register" className="login-signup-btn">
               Sign Up
             </Link>
           </div>

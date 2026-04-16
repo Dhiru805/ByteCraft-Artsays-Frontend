@@ -13,6 +13,8 @@ const BiddingArena = () => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+  const userType = localStorage.getItem("userType");
+  const isArtistOrSeller = userType === "Artist" || userType === "Seller";
 
   /* ---------------- STATUS HELPERS ---------------- */
   const getFinalStatus = (item) => {
@@ -254,6 +256,7 @@ const BiddingArena = () => {
                   </div>
 
                   {/* Action Buttons */}
+                  {!isArtistOrSeller && (
                   <div className="grid grid-cols-5 gap-2">
                     <div className="flex flex-col justify-center col-span-2">
                       <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">Time Left</span>
@@ -265,13 +268,14 @@ const BiddingArena = () => {
                     <button
                       disabled={isEnded}
                       className={`col-span-3 h-[48px] rounded-2xl font-black text-[11px] hover:!text-[#6F4D34] hover:!bg-[#ffffff] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm border border-gray-100 transform active:scale-95 flex items-center justify-center
-                        ${isEnded 
-                          ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+                        ${isEnded
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-[#6F4D34] text-white hover:bg-white hover:text-[#6F4D34]"}`}
                     >
                       {status === 'Upcoming' ? 'Remind Me' : isEnded ? 'Ended' : 'Place Bid'}
                     </button>
                   </div>
+                  )}
                 </div>
               </div>
             );

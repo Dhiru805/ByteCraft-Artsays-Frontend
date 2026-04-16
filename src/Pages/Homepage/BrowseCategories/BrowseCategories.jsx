@@ -501,6 +501,7 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
                     </div>
 
                       {/* Action Buttons */}
+                      {userType !== "Artist" && userType !== "Seller" && (
                       <div className="grid grid-cols-5 gap-2 mt-2">
                         <button
                           onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
@@ -538,6 +539,7 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
                         </span>
                       </button>
                     </div>
+                      )}
                   </div>
                 </div>
               );

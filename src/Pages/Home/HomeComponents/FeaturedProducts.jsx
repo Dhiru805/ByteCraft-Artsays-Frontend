@@ -30,7 +30,7 @@ export const Product = ({ product }) => {
         </button>
 
         <img
-          className="max-w-full max-h-full object-contain "
+          className="object-contain max-w-full max-h-full "
           src={product.url || "/assets/home/biditemurl.jpg"}
           alt={product.name}
         />
@@ -41,24 +41,26 @@ export const Product = ({ product }) => {
         {product.name}
       </h3>
       <div className="flex items-center justify-between gap-1 my-[5px]  py-1">
-          <div className="flex items-center gap-1">
-            <img src="/assets/home/star.svg" alt="star icon" width="16" height="16" className="w-4 h-4" />
-            <span className="text-sm">
-              {product.rating} ({product.reviewCount} Reviews)
-            </span>
-          </div>
+        <div className="flex items-center gap-1">
+          <img src="/assets/home/star.svg" alt="star icon" width="16" height="16" className="w-4 h-4" />
+          <span className="text-sm">
+            {product.rating} ({product.reviewCount} Reviews)
+          </span>
+        </div>
         <span className="font-medium text-[18px] text-black-900">
           ${product.price}
         </span>
       </div>
-      <div className="flex flex-row items-center gap-[20px] justify-between">
-        <button className="text-center border-2 border-orange-200 rounded-[30px] text-sm  p-[10px] text-back-900 bg-base w-full">
-          ADD TO CART
-        </button>
-        <button className="text-center text-sm  rounded-[30px]  p-[10px] text-base bg-black-900 w-full">
-          BUY NOW
-        </button>
-      </div>
+      {userType !== "Artist" && userType !== "Seller" && (
+        <div className="flex flex-row items-center gap-[20px] justify-between">
+          <button className="text-center border-2 border-orange-200 rounded-[30px] text-sm  p-[10px] text-back-900 bg-base w-full">
+            ADD TO CART
+          </button>
+          <button className="text-center text-sm  rounded-[30px]  p-[10px] text-base bg-black-900 w-full">
+            BUY NOW
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -139,7 +139,7 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
     : "grid grid-cols-1 gap-3";
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-[1440px] mx-auto px-4 xl:!px-0 py-8">
       {title && (
         <div className="flex items-center gap-2 mb-4">
           <h3 className="text-lg font-bold text-gray-900">{title}</h3>
@@ -263,6 +263,7 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
                   </div>
 
                     {/* Action Buttons */}
+                    {userType !== "Artist" && userType !== "Seller" && (
                     <div className="grid grid-cols-5 gap-2">
                       <button
                         onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(product._id, e); }}
@@ -299,6 +300,7 @@ const SponsoredProducts = ({ placement, title = "Sponsored", layout = "row", max
                       </span>
                     </button>
                   </div>
+                    )}
                 </div>
               </div>
           );

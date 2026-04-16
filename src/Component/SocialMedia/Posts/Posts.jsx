@@ -17,6 +17,7 @@ const SponsoredFeedSlider = ({ ads }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef(null);
+  const userType = localStorage.getItem("userType");
 
   const handleAdClick = async (ad) => {
     try {
@@ -40,14 +41,14 @@ const SponsoredFeedSlider = ({ ads }) => {
   }, [ads.length, isHovered]);
 
   if (!ads || ads.length === 0) return null;
-    const ad = ads[currentIndex];
-    const image = ad.mainImage;
-    const hasDiscount = ad.marketPrice && ad.finalPrice && ad.marketPrice > ad.finalPrice;
-    const discountPercent = hasDiscount ? Math.round(((ad.marketPrice - ad.finalPrice) / ad.marketPrice) * 100) : 0;
+  const ad = ads[currentIndex];
+  const image = ad.mainImage;
+  const hasDiscount = ad.marketPrice && ad.finalPrice && ad.marketPrice > ad.finalPrice;
+  const discountPercent = hasDiscount ? Math.round(((ad.marketPrice - ad.finalPrice) / ad.marketPrice) * 100) : 0;
 
   return (
     <div
-      className="w-full rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden"
+      className="w-full overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -57,7 +58,7 @@ const SponsoredFeedSlider = ({ ads }) => {
           <img
             src={ad.userId?.profilePhoto ? getImageUrl(ad.userId.profilePhoto) : DEFAULT_PROFILE_IMAGE}
             alt={ad.userId?.name || "Seller"}
-            className="w-8 h-8 rounded-full object-cover border border-gray-200"
+            className="object-cover w-8 h-8 border border-gray-200 rounded-full"
           />
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-gray-900">
@@ -72,16 +73,16 @@ const SponsoredFeedSlider = ({ ads }) => {
       </div>
 
       {/* Image */}
-      <div className="relative w-full aspect-square bg-gray-50 cursor-pointer group" onClick={() => handleAdClick(ad)}>
-          {image ? (
-            <img
-              src={getImageUrl(image)}
-              alt={ad.productName}
-            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+      <div className="relative w-full cursor-pointer aspect-square bg-gray-50 group" onClick={() => handleAdClick(ad)}>
+        {image ? (
+          <img
+            src={getImageUrl(image)}
+            alt={ad.productName}
+            className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">
-            <i className="ri-image-line text-4xl"></i>
+          <div className="flex items-center justify-center w-full h-full text-gray-300">
+            <i className="text-4xl ri-image-line"></i>
           </div>
         )}
         {hasDiscount && (
@@ -95,15 +96,15 @@ const SponsoredFeedSlider = ({ ads }) => {
           <>
             <button
               onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev - 1 + ads.length) % ads.length); }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute flex items-center justify-center transition-opacity -translate-y-1/2 rounded-full shadow opacity-0 left-2 top-1/2 w-7 h-7 bg-white/80 group-hover:opacity-100"
             >
-              <i className="ri-arrow-left-s-line text-sm"></i>
+              <i className="text-sm ri-arrow-left-s-line"></i>
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev + 1) % ads.length); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/80 shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute flex items-center justify-center transition-opacity -translate-y-1/2 rounded-full shadow opacity-0 right-2 top-1/2 w-7 h-7 bg-white/80 group-hover:opacity-100"
             >
-              <i className="ri-arrow-right-s-line text-sm"></i>
+              <i className="text-sm ri-arrow-right-s-line"></i>
             </button>
           </>
         )}
@@ -112,8 +113,8 @@ const SponsoredFeedSlider = ({ ads }) => {
       {/* Product Info */}
       <div className="px-3 py-2.5">
         <h4
-            className="font-semibold text-sm text-gray-900 line-clamp-1 cursor-pointer hover:text-[#6F4D34] transition-colors"
-            onClick={() => handleAdClick(ad)}
+          className="font-semibold text-sm text-gray-900 line-clamp-1 cursor-pointer hover:text-[#6F4D34] transition-colors"
+          onClick={() => handleAdClick(ad)}
         >
           {ad.productName || "Untitled Product"}
         </h4>
@@ -129,13 +130,15 @@ const SponsoredFeedSlider = ({ ads }) => {
         </div>
 
         {/* Buy Now Button */}
-        <button
+        {userType !== "Artist" && userType !== "Seller" && (
+          <button
             onClick={() => handleAdClick(ad)}
-          className="w-full mt-2.5 py-2 bg-[#6F4D34] text-white text-sm font-semibold rounded-lg hover:bg-[#5a3d28] transition-colors flex items-center justify-center gap-1.5"
-        >
-          <i className="ri-shopping-bag-line text-sm"></i>
-          Buy Now
-        </button>
+            className="w-full mt-2.5 py-2 bg-[#6F4D34] text-white text-sm font-semibold rounded-lg hover:bg-[#5a3d28] transition-colors flex items-center justify-center gap-1.5"
+          >
+            <i className="text-sm ri-shopping-bag-line"></i>
+            Buy Now
+          </button>
+        )}
       </div>
 
       {/* Dots */}
@@ -218,9 +221,9 @@ const CommentInput = ({ post, userId, setPosts, inputRef }) => {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="relative w-full">
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute bottom-full left-0 w-full bg-white border rounded-md shadow-md z-50 max-h-40 overflow-y-auto mb-1">
+        <div className="absolute left-0 z-50 w-full mb-1 overflow-y-auto bg-white border rounded-md shadow-md bottom-full max-h-40">
           {suggestions.map((user) => (
             <div
               key={user._id}
@@ -237,12 +240,12 @@ const CommentInput = ({ post, userId, setPosts, inputRef }) => {
                 className="w-8 h-8 rounded-full"
               />
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-800 flex items-center">
+                <span className="flex items-center text-sm font-medium text-gray-800">
                   {user.username}
                   {user.verified?.length > 0 && (
                     <img
                       src={getImageUrl(user.verified[user.verified.length - 1]?.badgeImage)}
-                      className="inline-block ml-1 w-4 h-4 object-contain"
+                      className="inline-block object-contain w-4 h-4 ml-1"
                       alt="verified"
                     />
                   )}
@@ -253,7 +256,7 @@ const CommentInput = ({ post, userId, setPosts, inputRef }) => {
           ))}
         </div>
       )}
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <input
           type="text"
           ref={inputRef}
@@ -267,7 +270,7 @@ const CommentInput = ({ post, userId, setPosts, inputRef }) => {
         />
         <button
           onClick={handleComment}
-          className="text-blue-500 text-sm font-semibold hover:text-blue-700"
+          className="text-sm font-semibold text-blue-500 hover:text-blue-700"
         >
           Post
         </button>
@@ -333,8 +336,8 @@ const Post = () => {
   useEffect(() => {
     const fetchSponsoredAds = async () => {
       try {
-const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed", {}, true, false);
-          if (res?.data?.data) setSponsoredAds(res.data.data);
+        const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed", {}, true, false);
+        if (res?.data?.data) setSponsoredAds(res.data.data);
       } catch (err) {
         console.error("Error fetching sponsored ads:", err);
       }
@@ -429,7 +432,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
         `/api/social-media/homepage?userId=${userId}&page=${pageNum}&limit=${POSTS_PER_PAGE}`,
         true
       );
-      
+
       const newPosts = res?.data?.posts || [];
       const pagination = res?.data?.pagination;
 
@@ -479,7 +482,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const currentRef = loadMoreRef.current;
-    
+
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
@@ -511,11 +514,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
   const handleLike = async (postId) => {
     try {
       await postAPI(
-          `/api/social-media/posts/${postId}/likeUnlike`,
-          { userId },
-          {},
-          true
-        );
+        `/api/social-media/posts/${postId}/likeUnlike`,
+        { userId },
+        {},
+        true
+      );
       setPosts((prev) =>
         prev.map((p) =>
           p._id === postId
@@ -536,11 +539,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
   const handleSave = async (postId) => {
     try {
       await postAPI(
-          `/api/social-media/posts/${postId}/saveUnsave`,
-          { userId },
-          {},
-          true
-        );
+        `/api/social-media/posts/${postId}/saveUnsave`,
+        { userId },
+        {},
+        true
+      );
 
       setPosts((prev) =>
         prev.map((p) => (p._id === postId ? { ...p, isSaved: !p.isSaved } : p))
@@ -558,12 +561,12 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
   const confirmDelete = async () => {
     if (!deleteConfirmId) return;
     try {
-    const res = await deleteAPI(`/api/social-media/posts/${deleteConfirmId}`, {}, true);
-    if (res && !res.hasError) {
-      toast.success("Post deleted successfully");
-      setPosts((prev) => prev.filter((p) => p._id !== deleteConfirmId));
-      setDeleteConfirmId(null);
-    }
+      const res = await deleteAPI(`/api/social-media/posts/${deleteConfirmId}`, {}, true);
+      if (res && !res.hasError) {
+        toast.success("Post deleted successfully");
+        setPosts((prev) => prev.filter((p) => p._id !== deleteConfirmId));
+        setDeleteConfirmId(null);
+      }
     } catch (err) {
       console.error("Error deleting post:", err);
       toast.error(err.response?.data?.message || "Error deleting post");
@@ -663,11 +666,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
         amount: value,
       });
 
-         if (res?.data?.data?.paymentUrl) {
-                    window.location.href = res?.data?.data?.paymentUrl;
-                  } else {
-                    console.error(`Failed to create certifications: ${res.message}`);
-                  }
+      if (res?.data?.data?.paymentUrl) {
+        window.location.href = res?.data?.data?.paymentUrl;
+      } else {
+        console.error(`Failed to create certifications: ${res.message}`);
+      }
 
       // if (res.data.success) {
       //   setTipSuccess(true);
@@ -764,11 +767,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
   }
 
   const getExternalUrl = (url) => {
-  if (!url) return "#";
-  return url.startsWith("http://") || url.startsWith("https://")
-    ? url
-    : `https://${url}`;
-};
+    if (!url) return "#";
+    return url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
+  };
 
 
   const ensureBuyer = () => {
@@ -803,11 +806,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
               {/* Left Side (Image Viewer) */}
               <div className="w-[60%] h-full  bg-black flex items-center justify-center relative">
                 {activePost.images?.length > 0 ? (
-                  <div className="w-full h-full relative flex items-center justify-center">
+                  <div className="relative flex items-center justify-center w-full h-full">
                     <img
                       src={getImageUrl(activePost.images[activeImageIndex])}
                       alt="post"
-                      className="h-full w-full "
+                      className="w-full h-full "
                     />
 
                     {/* Image Nav Arrows (show only if multiple images) */}
@@ -815,27 +818,27 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       <>
                         {activeImageIndex > 0 && (
                           <button
-                            className="absolute left-3 top-1/2 -translate-y-1/2 bg-gray-100/70 p-2 rounded-full"
+                            className="absolute p-2 -translate-y-1/2 rounded-full left-3 top-1/2 bg-gray-100/70"
                             onClick={() =>
                               setActiveImageIndex((prev) => prev - 1)
                             }
                           >
-                            <i className="ri-arrow-left-s-line text-xl"></i>
+                            <i className="text-xl ri-arrow-left-s-line"></i>
                           </button>
                         )}
                         {activeImageIndex < activePost.images.length - 1 && (
                           <button
-                            className="absolute right-3 top-1/2 -translate-y-1/2 bg-gray-100/70 p-2 rounded-full"
+                            className="absolute p-2 -translate-y-1/2 rounded-full right-3 top-1/2 bg-gray-100/70"
                             onClick={() =>
                               setActiveImageIndex((prev) => prev + 1)
                             }
                           >
-                            <i className="ri-arrow-right-s-line text-xl"></i>
+                            <i className="text-xl ri-arrow-right-s-line"></i>
                           </button>
                         )}
 
                         {/* Image Dots */}
-                        <div className="absolute bottom-3 flex gap-2 justify-center w-full">
+                        <div className="absolute flex justify-center w-full gap-2 bottom-3">
                           {activePost.images.map((_, idx) => (
                             <div
                               key={idx}
@@ -870,15 +873,15 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                         className="w-10 h-10 rounded-full"
                       />
                       <div className="flex flex-col">
-                        <span className="font-semibold text-sm">
+                        <span className="text-sm font-semibold">
                           {activePost.user?.username}
                           {activePost.user.verified?.length > 0 && (
                             <img
                               src={getImageUrl(activePost.user.verified[
                                 activePost.user.verified.length - 1
                               ]?.badgeImage
-                                )}
-                              className="inline-block ml-1 w-5 h-5 object-contain"
+                              )}
+                              className="inline-block object-contain w-5 h-5 ml-1"
                               alt={
                                 activePost.user.verified[
                                   activePost.user.verified.length - 1
@@ -899,7 +902,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                     </div>
                     <button
                       onClick={() => setActiveIndex(null)}
-                      className="text-gray-600 hover:text-red-500 text-2xl font-bold"
+                      className="text-2xl font-bold text-gray-600 hover:text-red-500"
                     >
                       X
                     </button>
@@ -907,7 +910,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                 </div>
 
                 {/* Comments */}
-                <div className="flex flex-col gap-3 overflow-y-auto h-auto">
+                <div className="flex flex-col h-auto gap-3 overflow-y-auto">
                   {activePost.comments?.length > 0 ? (
                     activePost.comments.map((comment, idx) => (
                       <div key={idx} className="flex items-start gap-2">
@@ -929,7 +932,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500 text-sm">No comments yet</p>
+                    <p className="text-sm text-gray-500">No comments yet</p>
                   )}
                 </div>
                 <div className="flex flex-col gap-1.5">
@@ -948,11 +951,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                         onClick={() => {
                           commentRef.current.focus();
                         }}
-                        className="ri-chat-3-line text-xl"
+                        className="text-xl ri-chat-3-line"
                       ></i>
 
                       <button onClick={() => setSharePost(activePost)}>
-                        <i className="ri-send-plane-fill text-xl"></i>
+                        <i className="text-xl ri-send-plane-fill"></i>
                       </button>
                     </div>
                     <div>
@@ -967,23 +970,23 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                     </div>
                   </div>
 
-                  <p className="text-sm font-medium ml-1">
+                  <p className="ml-1 text-sm font-medium">
                     {activePost.likes.length} likes
                   </p>
 
-                    {/* Add Comment */}
-                    {activePost.canComment ? (
-                      <CommentInput
-                        post={activePost}
-                        userId={userId}
-                        setPosts={setPosts}
-                        inputRef={commentRef}
-                      />
-                    ) : (
-                      <p className="text-gray-500 text-sm italic">
-                        Comments are restricted
-                      </p>
-                    )}
+                  {/* Add Comment */}
+                  {activePost.canComment ? (
+                    <CommentInput
+                      post={activePost}
+                      userId={userId}
+                      setPosts={setPosts}
+                      inputRef={commentRef}
+                    />
+                  ) : (
+                    <p className="text-sm italic text-gray-500">
+                      Comments are restricted
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -992,19 +995,19 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
           {/* for small screen */}
           <div className="fixed inset-0 z-[9999] w-full h-full flex flex-col bg-[#ffffff] lg:hidden">
             {/* back button with title */}
-            <div className="w-full flex items-center justify-between p-3 border-b">
+            <div className="flex items-center justify-between w-full p-3 border-b">
               <i
-                className="ri-arrow-left-s-line text-2xl"
+                className="text-2xl ri-arrow-left-s-line"
                 onClick={() => setActiveIndex(null)}
               ></i>
-              <span className="font-semibold text-xl text-center">
+              <span className="text-xl font-semibold text-center">
                 Comments
               </span>
             </div>
 
             {/* caption with comments */}
-            <div className="flex-1 flex flex-col overflow-y-auto">
-              <div className="flex gap-2 border-b p-3">
+            <div className="flex flex-col flex-1 overflow-y-auto">
+              <div className="flex gap-2 p-3 border-b">
                 <img
                   src={
                     activePost.user?.profilePhoto
@@ -1012,7 +1015,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       : `${DEFAULT_PROFILE_IMAGE}`
                   }
                   alt="profile"
-                  className="w-11 h-11 rounded-full"
+                  className="rounded-full w-11 h-11"
                 />
                 <div className="">
                   <span className="font-semibold text-[16px] block">
@@ -1022,8 +1025,8 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                         src={getImageUrl(activePost.user.verified[
                           activePost.user.verified.length - 1
                         ]?.badgeImage
-                          )}
-                        className="inline-block ml-1 w-6 h-6 object-contain"
+                        )}
+                        className="inline-block object-contain w-6 h-6 ml-1"
                         alt={
                           activePost.user.verified[
                             activePost.user.verified.length - 1
@@ -1037,7 +1040,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       />
                     )}
                   </span>
-                  <p className="whitespace-pre-wrap break-words break-all text-sm">
+                  <p className="text-sm break-words break-all whitespace-pre-wrap">
                     {activePost.caption}
                   </p>
                 </div>
@@ -1069,7 +1072,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       </div>
                     ))
                 ) : (
-                  <p className="text-gray-500 text-sm">No comments yet</p>
+                  <p className="text-sm text-gray-500">No comments yet</p>
                 )}
               </div>
             </div>
@@ -1084,7 +1087,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                 />
               </div>
             ) : (
-              <p className="text-gray-500 text-sm italic">
+              <p className="text-sm italic text-gray-500">
                 Comments are restricted
               </p>
             )}
@@ -1096,11 +1099,11 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
             {/* Header */}
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-800">Pay a Tip</h2>
               <button
                 onClick={() => setTipPopupOpen(false)}
-                className="text-gray-600 hover:text-red-500 text-2xl font-bold"
+                className="text-2xl font-bold text-gray-600 hover:text-red-500"
               >
                 ×
               </button>
@@ -1108,7 +1111,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
 
             {/* Amount Input */}
             <div className="mb-4">
-              <label className="font-medium text-sm text-gray-700">
+              <label className="text-sm font-medium text-gray-700">
                 Enter Amount
               </label>
               <input
@@ -1121,13 +1124,13 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                 className={`w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${error ? "border-red-500" : "border-gray-300"
                   }`}
               />
-              <p className="text-xs text-gray-500 mt-1">Min ₹40 • Max ₹1,440</p>
-              {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+              <p className="mt-1 text-xs text-gray-500">Min ₹40 • Max ₹1,440</p>
+              {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
             </div>
 
             {/* Slider */}
             <div className="mb-6">
-              <p className="text-sm font-medium mb-2">
+              <p className="mb-2 text-sm font-medium">
                 Tip amount: <span className="font-semibold">₹{tipAmount}</span>
               </p>
               <input
@@ -1145,13 +1148,13 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setTipPopupOpen(false)}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600"
+                className="px-4 py-2 font-medium text-white bg-red-500 rounded-lg hover:bg-red-600"
               >
                 Pay ₹{tipAmount}
               </button>
@@ -1163,16 +1166,16 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
       {tipSuccess && (
         <div className="fixed inset-0 z-[10000] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white p-6 rounded-xl shadow-xl text-center w-[300px] animate-bounceIn">
-            <FaCheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <FaCheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
             <h3 className="text-lg font-semibold text-gray-800">
               Tip Sent Successfully!
             </h3>
-            <p className="text-gray-600 mt-1">
+            <p className="mt-1 text-gray-600">
               You Tipped <span className="font-bold">₹{tipAmount}</span>
             </p>
             <button
               onClick={() => setTipSuccess(false)}
-              className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              className="px-4 py-2 mt-4 text-white bg-green-500 rounded-lg hover:bg-green-600"
             >
               Close
             </button>
@@ -1183,22 +1186,22 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
       {/* Report Modal */}
       {reportPopupOpen && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center overflow-auto">
-          <div className="bg-white rounded-xl shadow-lg p-3">
+          <div className="p-3 bg-white shadow-lg rounded-xl">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-800">
                 Report @{reportedUser?.username}
               </h2>
               <button
                 onClick={() => setReportPopupOpen(false)}
-                className="text-gray-600 hover:text-red-500 text-2xl font-bold"
+                className="text-2xl font-bold text-gray-600 hover:text-red-500"
               >
                 ×
               </button>
             </div>
             <hr className="my-2 border-dark" />
             {/* Subtitle */}
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="mb-4 text-sm text-gray-600">
               Why are you reporting this post?
             </p>
 
@@ -1239,7 +1242,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
               {/* Description */}
               {selectedReason && (
                 <div className="mt-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
                     {selectedReason === "Other"
                       ? "Describe the issue (required)"
                       : "Describe the issue (optional)"}
@@ -1255,7 +1258,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                       }`}
                   />
                   {error && (
-                    <p className="text-xs text-red-500 mt-1">{error}</p>
+                    <p className="mt-1 text-xs text-red-500">{error}</p>
                   )}
                 </div>
               )}
@@ -1265,7 +1268,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                 <button
                   type="button"
                   onClick={() => setReportPopupOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100"
                 >
                   Cancel
                 </button>
@@ -1277,7 +1280,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                     : "bg-gray-400 cursor-not-allowed"
                     }`}
                 >
-                  Submit 
+                  Submit
                 </button>
               </div>
             </form>
@@ -1293,7 +1296,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
             <div className="flex justify-center mb-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-green-500"
+                className="w-12 h-12 text-green-500"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -1311,26 +1314,26 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
             <h3 className="text-lg font-semibold text-gray-800">
               Thanks for letting us know
             </h3>
-            <p className="text-gray-600 text-sm mt-1">
+            <p className="mt-1 text-sm text-gray-600">
               We’ve received your report about @{reportedUser.username}.
             </p>
             <hr className="my-2 border-dark" />
             {/* Block Option */}
             <div className="">
-              <p className="text-sm text-gray-700 mb-2">
+              <p className="mb-2 text-sm text-gray-700">
                 Do you also want to block{" "}
                 <span className="font-semibold">@{reportedUser.username}</span>?
               </p>
               <div className="flex justify-center gap-3">
                 <button
                   onClick={() => setReportSuccess(false)}
-                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100"
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100"
                 >
                   Close
                 </button>
                 <button
                   onClick={handleBlockUser} // ✅ hook your block API
-                  className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                  className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
                 >
                   Block
                 </button>
@@ -1342,20 +1345,20 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
 
       {sharePost && (
         <div className="fixed inset-0 bg-[#000000]/40 flex justify-center items-center z-[9999]">
-          <div className="bg-white w-80 rounded-xl p-4 shadow-lg relative">
+          <div className="relative p-4 bg-white shadow-lg w-80 rounded-xl">
             {/* Close */}
             <button
-              className="absolute top-2 right-2 text-xl"
+              className="absolute text-xl top-2 right-2"
               onClick={() => setSharePost(null)}
             >
               <i className="ri-close-line"></i>
             </button>
 
-            <h3 className="text-lg font-semibold mb-3">Share Post</h3>
+            <h3 className="mb-3 text-lg font-semibold">Share Post</h3>
 
             {/* Copy Link */}
             <button
-              className="w-full py-2 bg-gray-200 text-gray-800 rounded-lg mb-2"
+              className="w-full py-2 mb-2 text-gray-800 bg-gray-200 rounded-lg"
               onClick={() => {
                 const link = `${window.location.origin}/artsays-community/sharepost/${sharePost._id}`;
                 if (navigator.clipboard && window.isSecureContext) {
@@ -1375,7 +1378,7 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
 
             {/* Success Message */}
             {copyMsg && (
-              <p className="text-green-600 text-sm mt-1 text-center">
+              <p className="mt-1 text-sm text-center text-green-600">
                 {copyMsg}
               </p>
             )}
@@ -1388,455 +1391,455 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
           <React.Fragment key={post._id}>
             {/* Insert sponsored ad after every 5th post */}
             {idx > 0 && idx % 5 === 0 && sponsoredAds.length > 0 && (
-                <SponsoredFeedSlider ads={sponsoredAds} />
-              )}
-            <div className="w-full flex flex-col p-2 relative rounded-xl shadow-sm border">
-            {/* Post Header */}
-            <div className="flex justify-between items-center">
-              <div className="flex gap-2 items-center">
-                <img
-                  src={
-                    post.user?.profilePhoto
-                      ? getImageUrl(post.user?.profilePhoto)
-                      : `${DEFAULT_PROFILE_IMAGE}`
-                  }
-                  alt="profile"
-                  className="h-11 w-11 rounded-full cursor-pointer"
-                  onClick={() => goToProfile(post)}
-                />
+              <SponsoredFeedSlider ads={sponsoredAds} />
+            )}
+            <div className="relative flex flex-col w-full p-2 border shadow-sm rounded-xl">
+              {/* Post Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <img
+                    src={
+                      post.user?.profilePhoto
+                        ? getImageUrl(post.user?.profilePhoto)
+                        : `${DEFAULT_PROFILE_IMAGE}`
+                    }
+                    alt="profile"
+                    className="rounded-full cursor-pointer h-11 w-11"
+                    onClick={() => goToProfile(post)}
+                  />
 
-                <div>
-                  <div className="flex items-center">
-                    <h3
-                      className="font-extrabold text-[#000000] cursor-pointer"
-                      onClick={() => goToProfile(post)}
+                  <div>
+                    <div className="flex items-center">
+                      <h3
+                        className="font-extrabold text-[#000000] cursor-pointer"
+                        onClick={() => goToProfile(post)}
+                      >
+                        {post.user.username}
+                      </h3>
+
+                      {post.user.verified?.length > 0 && (
+                        <img
+                          src={getImageUrl(post.user.verified[post.user.verified.length - 1]
+                            ?.badgeImage
+                          )}
+                          className="inline-block object-contain w-5 h-5 ml-1"
+                          alt={
+                            post.user.verified[post.user.verified.length - 1]
+                              ?.badgeName || "badge"
+                          }
+                        />
+                      )}
+                      <div className="flex items-center text-[#000000]">
+                        {isPostCollaborateWithUserId(post) ? (
+                          <p className="font-extrabold cursor-pointer">
+                            , {profile?.username}
+                            {post.collaboraters?.length > 1 && (
+                              <>
+                                and &nbsp;
+                                <button
+                                  onClick={() => {
+                                    setShowCollaborators(true);
+                                    fetchAllCollaborators(post);
+                                  }}
+                                  className="font-medium text-blue-600 outline-none hover:underline focus:outline-none active:outline-none"
+                                >
+                                  ...others
+                                </button>
+                              </>
+                            )}
+                          </p>
+                        ) : (
+                          <>
+                            {post.collaborators?.length > 0 && (
+                              <p className="font-extrabold cursor-pointer">
+                                &nbsp; and &nbsp;
+                                <button
+                                  onClick={() => {
+                                    setShowCollaborators(true);
+                                    fetchAllCollaborators(post);
+                                  }}
+                                  className="font-medium text-blue-600 outline-none hover:underline focus:outline-none active:outline-none"
+                                >
+                                  ...others
+                                </button>
+                              </p>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Time + Sponsored */}
+                    <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
+                      {post.isPromoted && (
+                        <span className="font-semibold text-black">
+                          Sponsored
+                        </span>
+                      )}
+
+                      {post.location && !post.isPromoted && (
+                        <>
+                          {post.isPromoted && <span>·</span>}
+                          <span>{post.location}</span>
+                        </>
+                      )}
+
+                      {(post.isPromoted || post.location) && <span>·</span>}
+
+                      <span>{timeAgo(post.createdAt)}</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* CTA + Buttons */}
+                <div className="flex items-center gap-2">
+                  {post.showFollowButton ? (
+                    <button
+                      onClick={() => handleFollowToggle(post.user._id, false)}
+                      className="buy-button"
                     >
-                      {post.user.username}
-                    </h3>
+                      Follow
+                    </button>
+                  ) : (
+                    ""
+                  )}
+                  {post.forProduct && (
+                    <button
+                      className="buy-button"
+                      onClick={() => {
+                        if (!ensureBuyer()) return;
+                        navigate(
+                          `/my-account/check-out/${userId}?productId=${post?.forProduct
+                          }&quantity=${1}`
+                        );
+                      }}
+                    >
+                      Buy Now
+                    </button>
+                  )}
+                  <button onClick={() => setMenuOpenId(post._id)} className="focus:outline-none">
+                    <i className="text-lg ri-more-fill"></i>
+                  </button>
+                </div>
+              </div>
 
+              {/* More Menu */}
+              {menuOpenId === post._id && (
+                <ul
+                  ref={popupRef}
+                  className="absolute z-10 flex flex-col items-center justify-between w-40 text-xs bg-white border shadow-md rounded-xl right-1 top-12 "
+                >
+                  {/* Pay Tip */}
+                  {post.user._id !== userId && (
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <li
+                        className="flex items-center justify-center w-full px-3 py-2 font-semibold cursor-pointer hover:bg-gray-200 rounded-t-xl"
+                        onClick={() => {
+                          setTipUser({
+                            id: post._id,
+                            receiverId: post.user._id,
+                          });
+                          setTipPopupOpen(true);
+                          setMenuOpenId(null);
+                        }}
+                      >
+                        Pay Tip
+                      </li>
+                    </div>
+                  )}
+
+                  <hr className="w-[80%] border-t border-gray-400" />
+
+                  {/* Report */}
+                  {post.user._id !== userId && (
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <li
+                        className="flex items-center justify-center w-full px-3 py-2 font-semibold cursor-pointer hover:bg-gray-200"
+                        onClick={() => {
+                          setReportedUser({
+                            id: post.user._id,
+                            postId: post._id,
+                            username: post.user.username,
+                          });
+                          setReportPopupOpen(true);
+                          setMenuOpenId(null);
+                        }}
+                      >
+                        Report
+                      </li>
+                    </div>
+                  )}
+
+                  <hr className="w-[80%] border-t border-gray-400" />
+
+                  {/* Follow / Unfollow */}
+                  {post.user._id !== userId && (
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <li
+                        className="flex items-center justify-center w-full px-3 py-2 font-semibold cursor-pointer hover:bg-gray-200"
+                        onClick={() =>
+                          handleFollowToggle(
+                            post.user._id,
+                            !post.showFollowButton
+                          )
+                        }
+                      >
+                        {post.showFollowButton ? "Follow" : "Unfollow"}
+                      </li>
+                    </div>
+                  )}
+
+                  <hr className="w-[80%] border-t border-gray-400" />
+
+                  {/* Save / Unsave */}
+                  <li
+                    className="flex items-center justify-center w-full px-3 py-2 font-semibold cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleSave(post?._id)}
+                  >
+                    {post.isSaved ? "Unsave" : "Save"}
+                  </li>
+
+                  <hr className="w-[80%] border-t border-gray-400" />
+
+                  {/* About This Account */}
+                  <li
+                    className="flex items-center justify-center w-full px-3 py-2 font-semibold cursor-pointer hover:bg-gray-200"
+                    onClick={() =>
+                      navigate(
+                        `/artsays-community/profile/${post?.user?.username
+                          ? `${post?.user?.username}`
+                          : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
+                        }`, { state: { userId: post?.user?._id } }
+                      )
+                    }
+                  >
+                    About This Account
+                  </li>
+
+                  <hr className="w-[80%] border-t border-gray-400" />
+
+                  {/* Delete Post (Owner only) */}
+                  {post.user._id === userId && (
+                    <div className="flex flex-col items-center justify-center w-full">
+                      <li
+                        className="flex items-center justify-center w-full px-3 py-2 font-semibold text-red-600 cursor-pointer hover:bg-red-200"
+                        onClick={() => handleDeletePost(post._id)}
+                      >
+                        Delete
+                      </li>
+                      <hr className="w-[80%] border-t border-gray-400" />
+                    </div>
+                  )}
+
+                  {/* Cancel */}
+                  <li
+                    className="flex items-center justify-center w-full px-3 py-2 font-semibold text-red-500 cursor-pointer hover:bg-red-200 rounded-b-xl"
+                    onClick={() => setMenuOpenId(null)}
+                  >
+                    Cancel
+                  </li>
+                </ul>
+              )}
+
+              {/* Post Image Carousel */}
+              <div className="relative py-2">
+                {post.images && post.images.length > 0 && (
+                  <>
+                    <img
+                      src={getImageUrl(post.images[post.activeImageIndex || 0]
+                      )}
+                      alt="Post content"
+                      className="w-full h-full rounded-lg "
+                    />
+
+                    {/* Left Arrow (only if not on first image) */}
+                    {post.images.length > 1 &&
+                      (post.activeImageIndex || 0) > 0 && (
+                        <button
+                          onClick={() =>
+                            setPosts((prev) =>
+                              prev.map((p) =>
+                                p._id === post._id
+                                  ? {
+                                    ...p,
+                                    activeImageIndex:
+                                      (p.activeImageIndex || 0) - 1,
+                                  }
+                                  : p
+                              )
+                            )
+                          }
+                          className="absolute p-2 text-white transform -translate-y-1/2 bg-black rounded-full left-2 top-1/2 bg-opacity-40 focus:outline-none"
+                        >
+                          <i className="text-xl bg-gray-600 rounded-full ri-arrow-left-s-line"></i>
+                        </button>
+                      )}
+
+                    {/* Right Arrow (only if not on last image) */}
+                    {post.images.length > 1 &&
+                      (post.activeImageIndex || 0) < post.images.length - 1 && (
+                        <button
+                          onClick={() =>
+                            setPosts((prev) =>
+                              prev.map((p) =>
+                                p._id === post._id
+                                  ? {
+                                    ...p,
+                                    activeImageIndex:
+                                      (p.activeImageIndex || 0) + 1,
+                                  }
+                                  : p
+                              )
+                            )
+                          }
+                          className="absolute p-2 text-white transform -translate-y-1/2 bg-black rounded-full right-2 top-1/2 bg-opacity-40 focus:outline-none"
+                        >
+                          <i className="text-xl bg-gray-600 rounded-full ri-arrow-right-s-line"></i>
+                        </button>
+                      )}
+
+                    {/* Dots */}
+                    {post.images.length > 1 && (
+                      <div className="absolute z-10 flex justify-center w-full gap-1 bottom-6">
+                        {post.images.map((_, idx) => (
+                          <span
+                            key={idx}
+                            className={`h-2 w-2 rounded-full ${(post.activeImageIndex || 0) === idx
+                              ? "bg-white"
+                              : "bg-[#000000]"
+                              }`}
+                          ></span>
+                        ))}
+                      </div>
+                    )}
+                    {/* Website Link Box */}
+                    {post.isPromoted && post.promotionDetails?.website && (
+                      <a
+                        href={getExternalUrl(post.promotionDetails.website)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute bottom-4 w-[80%] text-white text-md px-3 py-2 justify-self-center mt-2 rounded-md flex flex-col shadow-lg bg-[#48372D]/70 hover:bg-[#48372D]"
+                      >
+                        <span className="font-semibold leading-tight">
+                          Explore Our Website
+                        </span>
+
+                        <span className="leading-tight break-all">
+                          {post.promotionDetails.website}
+                        </span>
+                      </a>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {/* Post Actions */}
+              <div className="flex flex-col gap-1 mx-1">
+                <div className="flex flex-row items-center justify-between">
+                  <div className="flex flex-row gap-4">
+                    <button onClick={() => handleLike(post._id)} className="focus:outline-none text-[#000000]">
+                      <i
+                        className={`${post.likes.includes(userId)
+                          ? "ri-heart-fill text-red-500"
+                          : "ri-heart-line"
+                          } text-xl font-medium`}
+                      ></i>
+                    </button>
+                    <button
+                      onClick={() => commentRefs.current[post._id]?.focus()} className="focus:outline-none text-[#000000]"
+                    >
+                      <i className="text-xl font-medium ri-chat-3-line"></i>
+                    </button>
+
+                    <button onClick={() => setSharePost(post)} className="focus:outline-none text-[#000000]">
+                      <i className="text-xl font-medium ri-send-plane-fill"></i>
+                    </button>
+                  </div>
+                  <div className="flex items-center">
+                    <button onClick={() => handleSave(post?._id)} className="focus:outline-none text-[#000000]">
+                      <i
+                        className={`${post?.isSaved ? "ri-bookmark-fill" : "ri-bookmark-line"
+                          } text-xl font-medium`}
+                      ></i>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Likes */}
+                <div className="text-sm text-[#000000] font-bold">
+                  {post.likes.length} likes
+                </div>
+
+                {/* Description */}
+                <div>
+                  <p className="text-sm mt-1 text-[#000000] font-semibold break-all whitespace-normal w-full">
+                    {post.user.username}{" "}
                     {post.user.verified?.length > 0 && (
                       <img
                         src={getImageUrl(post.user.verified[post.user.verified.length - 1]
                           ?.badgeImage
-                          )}
-                        className="inline-block ml-1 w-5 h-5 object-contain"
+                        )}
+                        className="inline-block object-contain w-5 h-5 ml-1"
                         alt={
                           post.user.verified[post.user.verified.length - 1]
                             ?.badgeName || "badge"
                         }
+                        title={
+                          post.user.verified[post.user.verified.length - 1]
+                            ?.badgeName
+                        }
                       />
-                    )}
-                    <div className="flex items-center text-[#000000]">
-                      {isPostCollaborateWithUserId(post) ? (
-                        <p className="font-extrabold cursor-pointer">
-                          , {profile?.username}
-                          {post.collaboraters?.length > 1 && (
-                            <>
-                              and &nbsp;
-                              <button
-                                onClick={() => {
-                                  setShowCollaborators(true);
-                                  fetchAllCollaborators(post);
-                                }}
-                                className="text-blue-600 font-medium hover:underline outline-none focus:outline-none active:outline-none"
-                              >
-                                ...others
-                              </button>
-                            </>
-                          )}
-                        </p>
-                      ) : (
-                        <>
-                          {post.collaborators?.length > 0 && (
-                            <p className="font-extrabold cursor-pointer">
-                              &nbsp; and &nbsp;
-                              <button
-                                onClick={() => {
-                                  setShowCollaborators(true);
-                                  fetchAllCollaborators(post);
-                                }}
-                                className="text-blue-600 font-medium hover:underline outline-none focus:outline-none active:outline-none"
-                              >
-                                ...others
-                              </button>
-                            </p>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Time + Sponsored */}
-                  <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
-                    {post.isPromoted && (
-                      <span className="font-semibold text-black">
-                        Sponsored
-                      </span>
-                    )}
-
-                    {post.location && !post.isPromoted && (
-                      <>
-                        {post.isPromoted && <span>·</span>}
-                        <span>{post.location}</span>
-                      </>
-                    )}
-
-                    {(post.isPromoted || post.location) && <span>·</span>}
-
-                    <span>{timeAgo(post.createdAt)}</span>
-                  </div>
-
+                    )}{" "}
+                    {post.caption}
+                  </p>
                 </div>
-              </div>
 
-              {/* CTA + Buttons */}
-              <div className="flex items-center gap-2">
-                {post.showFollowButton ? (
-                  <button
-                    onClick={() => handleFollowToggle(post.user._id, false)}
-                    className="buy-button"
-                  >
-                    Follow
-                  </button>
-                ) : (
-                  ""
-                )}
-                {post.forProduct && (
-                  <button
-                    className="buy-button"
-                    onClick={() => {
-                      if (!ensureBuyer()) return;
-                      navigate(
-                        `/my-account/check-out/${userId}?productId=${post?.forProduct
-                        }&quantity=${1}`
-                      );
-                    }}
-                  >
-                    Buy Now
-                  </button>
-                )}
-                <button onClick={() => setMenuOpenId(post._id)} className="focus:outline-none">
-                  <i className="ri-more-fill text-lg"></i>
-                </button>
-              </div>
-            </div>
-
-            {/* More Menu */}
-            {menuOpenId === post._id && (
-              <ul
-                ref={popupRef}
-                className="absolute bg-white flex flex-col text-xs rounded-xl items-center justify-between right-1 top-12 w-40 border shadow-md z-10 "
-              >
-                {/* Pay Tip */}
-                {post.user._id !== userId && (
-                  <div className="w-full flex flex-col items-center justify-center">
-                    <li
-                      className="w-full px-3 py-2 flex items-center font-semibold justify-center cursor-pointer hover:bg-gray-200 rounded-t-xl"
-                      onClick={() => {
-                        setTipUser({
-                          id: post._id,
-                          receiverId: post.user._id,
-                        });
-                        setTipPopupOpen(true);
-                        setMenuOpenId(null);
-                      }}
-                    >
-                      Pay Tip
-                    </li>
-                  </div>
-                )}
-
-                <hr className="w-[80%] border-t border-gray-400" />
-
-                {/* Report */}
-                {post.user._id !== userId && (
-                  <div className="w-full flex flex-col items-center justify-center">
-                    <li
-                      className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
-                      onClick={() => {
-                        setReportedUser({
-                          id: post.user._id,
-                          postId: post._id,
-                          username: post.user.username,
-                        });
-                        setReportPopupOpen(true);
-                        setMenuOpenId(null);
-                      }}
-                    >
-                      Report
-                    </li>
-                  </div>
-                )}
-
-                <hr className="w-[80%] border-t border-gray-400" />
-
-                {/* Follow / Unfollow */}
-                {post.user._id !== userId && (
-                  <div className="w-full flex flex-col items-center justify-center">
-                    <li
-                      className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
-                      onClick={() =>
-                        handleFollowToggle(
-                          post.user._id,
-                          !post.showFollowButton
-                        )
-                      }
-                    >
-                      {post.showFollowButton ? "Follow" : "Unfollow"}
-                    </li>
-                  </div>
-                )}
-
-                <hr className="w-[80%] border-t border-gray-400" />
-
-                {/* Save / Unsave */}
-                <li
-                  className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSave(post?._id)}
+                {/* Comments */}
+                <div
+                  className="text-xs text-[#000000] font-light cursor-pointer"
+                  onClick={() => setActiveIndex(finalPost.indexOf(post))}
                 >
-                  {post.isSaved ? "Unsave" : "Save"}
-                </li>
+                  View all {post.comments.length} comments
+                </div>
 
-                <hr className="w-[80%] border-t border-gray-400" />
-
-                {/* About This Account */}
-                <li
-                  className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-gray-200"
-                  onClick={() =>
-                    navigate(
-                      `/artsays-community/profile/${post?.user?.username
-                        ? `${post?.user?.username}`
-                        : `${post?.user?.name}_${post?.user?.lastName}_${post?.user?._id}`
-                      }`, { state: { userId: post?.user?._id } }
-                    )
-                  }
-                >
-                  About This Account
-                </li>
-
-                <hr className="w-[80%] border-t border-gray-400" />
-
-                {/* Delete Post (Owner only) */}
-                {post.user._id === userId && (
-                  <div className="w-full flex flex-col items-center justify-center">
-                    <li
-                      className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-red-200 text-red-600"
-                      onClick={() => handleDeletePost(post._id)}
-                    >
-                      Delete
-                    </li>
-                    <hr className="w-[80%] border-t border-gray-400" />
-                  </div>
-                )}
-
-                {/* Cancel */}
-                <li
-                  className="w-full px-3 py-2 flex font-semibold items-center justify-center cursor-pointer hover:bg-red-200 text-red-500 rounded-b-xl"
-                  onClick={() => setMenuOpenId(null)}
-                >
-                  Cancel
-                </li>
-              </ul>
-            )}
-
-            {/* Post Image Carousel */}
-            <div className="py-2 relative">
-              {post.images && post.images.length > 0 && (
-                <>
-                  <img
-                    src={getImageUrl(post.images[post.activeImageIndex || 0]
-                      )}
-                    alt="Post content"
-                    className="w-full h-full rounded-lg "
+                {/* Add Comment */}
+                {post.canComment ? (
+                  <CommentInput
+                    post={post}
+                    userId={userId}
+                    setPosts={setPosts}
+                    inputRef={(el) => (commentRefs.current[post._id] = el)}
                   />
-
-                  {/* Left Arrow (only if not on first image) */}
-                  {post.images.length > 1 &&
-                    (post.activeImageIndex || 0) > 0 && (
-                      <button
-                        onClick={() =>
-                          setPosts((prev) =>
-                            prev.map((p) =>
-                              p._id === post._id
-                                ? {
-                                  ...p,
-                                  activeImageIndex:
-                                    (p.activeImageIndex || 0) - 1,
-                                }
-                                : p
-                            )
-                          )
-                        }
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2 focus:outline-none"
-                      >
-                        <i className="ri-arrow-left-s-line text-xl bg-gray-600 rounded-full"></i>
-                      </button>
-                    )}
-
-                  {/* Right Arrow (only if not on last image) */}
-                  {post.images.length > 1 &&
-                    (post.activeImageIndex || 0) < post.images.length - 1 && (
-                      <button
-                        onClick={() =>
-                          setPosts((prev) =>
-                            prev.map((p) =>
-                              p._id === post._id
-                                ? {
-                                  ...p,
-                                  activeImageIndex:
-                                    (p.activeImageIndex || 0) + 1,
-                                }
-                                : p
-                            )
-                          )
-                        }
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-40 text-white rounded-full p-2 focus:outline-none"
-                      >
-                        <i className="ri-arrow-right-s-line text-xl bg-gray-600 rounded-full"></i>
-                      </button>
-                    )}
-
-                  {/* Dots */}
-                  {post.images.length > 1 && (
-                    <div className="absolute bottom-6 w-full flex justify-center gap-1 z-10">
-                      {post.images.map((_, idx) => (
-                        <span
-                          key={idx}
-                          className={`h-2 w-2 rounded-full ${(post.activeImageIndex || 0) === idx
-                            ? "bg-white"
-                            : "bg-[#000000]"
-                            }`}
-                        ></span>
-                      ))}
-                    </div>
-                  )}
-                  {/* Website Link Box */}
-                  {post.isPromoted && post.promotionDetails?.website && (
-                    <a
-                      href={getExternalUrl(post.promotionDetails.website)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute bottom-4 w-[80%] text-white text-md px-3 py-2 justify-self-center mt-2 rounded-md flex flex-col shadow-lg bg-[#48372D]/70 hover:bg-[#48372D]"
-                    >
-                      <span className="font-semibold leading-tight">
-                        Explore Our Website
-                      </span>
-
-                      <span className="break-all leading-tight">
-                        {post.promotionDetails.website}
-                      </span>
-                    </a>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Post Actions */}
-            <div className="flex flex-col gap-1 mx-1">
-              <div className="flex flex-row items-center justify-between">
-                <div className="flex flex-row gap-4">
-                  <button onClick={() => handleLike(post._id)} className="focus:outline-none text-[#000000]">
-                    <i
-                      className={`${post.likes.includes(userId)
-                        ? "ri-heart-fill text-red-500"
-                        : "ri-heart-line"
-                        } text-xl font-medium`}
-                    ></i>
-                  </button>
-                  <button
-                    onClick={() => commentRefs.current[post._id]?.focus()} className="focus:outline-none text-[#000000]"
-                  >
-                    <i className="ri-chat-3-line text-xl font-medium"></i>
-                  </button>
-
-                  <button onClick={() => setSharePost(post)} className="focus:outline-none text-[#000000]">
-                    <i className="ri-send-plane-fill text-xl font-medium"></i>
-                  </button>
-                </div>
-                <div className="flex items-center">
-                  <button onClick={() => handleSave(post?._id)} className="focus:outline-none text-[#000000]">
-                    <i
-                      className={`${post?.isSaved ? "ri-bookmark-fill" : "ri-bookmark-line"
-                        } text-xl font-medium`}
-                    ></i>
-                  </button>
-                </div>
-              </div>
-
-              {/* Likes */}
-              <div className="text-sm text-[#000000] font-bold">
-                {post.likes.length} likes
-              </div>
-
-              {/* Description */}
-              <div>
-                <p className="text-sm mt-1 text-[#000000] font-semibold break-all whitespace-normal w-full">
-                  {post.user.username}{" "}
-                  {post.user.verified?.length > 0 && (
-                    <img
-                      src={getImageUrl(post.user.verified[post.user.verified.length - 1]
-                        ?.badgeImage
-                        )}
-                      className="inline-block ml-1 w-5 h-5 object-contain"
-                      alt={
-                        post.user.verified[post.user.verified.length - 1]
-                          ?.badgeName || "badge"
-                      }
-                      title={
-                        post.user.verified[post.user.verified.length - 1]
-                          ?.badgeName
-                      }
-                    />
-                  )}{" "}
-                  {post.caption}
-                </p>
-              </div>
-
-              {/* Comments */}
-              <div
-                className="text-xs text-[#000000] font-light cursor-pointer"
-                onClick={() => setActiveIndex(finalPost.indexOf(post))}
-              >
-                View all {post.comments.length} comments
-              </div>
-
-                  {/* Add Comment */}
-                  {post.canComment ? (
-                    <CommentInput
-                      post={post}
-                      userId={userId}
-                      setPosts={setPosts}
-                      inputRef={(el) => (commentRefs.current[post._id] = el)}
-                    />
-                  ) : (
-                    <p className="text-gray-500 text-sm italic p-3">
-                      Comments are restricted
-                    </p>
-                    )}
+                ) : (
+                  <p className="p-3 text-sm italic text-gray-500">
+                    Comments are restricted
+                  </p>
+                )}
               </div>
             </div>
           </React.Fragment>
         ))}
 
         {/* Infinite Scroll Loading Indicator */}
-          <div ref={loadMoreRef} className="w-full py-4 flex justify-center">
-            {loadingMore && (
-              <div className="flex flex-col items-center gap-2">
-                <div className="w-8 h-8 border-4 border-gray-300 border-t-[#AD6449] rounded-full animate-spin"></div>
-                <p className="text-sm text-gray-500">Loading more posts...</p>
-              </div>
-            )}
-            {!hasMore && posts.length > 0 && (
-              <p className="text-sm text-gray-400 py-4">You've reached the end</p>
-            )}
-          </div>
+        <div ref={loadMoreRef} className="flex justify-center w-full py-4">
+          {loadingMore && (
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-8 h-8 border-4 border-gray-300 border-t-[#AD6449] rounded-full animate-spin"></div>
+              <p className="text-sm text-gray-500">Loading more posts...</p>
+            </div>
+          )}
+          {!hasMore && posts.length > 0 && (
+            <p className="py-4 text-sm text-gray-400">You've reached the end</p>
+          )}
         </div>
-        
-        {showCollaborators && allCollaboraters && (
+      </div>
+
+      {showCollaborators && allCollaboraters && (
         <div className="fixed inset-0 flex items-center justify-center  bg-[#000000]/40 backdrop-blur-sm z-50">
           <div
             ref={collabRef}
-            className="relative bg-white rounded-xl shadow-xl p-3 w-80 animate-fadeIn"
+            className="relative p-3 bg-white shadow-xl rounded-xl w-80 animate-fadeIn"
           >
             {/* ❌ Close (cross) button */}
             <button
@@ -1846,17 +1849,17 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
               <i className="ri-close-line text-[#000000]"></i>{" "}
             </button>
 
-            <h3 className="text-lg font-semibold mb-4 text-center">
+            <h3 className="mb-4 text-lg font-semibold text-center">
               Collaborators
             </h3>
 
-            <ul className="space-y-2 max-h-48 overflow-y-auto">
+            <ul className="space-y-2 overflow-y-auto max-h-48">
               {allCollaboraters?.length > 0 ? (
                 allCollaboraters.map((c) => {
                   return (
                     <li
                       key={c._id}
-                      className="p-2 border rounded-md flex items-center space-x-6"
+                      className="flex items-center p-2 space-x-6 border rounded-md"
                     >
                       <img
                         src={
@@ -1865,15 +1868,15 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
                             : DEFAULT_PROFILE_IMAGE
                         }
                         alt={c.username || "user"}
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="object-cover w-10 h-10 rounded-full"
                       />
 
-                      <span className=" text-lg font-bold ">{c.username}</span>
+                      <span className="text-lg font-bold ">{c.username}</span>
                     </li>
                   );
                 })
               ) : (
-                <li className="text-gray-500 text-center py-3">
+                <li className="py-3 text-center text-gray-500">
                   No collaborators found
                 </li>
               )}
@@ -1886,18 +1889,18 @@ const res = await getAPI("/api/campaigns/ads/placement?placement=communityFeed",
       {deleteConfirmId && (
         <div className="fixed inset-0 z-[9999] bg-[#000000]/40 flex justify-center items-center">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[400px]">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">Delete Post?</h2>
-            <p className="text-gray-600 mb-6 text-center">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <h2 className="mb-4 text-xl font-semibold text-center text-gray-800">Delete Post?</h2>
+            <p className="mb-6 text-center text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                className="px-6 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 font-medium"
+                className="px-6 py-2 font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="px-6 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600"
+                className="px-6 py-2 font-medium text-white bg-red-500 rounded-lg hover:bg-red-600"
               >
                 Delete
               </button>
@@ -1914,24 +1917,24 @@ export default Post;
 // loading skeleton
 const LoadingSkeleton = () => {
   return (
-    <div className="animate-pulse rounded-xl shadow-sm border my-4 col-span-12 lg:col-span-6 p-2">
+    <div className="col-span-12 p-2 my-4 border shadow-sm animate-pulse rounded-xl lg:col-span-6">
       {/* Header */}
-      <div className="flex items-center space-x-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-gray-300"></div>
+      <div className="flex items-center mb-4 space-x-3">
+        <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
         <div className="flex-1">
-          <div className="h-3 w-32 bg-gray-300 rounded"></div>
-          <div className="h-2 w-20 bg-gray-200 rounded mt-1"></div>
+          <div className="w-32 h-3 bg-gray-300 rounded"></div>
+          <div className="w-20 h-2 mt-1 bg-gray-200 rounded"></div>
         </div>
       </div>
 
       {/* Image / Content */}
-      <div className="w-full h-80 bg-gray-300 rounded-xl mb-4"></div>
+      <div className="w-full mb-4 bg-gray-300 h-80 rounded-xl"></div>
 
       {/* Footer */}
       <div className="flex items-center space-x-4">
-        <div className="h-3 w-16 bg-gray-300 rounded"></div>
-        <div className="h-3 w-12 bg-gray-300 rounded"></div>
-        <div className="h-3 w-20 bg-gray-300 rounded"></div>
+        <div className="w-16 h-3 bg-gray-300 rounded"></div>
+        <div className="w-12 h-3 bg-gray-300 rounded"></div>
+        <div className="w-20 h-3 bg-gray-300 rounded"></div>
       </div>
     </div>
   );

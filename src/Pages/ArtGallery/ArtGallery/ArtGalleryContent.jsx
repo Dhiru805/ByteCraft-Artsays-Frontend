@@ -35,7 +35,8 @@ const ArtGalleryContent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const navigate = useNavigate();
+  const navigate = useNavigate();
+
   const base = process.env.REACT_APP_API_URL;
 
   const userId = localStorage.getItem("userId");
@@ -278,13 +279,13 @@ const ArtGalleryContent = () => {
         <main className="w-full">
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-center font-bold">
+            <div className="p-4 mb-6 font-bold text-center text-red-600 border border-red-200 bg-red-50 rounded-2xl">
               {error}
             </div>
           )}
 
           {/* Search Bar */}
-          <div className="relative mb-8 group mx-auto">
+          <div className="relative mx-auto mb-8 group">
             <input
               type="text"
               placeholder="Search masterpieces, artists, or styles in our gallery..."
@@ -297,12 +298,12 @@ const ArtGalleryContent = () => {
           {/* Products Grid */}
           <div className="mb-12">
             {currentProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {currentProducts.map((product, index) => {
-                    const displayPrice = product.finalPrice;
-                    const hasDiscount = displayPrice < product.marketPrice;
-                    const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
-                    return (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {currentProducts.map((product, index) => {
+                  const displayPrice = product.finalPrice;
+                  const hasDiscount = displayPrice < product.marketPrice;
+                  const discountPercent = hasDiscount ? Math.round(((product.marketPrice - displayPrice) / product.marketPrice) * 100) : 0;
+                  return (
                     <div
                       key={product._id}
                       className="group flex flex-col h-full bg-white rounded-[40px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100/50 animate-fade-in-up relative"
@@ -317,23 +318,23 @@ const ArtGalleryContent = () => {
                         />
                         {(!product.quantity || product.quantity === 0) && (
                           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-                            <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12"><span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span></div>
+                            <div className="px-6 py-2 transform bg-white border rounded-lg shadow-2xl border-white/50 -rotate-12"><span className="text-xl font-black tracking-wider text-red-600 uppercase">Sold Out</span></div>
                           </div>
                         )}
-                        <div className="absolute top-5 left-5 flex flex-col gap-2 z-10">
+                        <div className="absolute z-10 flex flex-col gap-2 top-5 left-5">
                           {product.editionType && (
                             <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">{product.editionType}</div>
                           )}
                         </div>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleWishlist(product._id); }}
-                          className="absolute top-5 right-5 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+                          className="absolute z-10 p-3 transition-all transform rounded-full shadow-sm top-5 right-5 bg-white/80 backdrop-blur-md hover:bg-white hover:text-red-500 hover:scale-110 group/heart"
                         >
                           <Heart size={20} className={`transition-colors ${likedProducts[product._id] ? "text-red-500 fill-red-500" : "text-gray-900 group-hover/heart:text-red-500"}`} />
                         </button>
                       </div>
 
-                      <div className="flex flex-col flex-grow p-6 gap-4">
+                      <div className="flex flex-col flex-grow gap-4 p-6">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
@@ -341,7 +342,7 @@ const ArtGalleryContent = () => {
                           </div>
                           <div className="flex -space-x-2">
                             {product.badges?.map((img, idx) => (
-                              <img key={idx} src={getImageUrl(img)} className="w-5 h-5 rounded-full border-2 border-white shadow-sm" alt="Badge" />
+                              <img key={idx} src={getImageUrl(img)} className="w-5 h-5 border-2 border-white rounded-full shadow-sm" alt="Badge" />
                             ))}
                           </div>
                         </div>
@@ -349,23 +350,24 @@ const ArtGalleryContent = () => {
                         <h3 className="text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight">{product.productName}</h3>
 
                         <div className="flex items-center gap-3">
-                          <div className="flex items-center bg-gray-50 px-2 py-1 rounded-xl border border-gray-100">
+                          <div className="flex items-center px-2 py-1 border border-gray-100 bg-gray-50 rounded-xl">
                             <div className="flex items-center mr-2">{renderStars(product.averageRating)}</div>
                             <span className="text-xs font-black text-gray-900">{product.averageRating ? product.averageRating.toFixed(1) : "0.0"}</span>
                           </div>
                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">• {product.reviewCount || 0} reviews</span>
                         </div>
 
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                              <div className="flex flex-col">
-                              {hasDiscount && product.marketPrice != null && <span className="text-sm text-gray-400 line-through font-bold">₹{product.marketPrice.toLocaleString()}</span>}
-                              <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{(displayPrice ?? 0).toLocaleString()}</span>
-                            </div>
+                        <div className="flex items-center justify-between pt-4 mt-auto border-t border-gray-50">
+                          <div className="flex flex-col">
+                            {hasDiscount && product.marketPrice != null && <span className="text-sm font-bold text-gray-400 line-through">₹{product.marketPrice.toLocaleString()}</span>}
+                            <span className="text-2xl font-black tracking-tighter text-gray-900">₹{(displayPrice ?? 0).toLocaleString()}</span>
+                          </div>
                           {hasDiscount && (
                             <div className="bg-red-50 text-[#E74C3C] px-3 py-1.5 rounded-2xl border border-red-100/50 shadow-sm"><span className="text-[10px] font-black uppercase tracking-tighter leading-none">{discountPercent}% OFF</span></div>
                           )}
                         </div>
 
+                        {userType !== "Artist" && userType !== "Seller" && (
                           <div className="grid grid-cols-5 gap-3">
                             <button
                               onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
@@ -384,7 +386,7 @@ const ArtGalleryContent = () => {
                                 })()}
                               </div>
                             </button>
-                              <button
+                            <button
                               onClick={async (e) => {
                                 e.stopPropagation();
                                 if (!ensureBuyer()) return;
@@ -392,10 +394,11 @@ const ArtGalleryContent = () => {
                                 await addToCart(product._id);
                                 navigate(`/my-account/check-out/${userId}?productId=${product._id}`);
                               }}
-                            disabled={!product.quantity || product.quantity === 0}
-                            className="col-span-4 h-[56px] bg-[#6F4D34] text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-xl hover:bg-[#5a3e2a] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-[#6F4D34] transform active:scale-95"
-                          >{(!product.quantity || product.quantity === 0) ? "Sold Out" : "Shop Now"}</button>
-                        </div>
+                              disabled={!product.quantity || product.quantity === 0}
+                              className="col-span-4 h-[56px] bg-[#6F4D34] text-white rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 shadow-sm hover:shadow-xl hover:bg-[#5a3e2a] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed border border-[#6F4D34] transform active:scale-95"
+                            >{(!product.quantity || product.quantity === 0) ? "Sold Out" : "Shop Now"}</button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -403,9 +406,9 @@ const ArtGalleryContent = () => {
               </div>
             ) : (
               <div className="py-32 text-center bg-white rounded-[40px] border border-dashed border-gray-200 shadow-sm">
-                <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 rounded-full mb-6 text-gray-300"><Search size={48} /></div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">No masterpieces found</h3>
-                <p className="text-gray-500 max-w-sm mx-auto mb-8">Try adjusting your search term to discover more incredible art from our gallery.</p>
+                <div className="inline-flex items-center justify-center w-24 h-24 mb-6 text-gray-300 rounded-full bg-gray-50"><Search size={48} /></div>
+                <h3 className="mb-2 text-2xl font-bold text-gray-900">No masterpieces found</h3>
+                <p className="max-w-sm mx-auto mb-8 text-gray-500">Try adjusting your search term to discover more incredible art from our gallery.</p>
                 <button onClick={() => setFilters({ sortBy: "New Arrivals", specialTags: [], priceRange: 89700, priceBuckets: [], size: [], mainCategory: [], category: [], subCategory: [], productType: [], productMedium: [], productMaterial: [], productEditionType: [], productSurfaceType: [], search: "" })} className="text-[#6F4D34] font-bold hover:underline px-8 py-3 border-2 border-[#6F4D34] rounded-full transition-all">Clear Search</button>
               </div>
             )}
@@ -413,10 +416,10 @@ const ArtGalleryContent = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center mt-12 pb-12">
+            <div className="flex justify-center pb-12 mt-12">
               <nav className="flex items-center gap-2 p-2 bg-white border border-gray-200 rounded-[32px] shadow-sm">
-                <button disabled={currentPage === 1} onClick={goToPrevPage} className="p-4 rounded-2xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"><ChevronLeft size={28} /></button>
-                <div className="flex items-center px-4 gap-1">
+                <button disabled={currentPage === 1} onClick={goToPrevPage} className="p-4 text-gray-500 transition-colors rounded-2xl hover:bg-gray-50 disabled:opacity-30"><ChevronLeft size={28} /></button>
+                <div className="flex items-center gap-1 px-4">
                   {Array.from({ length: totalPages }).map((_, i) => {
                     const pageNum = i + 1;
                     if (totalPages > 7) {
@@ -430,7 +433,7 @@ const ArtGalleryContent = () => {
                     );
                   })}
                 </div>
-                <button disabled={currentPage === totalPages} onClick={goToNextPage} className="p-4 rounded-2xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"><ChevronRight size={28} /></button>
+                <button disabled={currentPage === totalPages} onClick={goToNextPage} className="p-4 text-gray-500 transition-colors rounded-2xl hover:bg-gray-50 disabled:opacity-30"><ChevronRight size={28} /></button>
               </nav>
             </div>
           )}
@@ -439,7 +442,7 @@ const ArtGalleryContent = () => {
           {(page?.sectionTitle || page?.sectionDescription) && (
             <div className="mt-12 p-8 md:p-12 bg-[#6F4D34]/5 rounded-[48px] border border-[#6F4D34]/10 mb-12">
               {page.sectionTitle && <h2 className="text-2xl md:text-4xl font-black text-[#6F4D34] mb-6 tracking-tight">{page.sectionTitle}</h2>}
-              {page.sectionDescription && <p className="text-lg text-gray-700 leading-relaxed font-medium">{page.sectionDescription}</p>}
+              {page.sectionDescription && <p className="text-lg font-medium leading-relaxed text-gray-700">{page.sectionDescription}</p>}
             </div>
           )}
         </main>

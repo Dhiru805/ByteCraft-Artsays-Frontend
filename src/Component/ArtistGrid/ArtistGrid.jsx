@@ -93,7 +93,12 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
         );
 
         if (!cancelled) {
-          setArtists(formatted);
+          const withPhoto = formatted.filter((a) => a.profilePhoto);
+          for (let i = withPhoto.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [withPhoto[i], withPhoto[j]] = [withPhoto[j], withPhoto[i]];
+          }
+          setArtists(withPhoto);
         }
       } catch (err) {
         console.error("Error loading top artists:", err);
