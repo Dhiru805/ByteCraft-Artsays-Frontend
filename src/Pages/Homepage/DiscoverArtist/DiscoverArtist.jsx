@@ -4,17 +4,17 @@
 //   return (
 //     <div className="max-w-[1440px] mx-auto py-4 px-3">
 //       <div>
-//         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-3">
+//         <div className="grid grid-cols-1 gap-6 mt-3 md:grid-cols-4">
 //           {/* title */}
 //           <h1 className="md:col-span-3 text-lg md:text-4xl font-bold text-[#6F4D34] px-3">
 //             Discover Artist
 //           </h1>
 //           {/* Search Bar */}
-//           <div className="hidden lg:block justify-self-end relative w-full sm:w-64">
+//           <div className="relative hidden w-full lg:block justify-self-end sm:w-64">
 //             <input
 //               type="text"
 //               placeholder="Search"
-//               className="w-full pl-10 pr-4 py-2 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
+//               className="w-full py-2 pl-10 pr-4 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-red-400"
 //             />
 //             <svg
 //               xmlns="http://www.w3.org/2000/svg"
@@ -36,12 +36,12 @@
 //         <hr className="my-3 border-dark" />
 
 //         {/* Subtitle */}
-//         <p className="mt-3 text-xs md:text-base font-medium text-black leading-relaxed px-3">
+//         <p className="px-3 mt-3 text-xs font-medium leading-relaxed text-black md:text-base">
 //           At ArtSays, we make it simple for you to collaborate directly with
 //           talented artists and bring your creative vision to life.
 //         </p>
 //       </div>
-//       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 py-4">
+//       <div className="grid grid-cols-2 gap-3 py-4 sm:grid-cols-2 lg:grid-cols-4">
 //         <div className="w-full mx-auto product-card artist-card border-5">
 //           {/* Premium Label */}
 //           <div className="relative p-img artist-img">
@@ -49,7 +49,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -111,7 +111,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -173,7 +173,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -235,7 +235,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -297,7 +297,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -359,7 +359,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -421,7 +421,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -483,7 +483,7 @@
 //             <img
 //               src="/herosectionimg/1.jpg"
 //               alt="Beauty of Joseon Mandala Art"
-//               className="w-full h-40 sm:h-64 object-contain product-img a-product-img"
+//               className="object-contain w-full h-40 sm:h-64 product-img a-product-img"
 //             />
 //           </div>
 //           {/* Product Category */}
@@ -588,14 +588,14 @@ const DiscoverArtist = () => {
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
-      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
+      <div className="max-w-[1440px] mx-auto px-4 xl:!px-0">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 align-items-center mb-12">
+        <div className="flex flex-col justify-between gap-3 mb-12 md:flex-row md:items-end align-items-center">
           <div className="flex flex-col gap-6">
-            <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+            <h1 className="text-3xl font-black tracking-tighter text-gray-900 md:text-5xl">
               {data.heading}
             </h1>
-            <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
+            <p className="max-w-5xl text-lg font-medium leading-relaxed text-gray-500">
               {data.description}
             </p>
           </div>

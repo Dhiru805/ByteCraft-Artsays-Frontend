@@ -408,11 +408,11 @@ const ArtIcon = () => {
   };
 
   if (loading) return <div><ArtlconSkeleton /></div>;
-  if (!data) return null;
+  if (!data || celebrities.length === 0) return null;
 
     return (
     <div className="bg-[#F8F8F8] font-[poppins] py-12">
-      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
+      <div className="max-w-[1440px] mx-auto px-4 xl:!px-0">
        
         <div className="flex flex-col justify-between gap-6 mb-8 md:flex-row md:items-end align-items-center">
           <div className="flex flex-col gap-6">

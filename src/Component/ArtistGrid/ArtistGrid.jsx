@@ -193,7 +193,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
   return (
     <div className="w-full">
       {paginatedArtists.length > 0 ? (
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:overflow-visible">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:overflow-visible">
             {paginatedArtists.map((artist, index) => {
               const isFollowing = userId && (artist.isFollowing || myFollowing.includes(String(artist.id)));
               return (
@@ -207,9 +207,9 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
                       src={getImageUrl(artist.profilePhoto) || DEFAULT_PROFILE_IMAGE}
                     onError={(e) => { e.target.src = DEFAULT_PROFILE_IMAGE; }}
                     alt={artist.username}
-                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                  <div className="absolute z-10 flex flex-col gap-2 top-4 left-4">
                     {artist.badges.length > 0 && (
                       <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
                         Verified Artist
@@ -218,7 +218,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
                   </div>
                 </div>
 
-                <div className="flex flex-col flex-grow p-4 gap-3">
+                <div className="flex flex-col flex-grow gap-3 p-4">
                   <div className="flex items-center gap-1">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-[#6F4D34] animate-pulse" />
@@ -229,7 +229,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
                     <div className="flex -space-x-1.5">
                       {artist.badges?.map((img, idx) => (
                         <div key={idx}>
-                            <img src={getImageUrl(img) || ""} className="w-4 h-4 rounded-full border border-white" alt="Badge" />
+                            <img src={getImageUrl(img) || ""} className="w-4 h-4 border border-white rounded-full" alt="Badge" />
                         </div>
                       ))}
                     </div>
@@ -240,7 +240,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
                   </h3>
 
                   <div className="flex items-center gap-2">
-                    <span className="bg-[#6F4D34]/5 text-[#6F4D34] text-[11px] font-bold px-3 py-1 rounded-full border border-[#6F4D34]/10">
+                    <span className="bg-[#6F4D34]/5 text-[#6F4D34] text-[9px] font-bold px-3 py-1 rounded-full border border-[#6F4D34]/10">
                       {artist.mainCategoryName}
                     </span>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
@@ -273,12 +273,12 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
           })}
         </div>
       ) : (
-        <div className="py-24 text-center bg-white rounded-3xl border border-gray-100">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 rounded-full mb-6 text-gray-300">
+        <div className="py-24 text-center bg-white border border-gray-100 rounded-3xl">
+          <div className="inline-flex items-center justify-center w-24 h-24 mb-6 text-gray-300 rounded-full bg-gray-50">
             <Search size={40} />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">No artists found</h3>
-          <p className="text-gray-500 max-w-sm mx-auto">
+          <h3 className="mb-2 text-2xl font-bold text-gray-900">No artists found</h3>
+          <p className="max-w-sm mx-auto text-gray-500">
             Try adjusting your filters or search term to discover amazing creators.
           </p>
         </div>
@@ -286,15 +286,15 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
 
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">
-          <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
+          <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 shadow-sm rounded-2xl">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
+              className="p-3 text-gray-500 transition-colors rounded-xl hover:bg-gray-50 disabled:opacity-30"
             >
               <ChevronLeft size={24} />
             </button>
-            <div className="flex items-center px-2 gap-1">
+            <div className="flex items-center gap-1 px-2">
               {pages.map((page) => (
                 <button
                   key={page}
@@ -310,7 +310,7 @@ const ArtistCard = ({ limit = 8, searchQuery = "", filters = {} }) => {
             <button
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              className="p-3 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-colors"
+              className="p-3 text-gray-500 transition-colors rounded-xl hover:bg-gray-50 disabled:opacity-30"
             >
               <ChevronRight size={24} />
             </button>
