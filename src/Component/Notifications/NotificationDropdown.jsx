@@ -383,7 +383,7 @@ const NotificationDropdown = ({ userId, onUnreadChange }) => {
 
       {/* Dropdown */}
       {open && (
-        <div style={{ position: "absolute", right: 0, top: "calc(100% + 10px)", width: "360px", background: "#fff", borderRadius: "20px", boxShadow: "0 20px 60px rgba(0,0,0,0.15)", border: "1px solid #f0ebe7", zIndex: 9999, overflow: "hidden" }}>
+        <div style={window.innerWidth <= 768 ? { position: "fixed", left: "50%", transform: "translateX(-50%)", top: "70px", width: "calc(100vw - 32px)", maxWidth: "360px", background: "#fff", borderRadius: "20px", boxShadow: "0 20px 60px rgba(0,0,0,0.15)", border: "1px solid #f0ebe7", zIndex: 9999, overflow: "hidden" } : { position: "absolute", right: 0, top: "calc(100% + 10px)", width: "360px", background: "#fff", borderRadius: "20px", boxShadow: "0 20px 60px rgba(0,0,0,0.15)", border: "1px solid #f0ebe7", zIndex: 9999, overflow: "hidden" }}>
 
           {/* Header */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 18px 12px", borderBottom: "1px solid #f5f0ee" }}>
