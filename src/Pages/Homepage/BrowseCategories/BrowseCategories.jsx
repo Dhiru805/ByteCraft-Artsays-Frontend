@@ -309,18 +309,18 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
   }, [userId]);
 
   if (loading) return <BrowserCategorySkeleton />;
-  if (!data) return null;
+  if (!data || allProducts.length === 0) return null;
 
   return (
     <div className="w-full bg-gray-50/50 py-12 font-[poppins]">
-      <div className="max-w-[1440px] mx-auto px-4 md:!px-0">
+      <div className="max-w-[1440px] mx-auto px-4 xl:!px-0">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-3">
+        <div className="flex flex-col justify-between gap-6 mb-3 md:flex-row md:items-end align-items-center">
             <div className="flex flex-col gap-6">
-              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+              <h2 className="text-3xl font-black tracking-tighter text-gray-900 md:text-5xl">
                 {data.heading || "Browse Categories"}
               </h2>
-              <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
+              <p className="max-w-5xl text-lg font-medium leading-relaxed text-gray-500">
                 {data.description || "Discover a curated selection of masterpieces across various artistic styles and mediums."}
               </p>
             </div>
@@ -335,7 +335,7 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
         </div>
 
         {/* Category & Search Controls */}
-        <div className="flex flex-col lg:flex-row gap-3 mb-12 items-center">
+        <div className="flex flex-col items-center gap-3 mb-12 lg:flex-row">
           {/* Search Bar - Matching Store Page */}
           <div className="relative flex-1 w-full group">
             <input
@@ -348,7 +348,7 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
           </div>
 
           {/* Horizontal Category Scroll */}
-          <div className="w-full lg:w-auto overflow-hidden">
+          <div className="w-full overflow-hidden lg:w-auto">
             <div
               ref={scrollRef}
               className="flex gap-3 overflow-x-auto !scrollbar-hide cursor-grab active:cursor-grabbing"
@@ -411,14 +411,14 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
                     {/* Sold Out Overlay */}
                     {(!product.quantity || product.quantity === 0) && (
                       <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20 backdrop-blur-[1px]">
-                        <div className="bg-white px-6 py-2 rounded-lg shadow-2xl border border-white/50 transform -rotate-12">
-                          <span className="text-red-600 font-black text-xl uppercase tracking-wider">Sold Out</span>
+                        <div className="px-6 py-2 transform bg-white border rounded-lg shadow-2xl border-white/50 -rotate-12">
+                          <span className="text-xl font-black tracking-wider text-red-600 uppercase">Sold Out</span>
                         </div>
                       </div>
                     )}
 
                     {/* Floating Badges */}
-                    <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                    <div className="absolute z-10 flex flex-col gap-2 top-4 left-4">
                       {product.editionType && (
                         <div className="bg-white backdrop-blur-md text-[#6F4D34] text-[10px] font-black px-3 py-1.5 rounded-full shadow-sm uppercase tracking-widest border border-white/20">
                           {product.editionType}
@@ -430,7 +430,7 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleWishlist(product._id, e); }}
                       aria-label={likedProducts[product._id] ? "Remove from Wishlist" : "Add to Wishlist"}
-                      className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 group/heart z-10"
+                      className="absolute z-10 p-3 transition-all transform rounded-full shadow-sm top-4 right-4 bg-white/80 backdrop-blur-md hover:bg-white hover:text-red-500 hover:scale-110 group/heart"
                     >
                       <Heart
                         size={18}
@@ -439,11 +439,11 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
                     </button>
 
                     {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 transition-opacity duration-500 opacity-0 pointer-events-none bg-black/5 group-hover:opacity-100" />
                   </div>
 
                   {/* Content */}
-                  <div className="flex flex-col flex-grow p-4 gap-3">
+                  <div className="flex flex-col flex-grow gap-3 p-4">
                     {/* Artist Info & Badges */}
                     <div className="flex items-center gap-1">
                       <div className="flex items-center gap-2">
@@ -487,20 +487,21 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
                     </div>
 
                     {/* Pricing & Discount */}
-                    <div className="flex items-center justify-between mt-auto border-t border-gray-50 pt-3">
+                    <div className="flex items-center justify-between pt-3 mt-auto border-t border-gray-50">
                       <div className="flex items-center gap-2">
                           {hasDiscount && (
-                            <span className="text-lg text-gray-500 line-through font-bold">
+                            <span className="text-lg font-bold text-gray-500 line-through">
                               ₹{(product.marketPrice ?? 0).toLocaleString()}
                             </span>
                           )}
-                              <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                              <span className="text-2xl font-black tracking-tighter text-gray-900">
                                 ₹{(displayPrice ?? 0).toLocaleString()}
                               </span>
                       </div>
                     </div>
 
                       {/* Action Buttons */}
+                      {userType !== "Artist" && userType !== "Seller" && (
                       <div className="grid grid-cols-5 gap-2 mt-2">
                         <button
                           onClick={(e) => { e.stopPropagation(); addToCart(product._id); }}
@@ -538,6 +539,7 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
                         </span>
                       </button>
                     </div>
+                      )}
                   </div>
                 </div>
               );
@@ -545,11 +547,11 @@ const BrowseCategories = ({ homepageId: homepageIdProp }) => {
           </div>
         ) : (
           <div className="py-24 text-center bg-white rounded-[32px] border border-gray-100 shadow-sm">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-50 rounded-full mb-6 text-gray-300">
+            <div className="inline-flex items-center justify-center w-24 h-24 mb-6 text-gray-300 rounded-full bg-gray-50">
               <Search size={40} />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">No masterpieces found</h3>
-            <p className="text-gray-500 max-w-sm mx-auto mb-8">
+            <h3 className="mb-2 text-2xl font-bold text-gray-900">No masterpieces found</h3>
+            <p className="max-w-sm mx-auto mb-8 text-gray-500">
               Try adjusting your search or selected category to discover more incredible art.
             </p>
             <button

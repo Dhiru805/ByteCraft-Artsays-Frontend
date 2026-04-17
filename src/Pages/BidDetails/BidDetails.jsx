@@ -458,6 +458,7 @@ const BidDetails = () => {
                 bidToConfirm={bidToConfirm}
                 setBidToConfirm={setBidToConfirm}
                 winner={winner}
+                userType={userType}
               />
 
               <OffersBlock
@@ -740,7 +741,7 @@ const ProductInfo = ({ product, currentHighest, isBidEnded, winner, artistName, 
   );
 };
 
-const BiddingCard = ({ product, currentHighest, timeLeft, isLastDay, isBidEnded, minIncrement, showBidSidebar, setShowBidSidebar, manualBid, setManualBid, handleBidSubmit, confirmPopup, setConfirmPopup, bidToConfirm, setBidToConfirm, winner }) => {
+const BiddingCard = ({ product, currentHighest, timeLeft, isLastDay, isBidEnded, minIncrement, showBidSidebar, setShowBidSidebar, manualBid, setManualBid, handleBidSubmit, confirmPopup, setConfirmPopup, bidToConfirm, setBidToConfirm, winner, userType }) => {
   return (
     <div className="bg-white rounded-[32px] border border-gray-200 shadow-xl overflow-hidden">
       <div className="p-6 space-y-6">
@@ -762,7 +763,7 @@ const BiddingCard = ({ product, currentHighest, timeLeft, isLastDay, isBidEnded,
             <div className="flex items-center gap-1"><Truck size={12} /> Global Shipping</div>
           </div>
 
-          {!isBidEnded ? (
+          {!isBidEnded && userType !== "Artist" && userType !== "Seller" ? (
             <div className="space-y-4">
               <AnimatePresence mode="wait">
                 {!showBidSidebar ? (

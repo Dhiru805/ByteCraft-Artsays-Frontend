@@ -72,7 +72,8 @@ const CelebrityContent = () => {
     productSurfaceTypes: [],
     periodEras: [],
   });
-
+
+
 
   const toggleExpand = (category) => {
     setExpandedFilters((prev) => ({
@@ -567,8 +568,8 @@ const CelebrityContent = () => {
     optionsLength,
     onExpand,
   }) => (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-4 animate-slide-up">
-      <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+    <div className="p-6 mb-4 bg-white border border-gray-100 shadow-sm rounded-2xl animate-slide-up">
+      <h3 className="flex items-center gap-2 mb-3 text-lg font-bold text-gray-900">
         <Icon size={18} className="text-[#6F4D34]" />
         {title}
       </h3>
@@ -585,7 +586,7 @@ const CelebrityContent = () => {
   );
 
   const CheckboxItem = ({ label, checked, onChange }) => (
-    <label className="flex items-center group cursor-pointer">
+    <label className="flex items-center cursor-pointer group">
       <div className="relative flex items-center">
         <input
           type="checkbox"
@@ -595,8 +596,8 @@ const CelebrityContent = () => {
         />
         <div
           className={`w-5 h-5 border-2 rounded-md transition-all flex items-center justify-center ${checked
-              ? "border-[#6F4D34] bg-[#6F4D34]"
-              : "border-gray-300 group-hover:border-[#6F4D34]"
+            ? "border-[#6F4D34] bg-[#6F4D34]"
+            : "border-gray-300 group-hover:border-[#6F4D34]"
             }`}
         >
           {checked && (
@@ -626,7 +627,7 @@ const CelebrityContent = () => {
   );
 
   const RadioItem = ({ label, checked, onChange, name }) => (
-    <label className="flex items-center group cursor-pointer">
+    <label className="flex items-center cursor-pointer group">
       <div className="relative flex items-center">
         <input
           type="radio"
@@ -637,8 +638,8 @@ const CelebrityContent = () => {
         />
         <div
           className={`w-5 h-5 border-2 rounded-full transition-all ${checked
-              ? "border-[#6F4D34] bg-[#6F4D34]"
-              : "border-gray-300 group-hover:border-[#6F4D34]"
+            ? "border-[#6F4D34] bg-[#6F4D34]"
+            : "border-gray-300 group-hover:border-[#6F4D34]"
             }`}
         >
           <div
@@ -701,34 +702,34 @@ const CelebrityContent = () => {
           <img
             src={celebrity?.profilePicture || "/herosectionimg/1.jpg"}
             alt="Hero Background"
-            className="w-full h-full object-cover blur-sm"
+            className="object-cover w-full h-full blur-sm"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
         </div>
 
         <div className="container mx-auto px-6 md:px-12 max-w-[1440px] relative z-10 py-12">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+          <div className="flex flex-col items-center gap-8 md:flex-row md:gap-16">
             {/* Left Content */}
             <div className="flex-1 text-white text-center md:!text-left">
               <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-xs md:text-sm font-bold tracking-widest uppercase mb-6 animate-fade-in border border-white/20">
                 Featured Art Icon
               </span>
-              <div className="items-center md:items-end gap-4 mb-6">
-                <h1 className="text-4xl md:text-7xl font-black text-white leading-tight drop-shadow-xl mb-3">
+              <div className="items-center gap-4 mb-6 md:items-end">
+                <h1 className="mb-3 text-4xl font-black leading-tight text-white md:text-7xl drop-shadow-xl">
                   {celebrity?.artistName || ""}
                 </h1>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={handleFollowToggle}
                     className={`mb-2 px-6 py-2 rounded-full font-bold transition-all transform active:scale-95 ${follow
-                        ? "bg-white/10 text-white border border-white/20 hover:bg-white/20"
-                        : "bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:bg-[#ffffff] shadow-lg shadow-[#6F4D34]/20"
+                      ? "bg-white/10 text-white border border-white/20 hover:bg-white/20"
+                      : "bg-[#6F4D34] text-white hover:!text-[#6F4D34] hover:bg-[#ffffff] shadow-lg shadow-[#6F4D34]/20"
                       }`}
                   >
                     {follow ? "Unfollow" : "Follow"}
                   </button>
                   {celebrity?.artsaysId && (
-                    <span className="mb-2 text-white/80 text-sm font-semibold tracking-wide">({celebrity.artsaysId})</span>
+                    <span className="mb-2 text-sm font-semibold tracking-wide text-white/80">({celebrity.artsaysId})</span>
                   )}
                 </div>
               </div>
@@ -743,30 +744,30 @@ const CelebrityContent = () => {
               </div>
 
               {/* Stats Bar */}
-              <div className="flex flex-wrap justify-center md:justify-start gap-6 md:gap-12">
+              <div className="flex flex-wrap justify-center gap-6 md:justify-start md:gap-12">
                 <div className="text-center md:text-left">
                   <div className="text-4xl font-black text-[#ffffff]">
                     {celebrity?.artWorkCollected || 0}
                   </div>
-                  <div className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                  <div className="text-xs font-bold tracking-widest uppercase text-white/60">
                     Collected
                   </div>
                 </div>
-                <div className="w-px h-10 bg-white/10 hidden md:block" />
+                <div className="hidden w-px h-10 bg-white/10 md:block" />
                 <div className="text-center md:text-left">
                   <div className="text-4xl font-black text-[#ffffff]">
                     {celebrity?.yearsActiveInArt || 0}
                   </div>
-                  <div className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                  <div className="text-xs font-bold tracking-widest uppercase text-white/60">
                     Years Active
                   </div>
                 </div>
-                <div className="w-px h-10 bg-white/10 hidden md:block" />
+                <div className="hidden w-px h-10 bg-white/10 md:block" />
                 <div className="text-center md:text-left">
                   <div className="text-4xl font-black text-[#ffffff]">
                     {celebrity?.exhibitionFeatured || 0}
                   </div>
-                  <div className="text-xs font-bold text-white/60 uppercase tracking-widest">
+                  <div className="text-xs font-bold tracking-widest uppercase text-white/60">
                     Exhibitions
                   </div>
                 </div>
@@ -774,7 +775,7 @@ const CelebrityContent = () => {
             </div>
 
             {/* Right Profile Image */}
-            <div className="w-64 h-64 md:w-96 md:h-96 shrink-0 relative animate-fade-in-up">
+            <div className="relative w-64 h-64 md:w-96 md:h-96 shrink-0 animate-fade-in-up">
               <div className="absolute inset-0 bg-[#6F4D34] rounded-[40px] rotate-6 scale-95 opacity-50" />
               <img
                 src={celebrity?.profilePicture || "/herosectionimg/1.jpg"}
@@ -788,7 +789,7 @@ const CelebrityContent = () => {
 
       <div className="w-full max-w-[1440px] mx-auto p-6">
         {/* Breadcrumb */}
-        <nav className="flex items-center text-sm text-gray-500 gap-2 mb-8 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <nav className="flex items-center gap-2 p-4 mb-8 text-sm text-gray-500 bg-white border border-gray-100 shadow-sm rounded-2xl">
           <span
             className="hover:text-[#6F4D34] cursor-pointer font-medium"
             onClick={() => navigate("/")}
@@ -803,7 +804,7 @@ const CelebrityContent = () => {
             Celebrities
           </span>
           <ChevronRight size={14} />
-          <span className="text-gray-900 font-bold">
+          <span className="font-bold text-gray-900">
             {celebrity?.artistName}
           </span>
         </nav>
@@ -812,7 +813,7 @@ const CelebrityContent = () => {
         {celebrity?.highlightsOfJourney && (
           <div className="mb-12 bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#6F4D34]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+            <h2 className="flex items-center gap-3 mb-6 text-2xl font-black text-gray-900">
               <div className="w-2 h-8 bg-[#6F4D34] rounded-full" />
               Journey Highlights
             </h2>
@@ -825,10 +826,10 @@ const CelebrityContent = () => {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row gap-3">
+        <div className="flex flex-col gap-3 lg:flex-row">
           {/* ---------------- SIDEBAR FILTERS ---------------- */}
           <aside className="w-full lg:w-[320px] shrink-0">
-            <div className="lg:hidden mb-4">
+            <div className="mb-4 lg:hidden">
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="w-full flex items-center justify-between px-6 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm font-bold text-[#6F4D34]"
@@ -845,8 +846,8 @@ const CelebrityContent = () => {
               className={`${showFilters ? "block" : "hidden"
                 } lg:block sticky top-6 space-y-4`}
             >
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold text-gray-900 mb-1">
+              <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
+                <h2 className="mb-1 text-xl font-bold text-gray-900">
                   Collection Filters
                 </h2>
                 <p className="text-sm text-gray-500">Refine the masterpieces</p>
@@ -871,8 +872,8 @@ const CelebrityContent = () => {
               </FilterSection>
 
               {/* Price Range */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 animate-slide-up">
-                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+              <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl animate-slide-up">
+                <h3 className="flex items-center gap-2 mb-3 text-lg font-bold text-gray-900">
                   <DollarSign size={18} className="text-[#6F4D34]" />
                   Price Range
                 </h3>
@@ -940,10 +941,10 @@ const CelebrityContent = () => {
           {/* ---------------- MAIN CONTENT ---------------- */}
           <main className="flex-grow">
             <div className="mb-8">
-              <h2 className="text-3xl font-black text-gray-900 mb-2">
+              <h2 className="mb-2 text-3xl font-black text-gray-900">
                 Celebrity Collection
               </h2>
-              <p className="text-gray-500 font-medium">
+              <p className="font-medium text-gray-500">
                 Showing {filteredProducts.length} unique pieces curated by{" "}
                 {celebrity?.artistName}
               </p>
@@ -963,10 +964,10 @@ const CelebrityContent = () => {
             {/* Products Grid */}
             <div className="mb-12">
               {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                   {filteredProducts.map((product, index) => {
-                      const displayPrice = product.finalPrice;
-                      const hasDiscount = displayPrice < product.marketPrice;
+                    const displayPrice = product.finalPrice;
+                    const hasDiscount = displayPrice < product.marketPrice;
                     const discountPercent = hasDiscount
                       ? Math.round(
                         ((product.marketPrice - displayPrice) /
@@ -993,21 +994,21 @@ const CelebrityContent = () => {
                             src={getImageUrl(product.mainImage)}
                             alt={product.productName}
                             className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${!product.quantity || product.quantity === 0
-                                ? "blur-[2px]"
-                                : ""
+                              ? "blur-[2px]"
+                              : ""
                               }`}
                           />
 
                           {/* Heart Button */}
                           <button
                             onClick={(e) => handleWishlist(product._id, e)}
-                            className="absolute top-5 right-5 bg-white/80 backdrop-blur-md p-3 rounded-full shadow-sm hover:bg-white hover:text-red-500 transition-all transform hover:scale-110 z-10"
+                            className="absolute z-10 p-3 transition-all transform rounded-full shadow-sm top-5 right-5 bg-white/80 backdrop-blur-md hover:bg-white hover:text-red-500 hover:scale-110"
                           >
                             <Heart
                               size={20}
                               className={`transition-colors ${likedProducts[product._id]
-                                  ? "text-red-500 fill-red-500"
-                                  : "text-gray-900"
+                                ? "text-red-500 fill-red-500"
+                                : "text-gray-900"
                                 }`}
                             />
                           </button>
@@ -1015,8 +1016,8 @@ const CelebrityContent = () => {
                           {/* Status Badge */}
                           {(!product.quantity || product.quantity === 0) && (
                             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-                              <div className="bg-white px-6 py-2 rounded-xl shadow-2xl transform -rotate-6">
-                                <span className="text-red-600 font-black text-xl uppercase tracking-wider">
+                              <div className="px-6 py-2 transform bg-white shadow-2xl rounded-xl -rotate-6">
+                                <span className="text-xl font-black tracking-wider text-red-600 uppercase">
                                   Sold Out
                                 </span>
                               </div>
@@ -1025,7 +1026,7 @@ const CelebrityContent = () => {
                         </div>
 
                         {/* Content */}
-                        <div className="flex flex-col flex-grow p-6 gap-4">
+                        <div className="flex flex-col flex-grow gap-4 p-6">
                           <div className="flex items-center gap-2">
                             <div className="flex items-center bg-[#6F4D34]/5 px-3 py-1 rounded-full">
                               <Star
@@ -1041,7 +1042,7 @@ const CelebrityContent = () => {
                                 <img
                                   key={idx}
                                   src={getImageUrl(img)}
-                                  className="w-4 h-4 rounded-full border border-white"
+                                  className="w-4 h-4 border border-white rounded-full"
                                   alt="Badge"
                                 />
                               ))}
@@ -1055,52 +1056,54 @@ const CelebrityContent = () => {
                           <div className="flex items-center justify-between mt-auto">
                             <div className="flex flex-col">
                               {hasDiscount && (
-                                <span className="text-sm text-gray-400 line-through font-bold">
+                                <span className="text-sm font-bold text-gray-400 line-through">
                                   ₹{product.marketPrice.toLocaleString()}
                                 </span>
                               )}
-                              <span className="text-2xl font-black text-gray-900 tracking-tighter">
+                              <span className="text-2xl font-black tracking-tighter text-gray-900">
                                 ₹{displayPrice.toLocaleString()}
                               </span>
                             </div>
                             {hasDiscount && (
-                              <div className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-black">
+                              <div className="px-3 py-1 text-xs font-black text-red-600 rounded-full bg-red-50">
                                 {discountPercent}% OFF
                               </div>
                             )}
                           </div>
 
-                          <div className="grid grid-cols-5 gap-3 pt-2">
-                            <button
-                              onClick={(e) => addToCart(product._id, e)}
-                              disabled={
-                                !product.quantity || product.quantity === 0
-                              }
-                              className="col-span-1 h-12 bg-gray-50 text-gray-900 rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all flex items-center justify-center disabled:opacity-30"
-                            >
-                              <ShoppingCart size={20} />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (userType !== "Buyer") {
-                                  toast.warn("Register as a Buyer to shop");
-                                  return;
+                          {userType !== "Artist" && userType !== "Seller" && (
+                            <div className="grid grid-cols-5 gap-3 pt-2">
+                              <button
+                                onClick={(e) => addToCart(product._id, e)}
+                                disabled={
+                                  !product.quantity || product.quantity === 0
                                 }
-                                navigate(
-                                  `/my-account/check-out/${userId}?productId=${product._id}`
-                                );
-                              }}
-                              disabled={
-                                !product.quantity || product.quantity === 0
-                              }
-                              className="col-span-4 h-12 bg-[#6F4D34] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#5a3e2a] transition-all disabled:bg-gray-200"
-                            >
-                              {(!product.quantity || product.quantity === 0)
-                                ? "Sold Out"
-                                : "Buy Now"}
-                            </button>
-                          </div>
+                                className="col-span-1 h-12 bg-gray-50 text-gray-900 rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all flex items-center justify-center disabled:opacity-30"
+                              >
+                                <ShoppingCart size={20} />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (userType !== "Buyer") {
+                                    toast.warn("Register as a Buyer to shop");
+                                    return;
+                                  }
+                                  navigate(
+                                    `/my-account/check-out/${userId}?productId=${product._id}`
+                                  );
+                                }}
+                                disabled={
+                                  !product.quantity || product.quantity === 0
+                                }
+                                className="col-span-4 h-12 bg-[#6F4D34] text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#5a3e2a] transition-all disabled:bg-gray-200"
+                              >
+                                {(!product.quantity || product.quantity === 0)
+                                  ? "Sold Out"
+                                  : "Buy Now"}
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -1108,13 +1111,13 @@ const CelebrityContent = () => {
                 </div>
               ) : (
                 <div className="py-24 text-center bg-white rounded-[32px] border border-dashed border-gray-200">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-50 rounded-full mb-6 text-gray-300">
+                  <div className="inline-flex items-center justify-center w-20 h-20 mb-6 text-gray-300 rounded-full bg-gray-50">
                     <Search size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="mb-2 text-xl font-bold text-gray-900">
                     No matching pieces found
                   </h3>
-                  <p className="text-gray-500 max-w-xs mx-auto mb-8">
+                  <p className="max-w-xs mx-auto mb-8 text-gray-500">
                     Try adjusting your filters to explore the rest of this
                     exclusive collection.
                   </p>

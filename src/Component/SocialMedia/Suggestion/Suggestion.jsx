@@ -68,9 +68,9 @@ const Suggestion = () => {
         const suggestedUsers = (res?.data?.suggestedUsers || []).map(user => {
           const isFollowing = Array.isArray(user?.profile?.followers)
             ? user.profile.followers.some(f => {
-                const fId = typeof f === "object" && f !== null ? f._id : f;
-                return String(fId) === String(userId);
-              })
+              const fId = typeof f === "object" && f !== null ? f._id : f;
+              return String(fId) === String(userId);
+            })
             : false;
           return { ...user, followStatus: isFollowing ? "Unfollow" : "Follow" };
         });
@@ -148,18 +148,18 @@ const Suggestion = () => {
   if (loading) return <MediaSideSuggestionSkele />;
 
   return (
-    <div className="suggestion sticky top-0 h-screen hidden lg:block col-span-3 px-2 py-2">
-      <h3 className="text-lg font-bold my-2 ml-1">Discover Creators</h3>
+    <div className="sticky top-0 hidden h-screen col-span-3 px-2 py-2 suggestion lg:block">
+      <h3 className="my-2 ml-1 text-lg font-bold">Discover Creators</h3>
 
       {users.map((user, index) => {
-          const followStatus = user.followStatus || "Follow";
-          const isFollowing = followStatus === "Unfollow" || followStatus === "Following";
+        const followStatus = user.followStatus || "Follow";
+        const isFollowing = followStatus === "Unfollow" || followStatus === "Following";
 
-          const fullName = `${user?.name || ''} ${user?.lastName || ''}`.trim();
-          const displayName = user?.username || fullName || 'User';
-          const displayUsername = isNarrow
-            ? displayName.slice(0, 5)
-            : displayName;
+        const fullName = `${user?.name || ''} ${user?.lastName || ''}`.trim();
+        const displayName = user?.username || fullName || 'User';
+        const displayUsername = isNarrow
+          ? displayName.slice(0, 5)
+          : displayName;
 
         return (
           <div
@@ -167,14 +167,14 @@ const Suggestion = () => {
             className="suggested grid grid-cols-7 flex flex-col sm:flex-row p-1 items-start sm:items-center justify-between mb-2 gap-1 border-[#6E4E37]"
           >
             {/* Avatar + Name */}
-            <div className="col-span-5 flex items-center gap-2">
+            <div className="flex items-center col-span-5 gap-2">
               <img
                 src={user?.profilePhoto
                   ? getImageUrl(user?.profilePhoto)
                   : DEFAULT_PROFILE_IMAGE
                 }
                 alt="avatar"
-                className="rounded-full w-9 h-9 object-cover"
+                className="object-cover rounded-full w-9 h-9"
               />
               <div className="flex flex-col max-w-[80px] lg:max-w-fit">
                 <p className="text-xs font-semibold text-gray-800 truncate lg:truncate-none">
@@ -187,32 +187,32 @@ const Suggestion = () => {
             </div>
 
             {/* Buttons */}
-              <div className="col-span-2 flex flex-row gap-1 items-center sm:ml-auto">
-                <button
-                  className={`${isFollowing
-                      ? "bg-gray-200 text-black"
-                      : "bg-[#6F4D34] text-white"
-                    } text-xs px-2 py-1 rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
-                  onClick={(e) => { e.stopPropagation(); handleFollowToggle(user._id, followStatus); }}
-                >
-                  {followStatus === "Following" ? "Following" : isFollowing ? "Unfollow" : "Follow"}
-                </button>
+            <div className="flex flex-row items-center col-span-2 gap-1 sm:ml-auto">
+              <button
+                className={`${isFollowing
+                  ? "bg-gray-200 text-black"
+                  : "bg-[#6F4D34] text-white"
+                  } text-xs px-2 py-1 rounded-lg border border-gray-300 font-semibold transition-colors duration-300 whitespace-nowrap`}
+                onClick={(e) => { e.stopPropagation(); handleFollowToggle(user._id, followStatus); }}
+              >
+                {followStatus === "Following" ? "Following" : isFollowing ? "Unfollow" : "Follow"}
+              </button>
             </div>
           </div>
         );
       })}
 
-        <hr className="h-0.5 bg-gray-700 text-gray-400 border-none mt-2" />
+      <hr className="h-0.5 bg-gray-700 text-gray-400 border-none mt-2" />
 
-          {/* Sponsored Ad Card - Store Style */}
-          <SidebarAdCard
-            sidebarAds={sidebarAds}
-            displayAdImages={displayAdImages}
-            activeAdIndex={activeAdIndex}
-            setActiveAdIndex={setActiveAdIndex}
-            navigate={navigate}
-          />
-      </div>
+      {/* Sponsored Ad Card - Store Style */}
+      <SidebarAdCard
+        sidebarAds={sidebarAds}
+        displayAdImages={displayAdImages}
+        activeAdIndex={activeAdIndex}
+        setActiveAdIndex={setActiveAdIndex}
+        navigate={navigate}
+      />
+    </div>
   );
 };
 
@@ -222,6 +222,7 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
   const [isHovered, setIsHovered] = useState(false);
   const [slideDir, setSlideDir] = useState("right");
   const totalAds = displayAdImages.length;
+  const userType = localStorage.getItem("userType");
 
   useEffect(() => {
     if (totalAds <= 1 || isHovered) return;
@@ -282,7 +283,7 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
   };
 
   return (
-    <div className="mt-4 w-full">
+    <div className="w-full mt-4">
       <div
         className="group flex flex-col bg-white rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 border border-gray-100/50 cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
@@ -297,7 +298,7 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
               key={activeAdIndex}
               src={displayAdImages[activeAdIndex]}
               alt={ad?.productName || "Sponsored"}
-              className="absolute inset-0 w-full h-full object-contain transition-all duration-500 group-hover:scale-105"
+              className="absolute inset-0 object-contain w-full h-full transition-all duration-500 group-hover:scale-105"
               style={{
                 animation: totalAds > 1 ? `slideIn${slideDir === "right" ? "Right" : "Left"} 0.4s ease-out` : "none",
               }}
@@ -307,7 +308,7 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
 
           {/* Discount Badge */}
           {hasDiscount && (
-            <div className="absolute top-3 right-3 z-10">
+            <div className="absolute z-10 top-3 right-3">
               <div className="bg-red-50 text-[#E74C3C] px-2 py-1 rounded-full border border-red-100/50 shadow-sm">
                 <span className="text-[9px] font-black uppercase tracking-tight">{discountPercent}% OFF</span>
               </div>
@@ -319,37 +320,37 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
             <>
               <button
                 onClick={goPrev}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-white"
+                className="absolute z-10 flex items-center justify-center transition-opacity -translate-y-1/2 rounded-full shadow opacity-0 left-2 top-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm group-hover:opacity-100 hover:bg-white"
               >
-                <i className="ri-arrow-left-s-line text-sm text-gray-700"></i>
+                <i className="text-sm text-gray-700 ri-arrow-left-s-line"></i>
               </button>
               <button
                 onClick={goNext}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-white"
+                className="absolute z-10 flex items-center justify-center transition-opacity -translate-y-1/2 rounded-full shadow opacity-0 right-2 top-1/2 w-7 h-7 bg-white/90 backdrop-blur-sm group-hover:opacity-100 hover:bg-white"
               >
-                <i className="ri-arrow-right-s-line text-sm text-gray-700"></i>
+                <i className="text-sm text-gray-700 ri-arrow-right-s-line"></i>
               </button>
             </>
           )}
 
           {/* Hover overlay */}
-          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute inset-0 transition-opacity duration-500 opacity-0 pointer-events-none bg-black/5 group-hover:opacity-100" />
         </div>
 
-          {/* Content */}
-          <div className="flex flex-col p-3 gap-2">
-            {/* Artist / Seller */}
-            <div className="flex items-center gap-2">
-              <img
-                src={ad?.userId?.profilePhoto ? getImageUrl(ad.userId.profilePhoto) : DEFAULT_PROFILE_IMAGE}
-                alt={ad?.userId?.name || "Seller"}
-                className="w-6 h-6 rounded-full object-cover border border-gray-200 flex-shrink-0"
-              />
-              <span className="text-sm font-semibold text-gray-900 truncate">
-                {hasRealAd ? `${ad.userId?.name || ""}${ad.userId?.lastName ? ` ${ad.userId.lastName}` : ""}` : "Sponsored"}
-              </span>
-              <span className="text-[8px] font-bold tracking-wide uppercase text-white bg-[#6F4D34] px-1.5 py-0.5 rounded flex-shrink-0">Ad</span>
-            </div>
+        {/* Content */}
+        <div className="flex flex-col gap-2 p-3">
+          {/* Artist / Seller */}
+          <div className="flex items-center gap-2">
+            <img
+              src={ad?.userId?.profilePhoto ? getImageUrl(ad.userId.profilePhoto) : DEFAULT_PROFILE_IMAGE}
+              alt={ad?.userId?.name || "Seller"}
+              className="flex-shrink-0 object-cover w-6 h-6 border border-gray-200 rounded-full"
+            />
+            <span className="text-sm font-semibold text-gray-900 truncate">
+              {hasRealAd ? `${ad.userId?.name || ""}${ad.userId?.lastName ? ` ${ad.userId.lastName}` : ""}` : "Sponsored"}
+            </span>
+            <span className="text-[8px] font-bold tracking-wide uppercase text-white bg-[#6F4D34] px-1.5 py-0.5 rounded flex-shrink-0">Ad</span>
+          </div>
 
           {/* Title */}
           <h3 className="text-[15px] font-bold text-gray-900 line-clamp-1 group-hover:text-[#6F4D34] transition-colors tracking-tight leading-tight">
@@ -359,25 +360,27 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
           {/* Price Row */}
           <div className="flex items-center gap-2">
             {hasDiscount && (
-              <span className="text-sm text-gray-400 line-through font-bold">
+              <span className="text-sm font-bold text-gray-400 line-through">
                 ₹{(marketPrice || 0).toLocaleString()}
               </span>
             )}
             {displayPrice && (
-              <span className="text-xl font-black text-gray-900 tracking-tighter">
+              <span className="text-xl font-black tracking-tighter text-gray-900">
                 ₹{(displayPrice || 0).toLocaleString()}
               </span>
             )}
           </div>
 
           {/* Buy Now Button */}
-          <button
-            onClick={handleBuyNow}
-            className="w-full h-[40px] bg-[#6F4D34] text-white rounded-xl font-black text-[11px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:bg-[#5a3e2a] active:scale-95 flex items-center justify-center gap-2"
-          >
-            <i className="ri-shopping-bag-3-line text-sm"></i>
-            Buy Now
-          </button>
+          {userType !== "Artist" && userType !== "Seller" && (
+            <button
+              onClick={handleBuyNow}
+              className="w-full h-[40px] bg-[#6F4D34] text-white rounded-xl font-black text-[11px] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm hover:bg-[#5a3e2a] active:scale-95 flex items-center justify-center gap-2"
+            >
+              <i className="text-sm ri-shopping-bag-3-line"></i>
+              Buy Now
+            </button>
+          )}
 
           {/* Dot indicators */}
           {totalAds > 1 && (
@@ -386,11 +389,10 @@ const SidebarAdCard = ({ sidebarAds, displayAdImages, activeAdIndex, setActiveAd
                 <button
                   key={idx}
                   onClick={(e) => { e.stopPropagation(); goTo(idx); }}
-                  className={`rounded-full transition-all duration-300 ${
-                    idx === activeAdIndex
+                  className={`rounded-full transition-all duration-300 ${idx === activeAdIndex
                       ? "w-5 h-1.5 bg-[#6F4D34]"
                       : "w-1.5 h-1.5 bg-gray-200 hover:bg-gray-300"
-                  }`}
+                    }`}
                 />
               ))}
             </div>

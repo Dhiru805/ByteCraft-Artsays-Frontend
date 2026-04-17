@@ -393,6 +393,7 @@ const ProductDetails = () => {
                     navigate(`/my-account/check-out/${userId}?${params}`);
                   }
                 }}
+                userType={userType}
               />
 
               <OffersBlock
@@ -754,7 +755,7 @@ const ProductInfo = ({ product, discountPercent, ratingValue, reviewCount, artis
   );
 };
 
-const PurchaseCard = ({ product, quantity, setQuantity, protection, setProtection, giftOption, setGiftOption, pinCode, setPinCode, address, setAddress, handleSubmit, onAddToCart, onBuyNow }) => {
+const PurchaseCard = ({ product, quantity, setQuantity, protection, setProtection, giftOption, setGiftOption, pinCode, setPinCode, address, setAddress, handleSubmit, onAddToCart, onBuyNow, userType }) => {
   return (
     <div className="bg-white rounded-[32px] border border-gray-200 shadow-xl overflow-hidden">
       <div className="p-6 space-y-6">
@@ -838,6 +839,7 @@ const PurchaseCard = ({ product, quantity, setQuantity, protection, setProtectio
           </div>
         </div>
 
+        {userType !== "Artist" && userType !== "Seller" && (
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={onAddToCart}
@@ -854,6 +856,7 @@ const PurchaseCard = ({ product, quantity, setQuantity, protection, setProtectio
             <Zap size={18} /> Buy Now
           </button>
         </div>
+        )}
       </div>
       {!product.quantity && (
         <div className="bg-red-500 text-white text-center py-2 text-[10px] font-black uppercase tracking-[0.2em]">Currently Sold Out</div>

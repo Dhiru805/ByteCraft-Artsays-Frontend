@@ -219,7 +219,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                   width="1920"
                   height="1080"
                   fetchpriority="high"
-                  className="absolute inset-0 w-full h-full object-cover scale-105"
+                  className="absolute inset-0 object-cover w-full h-full scale-105"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -232,7 +232,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
             ) : (
               <motion.div
                 key="fallback-bg"
-                className="absolute inset-0 w-full h-full bg-cover bg-center scale-105"
+                className="absolute inset-0 w-full h-full scale-105 bg-center bg-cover"
                 style={{ backgroundImage: "url('/herosectionimg/hero-bg.jpg')" }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -247,7 +247,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
 
           {/* Content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 md:px-0 my-3 max-w-[1440px] mx-auto">
-            <div className="col-span-2 relative align-content-center">
+            <div className="relative col-span-2 align-content-center">
               <div>
                 {/* Badge */}
                 <span className="inline-block px-3 py-1 bg-white text-[#000000] backdrop-blur-md rounded-full text-[10px] md:text-sm font-bold tracking-widest uppercase mb-4 animate-fade-in">
@@ -255,12 +255,12 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                 </span>
 
                 {/* Static title */}
-                <h1 className="text-3xl sm:text-4xl md:text-7xl font-extrabold text-white leading-tight drop-shadow-lg mb-2">
+                <h1 className="mb-2 text-3xl font-extrabold leading-tight text-white sm:text-4xl md:text-7xl drop-shadow-lg">
                   {heroData.title}
                 </h1>
 
                 {/* Typing animation */}
-                <h2 className="text-2xl sm:text-3xl md:text-8xl font-extrabold mb-4">
+                <h2 className="mb-4 text-2xl font-extrabold sm:text-3xl md:text-8xl">
                   <span className="bg-gradient-to-r from-[#FFD59E] to-[#FF725E] bg-clip-text text-transparent !windhavi">
                     {text}
                   </span>
@@ -269,7 +269,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
 
                 {/* Search bar */}
                 <div className="relative w-full max-w-2xl mb-4" ref={searchRef}>
-                  <div className="flex items-center w-full rounded-xl border border-white/30 shadow-lg overflow-hidden bg-white backdrop-blur-sm">
+                  <div className="flex items-center w-full overflow-hidden bg-white border shadow-lg rounded-xl border-white/30 backdrop-blur-sm">
                     <label htmlFor="hero-search" className="sr-only">Search your next Masterpiece NOW!</label>
                     <input
                       id="hero-search"
@@ -279,7 +279,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                       onFocus={() => setOpen(true)}
                       onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                       placeholder="Search your next Masterpiece NOW!"
-                      className="flex-1 px-4 py-3 text-sm md:text-base text-dark placeholder-white/70 bg-transparent focus:outline-none"
+                      className="flex-1 px-4 py-3 text-sm bg-transparent md:text-base text-dark placeholder-white/70 focus:outline-none"
                     />
                     <button
                       onClick={() => handleSearch()}
@@ -296,16 +296,16 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                     {/* ── Products section: only when actively searching ── */}
                     {q && (
                       <>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                        <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">
                           {`Products matching "${query}"`}
                         </p>
                         {productSuggestions.length > 0 ? (
-                          <div className="flex flex-col divide-y divide-gray-100 mb-2">
+                          <div className="flex flex-col mb-2 divide-y divide-gray-100">
                             {productSuggestions.map((product, i) => (
                               <div
                                 key={product._id || i}
                                 onClick={() => navigate(`/store/product/${product._id}`)}
-                                className="flex items-center gap-3 py-2 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition"
+                                className="flex items-center gap-3 px-2 py-2 transition rounded-lg cursor-pointer hover:bg-gray-50"
                               >
                                 <img
                                   src={
@@ -316,7 +316,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                                         : "/assets/home/biditemurl.jpg"
                                   }
                                   alt={product.productName}
-                                  className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                                  className="flex-shrink-0 object-cover w-10 h-10 rounded-lg"
                                   onError={(e) => { e.target.src = "/assets/home/biditemurl.jpg"; }}
                                 />
                                 <div className="flex flex-col min-w-0">
@@ -341,7 +341,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                             ))}
                           </div>
                         ) : (
-                          matchedArtists.length === 0 ? null : <p className="text-xs text-gray-400 mb-4">No products found</p>
+                          matchedArtists.length === 0 ? null : <p className="mb-4 text-xs text-gray-400">No products found</p>
                         )}
                       </>
                     )}
@@ -349,12 +349,12 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                     {/* ── Artists section: always show (top 10 default, matched when searching) ── */}
                     {artistSuggestions.length > 0 && (
                       <>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                        <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">
                           {q ? `Artists matching "${query}"` : "Top Artists"}
                         </p>
                         {artistSuggestions.length > 0 ? (
                           <div
-                            className="flex gap-3 overflow-x-auto pb-2 mb-2 scroll-smooth"
+                            className="flex gap-3 pb-2 mb-2 overflow-x-auto scroll-smooth"
                             style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
                           >
                             {artistSuggestions.map((artist, i) => {
@@ -400,24 +400,24 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
                             })}
                           </div>
                         ) : (
-                          q && <p className="text-xs text-gray-400 mb-4">No artists found</p>
+                          q && <p className="mb-4 text-xs text-gray-400">No artists found</p>
                         )}
                       </>
                     )}
 
                     {/* ── No results at all ── */}
                     {q && productSuggestions.length === 0 && artistSuggestions.length === 0 && (
-                      <p className="text-sm text-gray-500 text-center py-4">No results found for "{query}"</p>
+                      <p className="py-4 text-sm text-center text-gray-500">No results found for "{query}"</p>
                     )}
 
                     {/* ── Artist not found when searching ── */}
                     {q && matchedArtists.length === 0 && matchedProducts.length > 0 && (
-                      <p className="text-xs text-gray-400 mb-2">No artists found for "{query}"</p>
+                      <p className="mb-2 text-xs text-gray-400">No artists found for "{query}"</p>
                     )}
 
                     {/* ── Recent Searches / Trend section ── */}
-                    <div className="border-t pt-2">
-                      <div className="font-bold flex items-center text-gray-800 mb-2 text-sm">
+                    <div className="pt-2 border-t">
+                      <div className="flex items-center mb-2 text-sm font-bold text-gray-800">
                         <svg className="mr-2" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
                           <path d="M3 13 L9 7 L13 11 L21 3" stroke="#2BB673" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                           <path d="M21 3 L21 9" stroke="#2BB673" strokeWidth="2.2" strokeLinecap="round" />
@@ -456,7 +456,7 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
               </div>
 
               {/* Description */}
-              <p className="text-sm md:text-md text-white leading-relaxed mb-3 max-w-xl line-clamp-3 md:line-clamp-none">
+              <p className="max-w-xl mb-3 text-sm leading-relaxed text-white md:text-md line-clamp-3 md:line-clamp-none">
                 {heroData.description}
               </p>
 
@@ -497,23 +497,23 @@ const Hero = ({ homepageId: homepageIdProp, onReady }) => {
             </AnimatePresence>
 
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
           </div>
         </div>
       </div>
 
       {/* Tags bar */}
-      <div className="bg-white py-6 shadow-md">
+      <div className="py-6 bg-white shadow-md">
         <div className="max-w-[1440px] mx-auto px-4 flex flex-wrap justify-center gap-6">
           {tags.map((tag, idx) => (
             <div key={idx} className="flex items-center gap-2">
-              <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100">
+              <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-xl">
                 <img
                   src={getImageUrl(tag.icon)}
                   alt={tag.title}
                   width="24"
                   height="24"
-                  className="w-6 h-6 object-contain"
+                  className="object-contain w-6 h-6"
                 />
               </div>
               <span className="text-base font-medium text-gray-800">

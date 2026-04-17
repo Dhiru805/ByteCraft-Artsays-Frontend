@@ -88,17 +88,18 @@ const HomeChallenges = () => {
   };
 
   if (loading) return <div><HomeChallengesSkeleton/></div>;
+  if (detailedChallenges.length === 0) return null;
 
   return (
     <div className="w-full bg-gray-50 font-[poppins] py-12 px-4 md:px-6">
       <div className="max-w-[1440px] mx-auto">
         {homepageChallenges && (
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 align-items-center mb-10">
+          <div className="flex flex-col justify-between gap-6 mb-10 md:flex-row md:items-end align-items-center">
             <div className="flex flex-col gap-6">
-              <h1 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tighter">
+              <h1 className="text-3xl font-black tracking-tighter text-gray-900 md:text-5xl">
                 {homepageChallenges.heading}
               </h1>
-              <p className="text-gray-500 text-lg max-w-5xl font-medium leading-relaxed">
+              <p className="max-w-5xl text-lg font-medium leading-relaxed text-gray-500">
                 {homepageChallenges.description}
               </p>
             </div>
@@ -124,7 +125,7 @@ const HomeChallenges = () => {
                     <img
                       src={getImageUrl(challenge?.bannerImage)}
                       alt={challenge?.title}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                      className="object-contain w-full h-full transition-transform duration-700 group-hover:scale-105"
                     />
                   <div className="absolute top-4 right-4 lg:hidden">
                     <span className="flex items-center gap-1 px-3 py-1 bg-[#6F4D34] text-white rounded-full text-xs font-bold shadow-lg">
@@ -134,14 +135,14 @@ const HomeChallenges = () => {
                 </div>
 
                 {/* Content Section */}
-                <div className="w-full lg:w-3/5 flex flex-col justify-center space-y-4">
+                <div className="flex flex-col justify-center w-full space-y-4 lg:w-3/5">
                   {!showDetails[index] ? (
                     <>
                       <div className="flex flex-wrap items-center gap-3">
                         <span className="hidden lg:flex items-center gap-1 px-3 py-1 bg-[#6F4D34] text-white rounded-full text-xs font-bold shadow-md">
                           <GoDotFill className="animate-pulse" /> {daysLeft(challenge?.endDate)}
                         </span>
-                        <span className="flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-bold uppercase">
+                        <span className="flex items-center gap-1 px-3 py-1 text-xs font-bold uppercase border rounded-full bg-amber-50 text-amber-700 border-amber-200">
                           <Trophy size={14} /> {challenge?.status}
                         </span>
                       </div>
@@ -150,7 +151,7 @@ const HomeChallenges = () => {
                         {challenge?.title}
                       </h2>
                       
-                      <p className="text-base md:text-lg text-gray-600 leading-relaxed line-clamp-2 font-medium">
+                      <p className="text-base font-medium leading-relaxed text-gray-600 md:text-lg line-clamp-2">
                         {challenge?.description}
                       </p>
 
@@ -162,25 +163,25 @@ const HomeChallenges = () => {
                         ))}
                       </div>
 
-                      <div className="flex items-center gap-4 p-4 bg-gradient-to-br from-amber-50 to-white rounded-2xl border border-amber-100 max-w-sm">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-amber-500 text-white shadow-lg">
+                      <div className="flex items-center max-w-sm gap-4 p-4 border bg-gradient-to-br from-amber-50 to-white rounded-2xl border-amber-100">
+                        <div className="flex items-center justify-center w-24 h-12 text-white shadow-lg rounded-xl bg-amber-500">
                           <FaCrown className="text-2xl" />
                         </div>
                         <div>
                           <p className="text-[10px] uppercase tracking-wider font-bold text-amber-600">Grand Prize</p>
-                          <p className="text-gray-900 font-bold text-lg leading-tight">
+                          <p className="text-lg font-bold leading-tight text-gray-900">
                             {challenge?.prizeDetails}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                      <div className="flex flex-col gap-4 pt-4 sm:flex-row">
                         <button
                           onClick={() => navigate(`/challenge/${slugUrl(challenge?.title)}`, { state: challenge })}
                           className="px-8 py-3.5 bg-[#6F4D34] hover:bg-[#5a3e2a] hover:-translate-y-1 text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 group/btn"
                         >
                           Join Challenge
-                          <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                          <ChevronRight size={18} className="transition-transform group-hover/btn:translate-x-1" />
                         </button>
                         <button
                           onClick={() => handleShowDetails(index)}
@@ -191,7 +192,7 @@ const HomeChallenges = () => {
                       </div>
                     </>
                   ) : (
-                    <div className="animate-fade-in space-y-5">
+                    <div className="space-y-5 animate-fade-in">
                       <button 
                         onClick={() => handleShowDetails(index)}
                         className="flex items-center gap-2 text-[#6F4D34] font-bold text-sm hover:underline mb-2"
@@ -199,23 +200,23 @@ const HomeChallenges = () => {
                         <ArrowLeft size={16} /> Back to summary
                       </button>
 
-                      <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                      <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
                         Detailed Information
                       </h2>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
                           <Layers size={20} className="text-[#6F4D34] mt-1" />
                           <div>
                             <p className="text-xs font-bold text-gray-500 uppercase">Theme</p>
-                            <p className="text-gray-900 font-semibold">{challenge?.type}</p>
+                            <p className="font-semibold text-gray-900">{challenge?.type}</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
                           <Calendar size={20} className="text-[#6F4D34] mt-1" />
                           <div>
                             <p className="text-xs font-bold text-gray-500 uppercase">Deadline</p>
-                            <p className="text-gray-900 font-semibold">
+                            <p className="font-semibold text-gray-900">
                               {challenge?.submissionDeadline
                                 ? format(new Date(challenge.submissionDeadline), "dd MMMM, yyyy")
                                 : "N/A"}
@@ -226,20 +227,20 @@ const HomeChallenges = () => {
                           <Tag size={20} className="text-[#6F4D34] mt-1" />
                           <div>
                             <p className="text-xs font-bold text-gray-500 uppercase">Entry Fee</p>
-                            <p className="text-gray-900 font-semibold">{challenge?.entryFee || "Free"}</p>
+                            <p className="font-semibold text-gray-900">{challenge?.entryFee || "Free"}</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-2xl">
                           <Trophy size={20} className="text-[#6F4D34] mt-1" />
                           <div>
                             <p className="text-xs font-bold text-gray-500 uppercase">Mediums</p>
-                            <p className="text-gray-900 font-semibold">{challenge?.tags?.join(", ")}</p>
+                            <p className="font-semibold text-gray-900">{challenge?.tags?.join(", ")}</p>
                           </div>
                         </div>
                       </div>
 
                       <div className="p-4 bg-[#6F4D34]/5 rounded-2xl border border-[#6F4D34]/10">
-                        <p className="text-sm text-gray-700 leading-relaxed font-medium">
+                        <p className="text-sm font-medium leading-relaxed text-gray-700">
                           {challenge?.description}
                         </p>
                       </div>
@@ -250,7 +251,7 @@ const HomeChallenges = () => {
                           className="w-full sm:w-auto px-12 py-4 bg-[#6F4D34] text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg hover:bg-[#5a3e2a] hover:-translate-y-1 transition-all flex items-center justify-center gap-2 group/btn"
                         >
                           Start Your Submission
-                          <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                          <ChevronRight size={18} className="transition-transform group-hover/btn:translate-x-1" />
                         </button>
                       </div>
                     </div>

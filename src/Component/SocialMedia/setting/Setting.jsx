@@ -398,6 +398,20 @@ const Setting = () => {
   const [collaborationSetting, setCollaborationSetting] = useState("everyone"); // or 'following' / 'none'
   const [manualApprove, setManualApprove] = useState(false);
   const [mentionSetting, setMentionSetting] = useState("everyone");
+  const [savingCollab, setSavingCollab] = useState(false);
+  const saveCollabSettings = async () => {
+    setSavingCollab(true);
+    try {
+      await updateSettings({
+        collaborationSettings: { allowFrom: collaborationSetting, manualApprove },
+        mentionSettings: { allowFrom: mentionSetting },
+      });
+    } catch (err) {
+      console.error("Error saving collaboration settings:", err);
+    } finally {
+      setSavingCollab(false);
+    }
+  };
   useEffect(() => {
     const fetchSettings = async () => {
       try {
@@ -448,31 +462,25 @@ const Setting = () => {
     allowCommentsFrom: "everyone",
     allowGifComments: true,
   });
-  const handleSettingsChange = async (field, value) => {
+  const [savingComments, setSavingComments] = useState(false);
+  const handleSettingsChange = (field, value) => {
+    setCommentSettings((prev) => ({ ...prev, [field]: value }));
+  };
+  const saveCommentSettings = async () => {
     const userId = localStorage.getItem("userId");
+    setSavingComments(true);
     try {
-      const body = {
-        userId,
-        allowCommentsFrom:
-          field === "allowCommentsFrom"
-            ? value
-            : commentSettings.allowCommentsFrom,
-        allowGifComments:
-          field === "allowGifComments"
-            ? value
-            : commentSettings.allowGifComments,
-      };
-
       const res = await putAPI(
         "/api/social-media/comment-settings",
-        body,
+        { userId, ...commentSettings },
         {},
         true
       );
-      // if using axios.put wrap with postAPI
       setCommentSettings(res.data.commentSettings);
     } catch (err) {
       console.error("Error updating comment settings:", err);
+    } finally {
+      setSavingComments(false);
     }
   };
 
@@ -1614,15 +1622,7 @@ const Setting = () => {
                           name="collaboration"
                           value="everyone"
                           checked={collaborationSetting === "everyone"}
-                          onChange={() => {
-                            setCollaborationSetting("everyone");
-                            updateSettings({
-                              collaborationSettings: {
-                                allowFrom: "everyone",
-                                manualApprove,
-                              },
-                            });
-                          }}
+                          onChange={() => setCollaborationSetting("everyone")}
                         />
                         <span>Allow collaboration from everyone</span>
                       </label>
@@ -1632,15 +1632,7 @@ const Setting = () => {
                           name="collaboration"
                           value="following"
                           checked={collaborationSetting === "following"}
-                          onChange={() => {
-                            setCollaborationSetting("following");
-                            updateSettings({
-                              collaborationSettings: {
-                                allowFrom: "following",
-                                manualApprove,
-                              },
-                            });
-                          }}
+                          onChange={() => setCollaborationSetting("following")}
                         />
                         <span>Allow collaboration from people you follow</span>
                       </label>
@@ -1650,15 +1642,7 @@ const Setting = () => {
                           name="collaboration"
                           value="none"
                           checked={collaborationSetting === "none"}
-                          onChange={() => {
-                            setCollaborationSetting("none");
-                            updateSettings({
-                              collaborationSettings: {
-                                allowFrom: "none",
-                                manualApprove,
-                              },
-                            });
-                          }}
+                          onChange={() => setCollaborationSetting("none")}
                         />
                         <span>Don't allow collaboration</span>
                       </label>
@@ -1677,15 +1661,7 @@ const Setting = () => {
                         <input
                           type="checkbox"
                           checked={manualApprove}
-                          onChange={() => {
-                            setManualApprove(!manualApprove);
-                            updateSettings({
-                              collaborationSettings: {
-                                allowFrom: collaborationSetting,
-                                manualApprove: !manualApprove,
-                              },
-                            });
-                          }}
+                          onChange={() => setManualApprove(!manualApprove)}
                           className="sr-only"
                         />
                         <div
@@ -1723,12 +1699,7 @@ const Setting = () => {
                           name="mention"
                           value="everyone"
                           checked={mentionSetting === "everyone"}
-                          onChange={() => {
-                            setMentionSetting("everyone");
-                            updateSettings({
-                              mentionSettings: { allowFrom: "everyone" },
-                            });
-                          }}
+                          onChange={() => setMentionSetting("everyone")}
                         />
                         <span>Allow mention from everyone</span>
                       </label>
@@ -1738,12 +1709,7 @@ const Setting = () => {
                           name="mention"
                           value="following"
                           checked={mentionSetting === "following"}
-                          onChange={() => {
-                            setMentionSetting("following");
-                            updateSettings({
-                              mentionSettings: { allowFrom: "following" },
-                            });
-                          }}
+                          onChange={() => setMentionSetting("following")}
                         />
                         <span>Allow mention from people you follow</span>
                       </label>
@@ -1753,18 +1719,22 @@ const Setting = () => {
                           name="mention"
                           value="none"
                           checked={mentionSetting === "none"}
-                          onChange={() => {
-                            setMentionSetting("none");
-                            updateSettings({
-                              mentionSettings: { allowFrom: "none" },
-                            });
-                          }}
+                          onChange={() => setMentionSetting("none")}
                         />
                         <span>Don't allow mention</span>
                       </label>
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="flex justify-end pt-2">
+                <button
+                  onClick={saveCollabSettings}
+                  disabled={savingCollab}
+                  className="px-6 py-2 bg-[#4f3823] text-white text-sm font-semibold rounded-lg hover:bg-[#3d2c1a] disabled:opacity-60 transition-colors"
+                >
+                  {savingCollab ? "Saving..." : "Save"}
+                </button>
               </div>
             </div>
           )}
@@ -1885,6 +1855,15 @@ const Setting = () => {
                       </div>
                     </label>
                   </div>
+                </div>
+                <div className="flex justify-end pt-2">
+                  <button
+                    onClick={saveCommentSettings}
+                    disabled={savingComments}
+                    className="px-6 py-2 bg-[#4f3823] text-white text-sm font-semibold rounded-lg hover:bg-[#3d2c1a] disabled:opacity-60 transition-colors"
+                  >
+                    {savingComments ? "Saving..." : "Save"}
+                  </button>
                 </div>
               </div>
             </div>

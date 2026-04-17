@@ -7,11 +7,18 @@ import { Outlet } from 'react-router-dom';
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
 
 const Dashboard = () => {
+  const closeSidebar = () => {
+    const sidebar = document.getElementById('left-sidebar');
+    if (sidebar) sidebar.classList.remove('open');
+    document.body.classList.remove('offcanvas-active');
+  };
+
   return (
     <div id="wrapper">
       <ScrollToTop/>
       <Navbar />
       <Sidebar />
+      <div className="sidebar-overlay" onClick={closeSidebar} />
       {/* <RightIconBar /> */}
 
       <div id="main-content" className="d-flex flex-column min-vh-100">

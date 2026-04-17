@@ -859,6 +859,7 @@ const BidProduct = () => {
                                 <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{(firstAd.finalPrice || 0).toLocaleString()}</span>
                               </div>
                             </div>
+                            {userType !== "Artist" && userType !== "Seller" && (
                             <div className="grid grid-cols-5 gap-2">
                               <button onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(firstAd._id); }} disabled={!firstAd.quantity || firstAd.quantity === 0} className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm" title="Add to Cart">
                                 <div className="relative">
@@ -870,6 +871,7 @@ const BidProduct = () => {
                                 <span className="relative z-10">Buy Now</span>
                               </button>
                             </div>
+                            )}
                           </div>
                         </div>
                       );
@@ -925,6 +927,7 @@ const BidProduct = () => {
                                       <span className="text-2xl font-black text-gray-900 tracking-tighter">₹{(adProduct.finalPrice || 0).toLocaleString()}</span>
                                     </div>
                                   </div>
+                                  {userType !== "Artist" && userType !== "Seller" && (
                                   <div className="grid grid-cols-5 gap-2">
                                     <button onClick={(e) => { e.stopPropagation(); if (!ensureBuyer()) return; addToCart(adProduct._id); }} disabled={!adProduct.quantity || adProduct.quantity === 0} className="col-span-1 h-[48px] bg-gray-50 text-gray-900 hover:text-[#ffffff] rounded-2xl hover:bg-[#6F4D34] hover:text-white transition-all duration-300 disabled:opacity-50 border border-gray-100 flex items-center justify-center group/cart shadow-sm" title="Add to Cart">
                                       <div className="relative">
@@ -936,6 +939,7 @@ const BidProduct = () => {
                                       <span className="relative z-10">Buy Now</span>
                                     </button>
                                   </div>
+                                  )}
                                 </div>
                               </div>
                             );
@@ -1018,6 +1022,7 @@ const BidProduct = () => {
                               </div>
 
                               {/* Action Buttons */}
+                              {userType !== "Artist" && userType !== "Seller" && (
                               <div className="grid grid-cols-5 gap-2">
                                 <div className="col-span-2 flex flex-col justify-center">
                                   <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">Time Left</span>
@@ -1034,13 +1039,14 @@ const BidProduct = () => {
                                   }}
                                   disabled={isEnded}
                                   className={`col-span-3 h-[48px] rounded-2xl font-black text-[11px] hover:!text-[#6F4D34] hover:!bg-[#ffffff] uppercase tracking-[0.1em] transition-all duration-300 shadow-sm border border-gray-100 transform active:scale-95 flex items-center justify-center
-                                    ${isEnded 
-                                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+                                    ${isEnded
+                                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                       : "bg-[#6F4D34] text-white hover:bg-white hover:text-[#6F4D34]"}`}
                                 >
                                   {status === 'Upcoming' ? 'Remind Me' : isEnded ? 'Ended' : 'Place Bid'}
                                 </button>
                               </div>
+                              )}
                             </div>
                           </div>
                         </React.Fragment>

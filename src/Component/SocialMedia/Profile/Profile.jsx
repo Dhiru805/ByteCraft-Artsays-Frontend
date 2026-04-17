@@ -366,11 +366,11 @@ const Profile = ({ shareprofileid }) => {
         const res = await getAPI(
           `/api/social-media/posts/collaboratedPost?userId=${viewedUserId}`
         );
-        setCollaboratedPosts(res.data.data);
+        setCollaboratedPosts(res?.data?.data || []);
 
         console.log("response of fetch collaborated post", res);
       } catch (error) {
-        console.error("collaboratedpost error", error.response.data.message);
+        console.error("collaboratedpost error", error?.response?.data?.message || error.message);
       }
     };
 

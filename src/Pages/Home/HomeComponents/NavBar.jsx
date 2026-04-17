@@ -927,7 +927,7 @@ const NavBar = () => {
               </Link>
             )}
             {isLoggedIn && !isOnCommunity && (
-              <button className="mob-icon-btn" onClick={() => navigate("/artsays-community/notification")} aria-label="Notifications">
+              <button className="mob-icon-btn" onClick={() => navigate(Usertype === "Buyer" ? "/my-account/notifications" : Usertype === "Artist" ? "/artist/notifications" : Usertype === "Seller" ? "/seller/notifications" : "/super-admin/notifications")} aria-label="Notifications">
                 <IoMdNotificationsOutline size={22} />
               </button>
             )}
@@ -1193,9 +1193,9 @@ const NavBar = () => {
             {(!isLoggedIn || Usertype === "Super-Admin") && (
               <div className="mbn-create-wrap">
                 <button
-                  className={`mbn-create-btn ${location.pathname.startsWith("/blogs") ? "mbn-on" : ""
+                  className={`mbn-create-btn ${location.pathname.startsWith("/super-admin/blog/create-blog") ? "mbn-on" : ""
                     }`}
-                  onClick={() => navigate("/blogs")}
+                  onClick={() => navigate("/super-admin/blog/create-blog")}
                   aria-label="Blog"
                 >
                   <MdLibraryAdd size={20} />
