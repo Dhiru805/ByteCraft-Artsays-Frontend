@@ -467,6 +467,26 @@ const Sidebar = () => {
           },
         ],
       },
+   
+       {
+        label: "Delhivery Settings",
+        tabId: "dstg1",
+        icon: "fa fa-truck",
+        path: `#delhiverysettings`,
+        basePath: "/super-admin/delhivery-settings",
+        subTabs: [
+          {
+            label: "Login Credential",
+            subtabId: "dstg11",
+            path: `/super-admin/delhivery-settings/login-credential`,
+          },
+          //   {
+          //   label: "Links",
+          //   subtabId: "dstg12",
+          //   path: `/super-admin/delhivery-settings/links`,
+          // },
+         ],
+        },
       {
         label: "Settings",
         tabId: "stg1",
@@ -867,7 +887,7 @@ const Sidebar = () => {
 
     const roleMenu = menuConfig[roleKey] || [];
 
-    if (email === "dhiraj.zope1997@gmail.com") {
+    if (email === "shantu131201@gmail.com") {
       setFetchedTabs(menuConfig["Super-Admin"]);
       return;
     }

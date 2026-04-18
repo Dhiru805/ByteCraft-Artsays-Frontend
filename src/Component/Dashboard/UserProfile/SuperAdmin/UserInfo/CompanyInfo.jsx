@@ -30,7 +30,7 @@ const CompanyProfile = ({ userId }) => {
                 if (response.data && response.data.length > 0) {
                     setFormData(response.data[0]);
                     const storedEmail = localStorage.getItem("email");
-                    setIsAuthorized(storedEmail === 'dhiraj.zope1997@gmail.com');
+                    setIsAuthorized(storedEmail === 'shantu131201@gmail.com');
                 }
             } catch (error) {
                 console.log("Fetch attempt completed");

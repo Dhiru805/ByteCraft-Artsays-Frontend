@@ -253,7 +253,7 @@ import { Country, State, City } from "country-state-city";
           setLoading(true);
           try {
             const response = await postAPI(
-              `/api/create-address`,
+              `/api/create-address-data`,
               { userId, ...formData },
               true,
               false

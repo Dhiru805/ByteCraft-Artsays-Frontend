@@ -339,13 +339,13 @@ const AddressModal = ({ isOpen, onClose, productId }) => {
 
         <h2>Shipping Addresses</h2>
 
-        <button
+        {/* <button
           onClick={() => setIsAddingNew(true)}
           className="btn btn-primary mb-3"
           disabled={loading}
         >
           + Add New Address
-        </button>
+        </button> */}
 
         { }
         {error && (

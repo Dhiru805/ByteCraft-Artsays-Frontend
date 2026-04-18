@@ -4,40 +4,44 @@ import putAPI from "../../../../../api/putAPI";
 import { useNavigate } from "react-router-dom";
 import useUserType from "../../../urlconfig";
 import { jwtDecode } from "jwt-decode";
+import PickupModal from "./PickupModal";
+import { toast } from "react-toastify";
 
 // Artist (Seller) view labels for order status
 const ARTIST_STATUS_LABELS = {
-  "Ordered": "New Order Received",
+  Ordered: "New Order Received",
   "Payment Pending": "Payment Pending",
   "Payment Received": "Payment Received",
   "Handling Time": "Handling Time (Processing)",
+  "Schedule pickup": "Pickup Scheduled",
   "Order Confirmed": "Order Confirmed",
   "Ready for Dispatch": "Ready for Dispatch",
-  "Shipped": "Shipped",
+  Shipped: "Shipped",
   "Out for Delivery": "Out for Delivery",
-  "Delivered": "Delivered",
-  "Completed": "Completed",
-  "Cancelled": "Order Cancelled",
+  Delivered: "Delivered",
+  Completed: "Completed",
+  Cancelled: "Order Cancelled",
   "Return Requested": "Return Requested",
   "Refund Approved": "Refund Approved",
-  "Resale": "Listed for Resale",
+  Resale: "Listed for Resale",
 };
 
 const STATUS_COLORS = {
-  "Ordered": "#17a2b8",
+  Ordered: "#17a2b8",
   "Payment Pending": "#ffc107",
   "Payment Received": "#28a745",
   "Handling Time": "#fd7e14",
   "Order Confirmed": "#007bff",
   "Ready for Dispatch": "#6f42c1",
-  "Shipped": "#20c997",
+  "Schedule pickup": "#6610f2", //
+  Shipped: "#20c997",
   "Out for Delivery": "#17a2b8",
-  "Delivered": "#28a745",
-  "Completed": "#28a745",
-  "Cancelled": "#dc3545",
+  Delivered: "#28a745",
+  Completed: "#28a745",
+  Cancelled: "#dc3545",
   "Return Requested": "#dc3545",
   "Refund Approved": "#ffc107",
-  "Resale": "#ff6600",
+  Resale: "#ff6600",
 };
 
 // Statuses the artist can set (shown in Action dropdown)
@@ -47,12 +51,13 @@ const ARTIST_ALLOWED_STATUSES = [
   "Shipped",
   "Delivered",
   "Cancelled",
+  "Schedule pickup",
 ];
 
 // Dropdown labels (different from status display labels)
 const ARTIST_DROPDOWN_LABELS = {
   ...ARTIST_STATUS_LABELS,
-  "Cancelled": "Cancel Order",
+  Cancelled: "Cancel Order",
 };
 
 const ProductRequest = () => {
@@ -64,7 +69,17 @@ const ProductRequest = () => {
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [cancelPopup, setCancelPopup] = useState({ show: false, orderId: null, index: null });
+  const [cancelPopup, setCancelPopup] = useState({
+    show: false,
+    orderId: null,
+    index: null,
+  });
+  const [pickupModal, setPickupModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+
+  const [pickupDate, setPickupDate] = useState("");
+  const [pickupTime, setPickupTime] = useState("");
 
   const BASE_URL = process.env.REACT_APP_API_URL_FOR_IMAGE;
 
@@ -117,7 +132,6 @@ const ProductRequest = () => {
   //         try {
   //             const result = await getAPI(`/api/artist-purchases/${userId}`);
 
-
   // console.log("API DATA RECEIVED:", result.data.data);
 
   //             if (result?.data?.success) {
@@ -143,7 +157,7 @@ const ProductRequest = () => {
           `/api/artist-purchases/${userId}`,
           {},
           true,
-          false
+          false,
         );
 
         console.log("🔥 Purchased Artist Products Response:", result);
@@ -153,7 +167,6 @@ const ProductRequest = () => {
         } else {
           setProducts([]);
         }
-
       } catch (error) {
         console.error("❌ Error fetching purchased products:", error);
         setProducts([]);
@@ -168,9 +181,13 @@ const ProductRequest = () => {
       (product) =>
         product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.artistName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.userId?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.buyerName?.toLowerCase().includes(searchTerm.toLowerCase())
+        product.userId?.name
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        product.userId?.lastName
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        product.buyerName?.toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .sort((a, b) => {
       const aCancelled = a.orderStatus === "Cancelled" ? 1 : 0;
@@ -181,7 +198,7 @@ const ProductRequest = () => {
 
   const displayedProducts = filteredProducts.slice(
     (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
+    currentPage * productsPerPage,
   );
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
@@ -204,18 +221,51 @@ const ProductRequest = () => {
   };
 
   const goToNextImage = () => {
-    if (currentImageIndex < currentImages.length - 1) setCurrentImageIndex(currentImageIndex + 1);
+    if (currentImageIndex < currentImages.length - 1)
+      setCurrentImageIndex(currentImageIndex + 1);
   };
+
+  // const handleStatusChange = async (orderId, newStatus, index) => {
+  //   if (newStatus === "Cancelled") {
+  //     setCancelPopup({ show: true, orderId, index });
+  //     return;
+  //   }
+  //   try {
+  //     const res = await putAPI(`/api/update-order-status/${orderId}`, { status: newStatus });
+  //     if (res?.data?.success) {
+  //       setProducts(prev => {
+  //         const updated = [...prev];
+  //         updated[index] = { ...updated[index], orderStatus: newStatus };
+  //         return updated;
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating order status:", error);
+  //     alert("Failed to update order status");
+  //   }
+  // };
 
   const handleStatusChange = async (orderId, newStatus, index) => {
     if (newStatus === "Cancelled") {
       setCancelPopup({ show: true, orderId, index });
       return;
     }
+
+    // 🚚 OPEN MODAL HERE
+    if (newStatus === "Schedule pickup") {
+      setSelectedOrder(products[index]);
+      setSelectedIndex(index);
+      setPickupModal(true);
+      return;
+    }
+
     try {
-      const res = await putAPI(`/api/update-order-status/${orderId}`, { status: newStatus });
+      const res = await putAPI(`/api/update-order-status/${orderId}`, {
+        status: newStatus,
+      });
+
       if (res?.data?.success) {
-        setProducts(prev => {
+        setProducts((prev) => {
           const updated = [...prev];
           updated[index] = { ...updated[index], orderStatus: newStatus };
           return updated;
@@ -230,9 +280,11 @@ const ProductRequest = () => {
   const confirmCancelOrder = async () => {
     const { orderId, index } = cancelPopup;
     try {
-      const res = await putAPI(`/api/update-order-status/${orderId}`, { status: "Cancelled" });
+      const res = await putAPI(`/api/update-order-status/${orderId}`, {
+        status: "Cancelled",
+      });
       if (res?.data?.success) {
-        setProducts(prev => {
+        setProducts((prev) => {
           const updated = [...prev];
           updated[index] = { ...updated[index], orderStatus: "Cancelled" };
           return updated;
@@ -243,6 +295,42 @@ const ProductRequest = () => {
       alert("Failed to cancel order");
     }
     setCancelPopup({ show: false, orderId: null, index: null });
+  };
+
+  const handleConfirmPickup = async () => {
+    if (!pickupDate || !pickupTime) {
+      alert("Please select date & time");
+      return;
+    }
+
+    try {
+      const res = await putAPI(`/api/update-order-status/${selectedOrder?.orderId}`, {
+        status: "Schedule pickup",
+        pickupDate,
+        pickupTime,
+      });
+
+      if (res?.data?.success) {
+        setProducts((prev) => {
+          const updated = [...prev];
+          updated[selectedIndex] = {
+            ...updated[selectedIndex],
+            orderStatus: "Schedule pickup",
+          };
+          return updated;
+        });
+      }
+    } catch (error) {
+      console.error("Pickup error:", error);
+      toast.error("Failed to schedule pickup");
+    }
+
+    // reset
+    setPickupModal(false);
+    setPickupDate("");
+    setPickupTime("");
+    setSelectedOrder(null);
+    setSelectedIndex(null);
   };
 
   return (
@@ -294,78 +382,121 @@ const ProductRequest = () => {
             <div className="table-responsive">
               <table className="table table-hover">
                 <thead className="thead-dark">
-                    <tr>
-                      <th>#</th>
-                      <th>Order ID</th>
-                      <th>Name</th>
-                      <th>Product Name</th>
+                  <tr>
+                    <th>#</th>
+                    <th>Order ID</th>
+                    <th>Name</th>
+                    <th>Product Name</th>
                     <th>Product Price</th>
                     <th>Product Quantity</th>
                     <th>Payment Type</th>
-                      <th>Order Status</th>
-                      <th>Date</th>
+                    <th>Order Status</th>
+                    <th>Date</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {displayedProducts.map((product, index) => (
-                    <tr key={`${product.orderId}-${product.productId}-${index}`}>
+                    <tr
+                      key={`${product.orderId}-${product.productId}-${index}`}
+                    >
                       <td>{(currentPage - 1) * productsPerPage + index + 1}</td>
-                          <td>
-                            {product.orderId}
-                            {product.isResale && (
-                              <span className="badge ml-1" style={{ backgroundColor: "#ff6600", color: "#fff", fontSize: "10px" }}>Resale</span>
-                            )}
-                            {product.isCustomOrder && (
-                              <span className="badge ml-1" style={{ backgroundColor: "#ff8c00", color: "#fff", fontSize: "10px" }}>Custom Order</span>
-                            )}
-                          </td>
-                        <td>{product.artistName || "N/A"}</td>
-                        <td>
-                          <img
-                            src={product.isCustomOrder ? `${BASE_URL}/${product.productImage?.replace(/\\/g, "/")}` : `${BASE_URL}${product.productImage}`}
-                            alt=""
-                            style={{
-                              width: "30px",
-                              height: "30px",
-                              objectFit: "cover",
-                              borderRadius: "50%",
-                              marginRight: "10px"
-                            }}
-                          />
-                            {product.productName}
-                        </td>
                       <td>
-                        {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" })
+                        {product.orderId}
+                        {product.isResale && (
+                          <span
+                            className="badge ml-1"
+                            style={{
+                              backgroundColor: "#ff6600",
+                              color: "#fff",
+                              fontSize: "10px",
+                            }}
+                          >
+                            Resale
+                          </span>
+                        )}
+                        {product.isCustomOrder && (
+                          <span
+                            className="badge ml-1"
+                            style={{
+                              backgroundColor: "#ff8c00",
+                              color: "#fff",
+                              fontSize: "10px",
+                            }}
+                          >
+                            Custom Order
+                          </span>
+                        )}
+                      </td>
+                      <td>{product.artistName || "N/A"}</td>
+                      <td>
+                        <img
+                          src={
+                            product.isCustomOrder
+                              ? `${BASE_URL}/${product.productImage?.replace(/\\/g, "/")}`
+                              : `${BASE_URL}${product.productImage}`
+                          }
+                          alt=""
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                            marginRight: "10px",
+                          }}
+                        />
+                        {product.productName}
+                      </td>
+                      <td>
+                        {new Intl.NumberFormat("en-IN", {
+                          style: "currency",
+                          currency: "INR",
+                        })
                           .format(product.subtotal)
                           .replace(/\.00$/, "")}
                       </td>
                       <td>{product.quantityPurchased}</td>
-                        <td>{product.paymentMethod}</td>
-                        <td>
-                          <span
-                            className="badge"
-                            style={{
-                              backgroundColor: STATUS_COLORS[product.orderStatus] || "#6c757d",
-                              color: "#fff",
-                              padding: "5px 10px",
-                              borderRadius: "4px",
-                              fontSize: "12px",
-                            }}
-                          >
-                            {ARTIST_STATUS_LABELS[product.orderStatus] || product.orderStatus || "New Order Received"}
-                          </span>
-                        </td>
-                        <td>{new Date(product.purchaseDate).toLocaleDateString("en-IN")}</td>
-                        <td className="d-flex align-items-center" style={{ gap: "6px" }}>
-                          <button
-                            className="btn btn-sm btn-outline-info"
-                            onClick={() => navigate(`/artist/order-view/${product.orderId}`)}
-                            title="View Order"
-                          >
-                            <i className="fa fa-eye"></i>
-                          </button>
-                          {product.orderStatus !== "Cancelled" && product.orderStatus !== "Completed" && product.orderStatus !== "Delivered" && product.orderStatus !== "Resale" && !product.isResale && (
+                      <td>{product.paymentMethod}</td>
+                      <td>
+                        <span
+                          className="badge"
+                          style={{
+                            backgroundColor:
+                              STATUS_COLORS[product.orderStatus] || "#6c757d",
+                            color: "#fff",
+                            padding: "5px 10px",
+                            borderRadius: "4px",
+                            fontSize: "12px",
+                          }}
+                        >
+                          {ARTIST_STATUS_LABELS[product.orderStatus] ||
+                            product.orderStatus ||
+                            "New Order Received"}
+                        </span>
+                      </td>
+                      <td>
+                        {new Date(product.purchaseDate).toLocaleDateString(
+                          "en-IN",
+                        )}
+                      </td>
+                      <td
+                        className="d-flex align-items-center"
+                        style={{ gap: "6px" }}
+                      >
+                        <button
+                          className="btn btn-sm btn-outline-info"
+                          onClick={() =>
+                            navigate(`/artist/order-view/${product.orderId}`)
+                          }
+                          title="View Order"
+                        >
+                          <i className="fa fa-eye"></i>
+                        </button>
+                        {product.orderStatus !== "Cancelled" &&
+                          product.orderStatus !== "Completed" &&
+                          product.orderStatus !== "Delivered" &&
+                          product.orderStatus !== "Resale" &&
+                          !product.isResale && (
                             <select
                               className="form-control form-control-sm"
                               value=""
@@ -374,7 +505,7 @@ const ProductRequest = () => {
                                   handleStatusChange(
                                     product.orderId,
                                     e.target.value,
-                                    products.indexOf(product)
+                                    products.indexOf(product),
                                   );
                                 }
                               }}
@@ -386,15 +517,19 @@ const ProductRequest = () => {
                                 fontSize: "12px",
                               }}
                             >
-                              <option value="" disabled>Update Status</option>
-                              {ARTIST_ALLOWED_STATUSES.filter(s => s !== product.orderStatus).map((status) => (
+                              <option value="" disabled>
+                                Update Status
+                              </option>
+                              {ARTIST_ALLOWED_STATUSES.filter(
+                                (s) => s !== product.orderStatus,
+                              ).map((status) => (
                                 <option key={status} value={status}>
                                   {ARTIST_DROPDOWN_LABELS[status]}
                                 </option>
                               ))}
                             </select>
                           )}
-                        </td>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -402,18 +537,36 @@ const ProductRequest = () => {
             </div>
             <div className="pagination d-flex justify-content-between mt-4">
               <span className="mx-1 d-none d-sm-inline-block text-truncate w-100">
-                Showing {(currentPage - 1) * productsPerPage + 1} to {Math.min(currentPage * productsPerPage, filteredProducts.length)} of {filteredProducts.length} entries
+                Showing {(currentPage - 1) * productsPerPage + 1} to{" "}
+                {Math.min(
+                  currentPage * productsPerPage,
+                  filteredProducts.length,
+                )}{" "}
+                of {filteredProducts.length} entries
               </span>
               <ul className="pagination d-flex justify-content-end w-100">
-                <li className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`} onClick={handlePrevious}>
+                <li
+                  className={`paginate_button page-item ${currentPage === 1 ? "disabled" : ""}`}
+                  onClick={handlePrevious}
+                >
                   <button className="page-link">Previous</button>
                 </li>
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                  <li key={pageNumber} className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`} onClick={() => setCurrentPage(pageNumber)}>
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1,
+                ).map((pageNumber) => (
+                  <li
+                    key={pageNumber}
+                    className={`paginate_button page-item ${currentPage === pageNumber ? "active" : ""}`}
+                    onClick={() => setCurrentPage(pageNumber)}
+                  >
                     <button className="page-link">{pageNumber}</button>
                   </li>
                 ))}
-                <li className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`} onClick={handleNext}>
+                <li
+                  className={`paginate_button page-item ${currentPage === totalPages ? "disabled" : ""}`}
+                  onClick={handleNext}
+                >
                   <button className="page-link">Next</button>
                 </li>
               </ul>
@@ -421,26 +574,58 @@ const ProductRequest = () => {
           </div>
         </div>
       </div>
-
+      <PickupModal
+        show={pickupModal}
+        onClose={() => setPickupModal(false)}
+        onConfirm={handleConfirmPickup}
+        pickupDate={pickupDate}
+        setPickupDate={setPickupDate}
+        pickupTime={pickupTime}
+        setPickupTime={setPickupTime}
+        orderCreatedAt={selectedOrder?.purchaseDate}
+      />
       {/* Cancel Order Confirmation Popup */}
       {cancelPopup.show && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.5)", zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center"
-        }}>
-          <div style={{
-            background: "#fff", borderRadius: "8px", padding: "24px",
-            maxWidth: "400px", width: "90%", textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.3)"
-          }}>
-            <h5 style={{ marginBottom: "12px", fontWeight: "600" }}>Cancel Order</h5>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "8px",
+              padding: "24px",
+              maxWidth: "400px",
+              width: "90%",
+              textAlign: "center",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            }}
+          >
+            <h5 style={{ marginBottom: "12px", fontWeight: "600" }}>
+              Cancel Order
+            </h5>
             <p style={{ color: "#666", marginBottom: "20px" }}>
-              Are you sure you want to cancel this order? This action cannot be undone.
+              Are you sure you want to cancel this order? This action cannot be
+              undone.
             </p>
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+            <div
+              style={{ display: "flex", gap: "10px", justifyContent: "center" }}
+            >
               <button
                 className="btn btn-secondary btn-sm"
-                onClick={() => setCancelPopup({ show: false, orderId: null, index: null })}
+                onClick={() =>
+                  setCancelPopup({ show: false, orderId: null, index: null })
+                }
               >
                 No, Go Back
               </button>

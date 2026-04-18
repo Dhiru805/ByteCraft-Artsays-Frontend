@@ -254,6 +254,8 @@ import GoogleSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/
 import FeedbackFormBuilder from "../Component/Dashboard/Super-AdminDashboard/Settings/FeedbackForm/FeedbackFormBuilder";
 import FeedbackResponses from "../Component/Dashboard/Super-AdminDashboard/Settings/FeedbackForm/FeedbackResponses";
 
+import DelhiveryCredential from "../Component/Dashboard/Super-AdminDashboard/DelhiverySetting/LoginCredential/logincredential";
+import DelihveryLinks from "../Component/Dashboard/Super-AdminDashboard/DelhiverySetting/Link/Links";
 //----------------------------------------Homepage Super-Admin Dashboard-----------------------------------------------------------
 import Homepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/table";
 import CreateHomepage from "../Component/Dashboard/Super-AdminDashboard/Homepage/create";
@@ -850,6 +852,10 @@ const AppRoutes = () => {
           path="product/product-info/:productId"
           element={<SuperAdminProductInfo />}
         />
+        {/* Delhivery Settings */}
+        <Route path="delhivery-settings/login-credential" element={<DelhiveryCredential />} />
+        <Route path="delhivery-settings/links" element={< DelihveryLinks />} />
+         
         {/* Admin Management */}
         <Route path="admin" element={<Admin />} />
         <Route path="admin/editprofile" element={<AdminProfile />} />
