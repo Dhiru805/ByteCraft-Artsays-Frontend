@@ -90,6 +90,7 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
+# build/ is intentionally NOT ignored — pre-built locally and committed to repo
 
 # Gatsby files
 .cache/

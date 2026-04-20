@@ -1,10 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useImperativeHandle } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import putAPI from '../../../../../api/putAPI';
 import { toast } from 'react-toastify';
 import { getImageUrl } from '../../../../../utils/getImageUrl';
 
-const TaxLegalCompliance = ({ userId }) => {
+const TaxLegalCompliance = React.forwardRef(({ userId }, ref) => {
     const [formData, setFormData] = useState({
         gstNumber: '',
         panNumber: '',
@@ -28,6 +28,22 @@ const TaxLegalCompliance = ({ userId }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredFields()) return false;
+            setLoading(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+    }));
 
     useEffect(() => {
         const fetchBusinessData = async () => {
@@ -218,7 +234,7 @@ const TaxLegalCompliance = ({ userId }) => {
         <div className="body">
             <h5 className="mb-2">Tax & Legal Compliance</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 {['gst', 'pan', 'tan', 'cin', 'aadhaar', 'businessCert'].map((field, index) => (
                     <div key={index} className="row clearfix mb-3">
                         <div className="col-lg-6 col-md-6">
@@ -250,21 +266,6 @@ const TaxLegalCompliance = ({ userId }) => {
                         </div>
                     </div>
                 ))}
-                <button type="button"
-                    className="btn btn-primary mx-2"
-                    disabled={loading}
-                    onClick={(e) => {
-                         if (!validateRequiredFields()) return;
-                        setLoading(true);
-                        Promise.resolve(handleSubmit(e))
-.then(() => {
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000); // 2000 ms = 2 second delay
-        })                            .catch(console.error)
-                            .finally(() => setLoading(false));
-                    }}
-                >{loading ? "Updating..." : "Update"}</button>
             </form>
 
             {/* Modal */}
@@ -293,6 +294,6 @@ const TaxLegalCompliance = ({ userId }) => {
             )}
         </div>
     );
-};
+});
 
 export default TaxLegalCompliance;

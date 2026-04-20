@@ -14,7 +14,7 @@ export const handleLogout = (navigate, logout) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axiosInstance.post("/user/logout");
+          await axiosInstance.post("/api/user/logout");
         } catch (error) {
           console.error("Error revoking session on logout:", error);
         }

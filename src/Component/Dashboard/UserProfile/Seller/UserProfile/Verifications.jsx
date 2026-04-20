@@ -145,7 +145,7 @@ const BASE_URL = getImageUrl(null);
         <div className="body">
             <h5 className="mb-2">Account Verification</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="form-group">
                     <label>Select Document Type <span style={{ color: 'red' }}>*</span></label>
                     <select

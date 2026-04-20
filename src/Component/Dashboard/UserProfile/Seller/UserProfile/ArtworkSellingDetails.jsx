@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../api/putAPI';
 import getAPI from '../../../../../api/getAPI';
 
-const ArtworkPricingDetails = ({ userId }) => {
+const ArtworkPricingDetails = React.forwardRef(({ userId }, ref) => {
     const [formData, setFormData] = useState({
         sampleArtwork: null,
         typeOfSeller: [],
@@ -17,6 +17,22 @@ const ArtworkPricingDetails = ({ userId }) => {
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredFields()) return false;
+            setLoading(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+    }));
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -194,7 +210,7 @@ const ArtworkPricingDetails = ({ userId }) => {
         <div className="body">
             <h5 className="mb-2">Artwork And Selling Details</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
@@ -340,20 +356,6 @@ const ArtworkPricingDetails = ({ userId }) => {
 
 
                 </div>
-                <button type="button"
-                    className="btn btn-primary mx-2"
-                    disabled={loading}
-                    onClick={(e) => {
-                        if (!validateRequiredFields()) return;
-                        setLoading(true);
-                        Promise.resolve(handleSubmit(e))
-                            .then(() => {
-                                window.location.reload();
-                            })
-                            .catch(console.error)
-                            .finally(() => setLoading(false));
-                    }}
-                >{loading ? "Updating..." : "Update"}</button>
             </form>
             {isModalOpen && (
                 <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }} tabIndex="-1">
@@ -389,6 +391,6 @@ const ArtworkPricingDetails = ({ userId }) => {
             )}
         </div>
     );
-};
+});
 
 export default ArtworkPricingDetails;

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../api/putAPI';
 import getAPI from '../../../../../api/getAPI';
 
-const BankPaymentDetails = ({ userId }) => {
+const BankPaymentDetails = React.forwardRef(({ userId }, ref) => {
     const [formData, setFormData] = useState({
         accountHolderName: '',
         bankName: '',
@@ -20,11 +20,11 @@ const BankPaymentDetails = ({ userId }) => {
                     console.warn("User ID is undefined. Cannot fetch bank details.");
                     return;
                 }
-    
+
                 const url = `/auth/bankdetails/${userId}`;
                 const result = await getAPI(url);
 
-                if (result && result.data && result.data.bankDetails) { 
+                if (result && result.data && result.data.bankDetails) {
                     setFormData({
                         accountHolderName: result.data.bankDetails.accountHolderName || '',
                         bankName: result.data.bankDetails.bankName || '',
@@ -35,13 +35,12 @@ const BankPaymentDetails = ({ userId }) => {
                 }
             } catch (error) {
                 console.error("Error fetching bank details:", error);
-                // toast.error("Failed to fetch bank details");
             }
         };
-    
+
         fetchBankDetails();
     }, [userId]);
-    
+
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -67,7 +66,7 @@ const BankPaymentDetails = ({ userId }) => {
         }
     };
 
-        const validateRequiredFields = () => {
+    const validateRequiredFields = () => {
       const missing = [];
       const requiredMap = {
         'Account Holder Name': formData.accountHolderName,
@@ -75,104 +74,105 @@ const BankPaymentDetails = ({ userId }) => {
         'Account Number'     : formData.accountNumber,
         'IFSC Code'          : formData.ifscCode,
       };
-    
+
       Object.entries(requiredMap).forEach(([label, value]) => {
         if (!value || String(value).trim() === '') {
           missing.push(label);
         }
       });
-    
+
       if (missing.length > 0) {
         toast.warn(`Please fill the required fields: ${missing.join(', ')}`);
         return false;
       }
-    
+
       return true;
     };
-    
+
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredFields()) return false;
+            setLoading(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+    }));
 
     return (
         <div className="body">
             <h5 className="mb-2">Bank/Payment Details (For Payments & Withdrawals)</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
                             <label>Account Holder Name <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="accountHolderName" 
-                                value={formData.accountHolderName} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="accountHolderName"
+                                value={formData.accountHolderName}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="form-group">
                             <label>Bank Name <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="bankName" 
-                                value={formData.bankName} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="bankName"
+                                value={formData.bankName}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="form-group">
                             <label>UPI ID</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="upiId" 
-                                value={formData.upiId} 
-                                onChange={handleChange} 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="upiId"
+                                value={formData.upiId}
+                                onChange={handleChange}
                             />
                         </div>
                     </div>
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
                             <label>Account Number <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="accountNumber" 
-                                value={formData.accountNumber} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="accountNumber"
+                                value={formData.accountNumber}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                         <div className="form-group">
                             <label>IFSC Code <span style={{ color: 'red' }}>*</span></label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                name="ifscCode" 
-                                value={formData.ifscCode} 
-                                onChange={handleChange} 
-                                required 
+                            <input
+                                type="text"
+                                className="form-control"
+                                name="ifscCode"
+                                value={formData.ifscCode}
+                                onChange={handleChange}
+                                required
                             />
                         </div>
                     </div>
                 </div>
-        <button type="button"
-          className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-            if (!validateRequiredFields()) return;
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );
-};
+});
 
 export default BankPaymentDetails;

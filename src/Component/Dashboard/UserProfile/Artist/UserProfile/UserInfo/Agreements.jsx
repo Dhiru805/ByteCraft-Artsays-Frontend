@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
-const AccountSecurityAgreement = ({ userId, loading }) => {
+const AccountSecurityAgreement = React.forwardRef(({ userId, loading }, ref) => {
     const [formData, setFormData] = useState({});
 
     const checkboxLabels = {
@@ -12,6 +12,22 @@ const AccountSecurityAgreement = ({ userId, loading }) => {
         agreeNoFakeArtwork: "Agree to No Fake Artwork Policy"
     };
     const [load, setLoad] = useState(false);
+
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredAgreements()) return false;
+            setLoad(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoad(false);
+            }
+        }
+    }));
 
     useEffect(() => {
         const fetchAgreementDetails = async () => {
@@ -97,7 +113,7 @@ const AccountSecurityAgreement = ({ userId, loading }) => {
         <div className="body">
             <h5 className="mb-2">Account Security And Agreements</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="form-group">
                     <input
                         type="checkbox"
@@ -159,23 +175,9 @@ const AccountSecurityAgreement = ({ userId, loading }) => {
                         <span style={{ color: 'red' }}> *</span>
                     </label>
                 </div>
-                <button type="button"
-                    className="btn btn-primary mx-2"
-                    disabled={load}
-                    onClick={(e) => {
-                        if (!validateRequiredAgreements()) return;
-                        setLoad(true);
-                        Promise.resolve(handleSubmit(e))
-                            .then(() => {
-                                window.location.reload();
-                            })
-                            .catch(console.error)
-                            .finally(() => setLoad(false));
-                    }}
-                >{load ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );
-};
+});
 
 export default AccountSecurityAgreement;

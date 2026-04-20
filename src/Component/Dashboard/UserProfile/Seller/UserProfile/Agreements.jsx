@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../api/putAPI';
 import getAPI from '../../../../../api/getAPI';
 
-const AccountSecurityAgreement = ({ userId }) => {
+const AccountSecurityAgreement = React.forwardRef(({ userId }, ref) => {
     const [formData, setFormData] = useState({});
     const [loading, setLoading] = useState(false);
 
@@ -92,11 +92,27 @@ const AccountSecurityAgreement = ({ userId }) => {
         }
     };
 
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredAgreements()) return false;
+            setLoading(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+    }));
+
     return (
         <div className="body">
             <h5 className="mb-2">Account Security And Agreements</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="form-group">
                     <input
                         type="checkbox"
@@ -132,7 +148,6 @@ const AccountSecurityAgreement = ({ userId }) => {
                         name="agreeCommissionFees"
                         checked={!!formData.agreeCommissionFees}
                         onChange={handleChange}
-
                     />
                     <label className="mx-2">{checkboxLabels.agreeCommissionFees} <span style={{ color: 'red' }}>*</span></label>
                 </div>
@@ -145,23 +160,9 @@ const AccountSecurityAgreement = ({ userId }) => {
                     />
                     <label className="mx-2">{checkboxLabels.agreeNoFakeArtwork} <span style={{ color: 'red' }}>*</span></label>
                 </div>
-                <button type="button"
-                    className="btn btn-primary mx-2"
-                    disabled={loading}
-                    onClick={(e) => {
-                        if (!validateRequiredAgreements()) return;
-                        setLoading(true);
-                        Promise.resolve(handleSubmit(e))
-                            .then(() => {
-                                window.location.reload();
-                            })
-                            .catch(console.error)
-                            .finally(() => setLoading(false));
-                    }}
-                >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );
-};
+});
 
 export default AccountSecurityAgreement;

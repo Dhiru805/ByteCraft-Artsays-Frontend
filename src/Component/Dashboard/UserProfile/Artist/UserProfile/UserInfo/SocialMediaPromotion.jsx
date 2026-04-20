@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 
-const SocialLink = ({ userId, profileData }) => {
+const SocialLink = React.forwardRef(({ userId, profileData }, ref) => {
     const [formData, setFormData] = useState({
         instagram: '',
         facebook: '',
@@ -48,11 +48,26 @@ const SocialLink = ({ userId, profileData }) => {
     };
     const [loading, setLoading] = useState(false);
 
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            setLoading(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+    }));
+
     return (
         <div className="body">
             <h5 className="mb-2">Social Media Promotion</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
@@ -109,22 +124,9 @@ const SocialLink = ({ userId, profileData }) => {
                         </div>
                     </div>
                 </div>
-        <button type="button"
-          className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );
-};
+});
 
 export default SocialLink;

@@ -600,6 +600,11 @@ const Sidebar = () => {
             label: "Custom Commission",
             path: `/super-admin/settings/custom-commission`,
           },
+          {
+            label: "Notification Templates",
+            subtabId: "stg20",
+            path: `/super-admin/settings/notification-templates`,
+          },
         ],
       },
       {

@@ -19,7 +19,7 @@ const AccountVerification = ({ userId }) => {
                     setVerificationType(data.documentType || '');  
                     setDocNumber(data.documentNumber || ''); 
                     if (data.documentFile) {  
-                        setFilePreview(`${process.env.REACT_APP_API_URL}/${data.documentFile}`);
+                        setFilePreview(data.documentFile.startsWith('http') ? data.documentFile : `${process.env.REACT_APP_API_URL}/${data.documentFile}`);
                         setFileType(data.documentFile.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
                     }
                 }

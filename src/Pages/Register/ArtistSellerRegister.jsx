@@ -5,8 +5,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../Login/LoginStyles.css';
 import { FaEye, FaEyeSlash, FaCheck } from 'react-icons/fa';
 import postAPI from '../../api/postAPI';
+import { useAuth } from '../../AuthContext';
 
 const Register = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -214,10 +216,32 @@ const Register = () => {
       }
 
       const response = await postAPI('/auth/createuser', payload);
-      toast.success(response.data.message);
-      setTimeout(() => {
-        navigate('/login');
-      }, 1000);
+      toast.success(response.data.message || `${formData.userType} account created successfully!`);
+
+      const { token, refreshToken, user } = response.data;
+
+      if (token && user) {
+        // Auto-login and redirect directly to profile page
+        sessionStorage.setItem('showCompleteProfilePopup', 'true');
+        login(
+          token,
+          user.userType,
+          user.status,
+          user.username || '',
+          user.name,
+          user.lastName,
+          user.id,
+          user.userrole || user.role,
+          refreshToken
+        );
+        setTimeout(() => {
+          navigate(`/${user.userType.toLowerCase()}/profile`);
+        }, 800);
+      } else {
+        // Fallback: go to login if token not returned
+        sessionStorage.setItem('showCompleteProfilePopup', 'true');
+        setTimeout(() => navigate('/login'), 1000);
+      }
     } catch (error) {
       console.error('Registration error:', error);
       toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
