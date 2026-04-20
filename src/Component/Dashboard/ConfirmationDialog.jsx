@@ -496,18 +496,23 @@ exhibitionplan:{
 };
 
 function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const handleDelete = async () => {
+    if (isDeleting) return;
+    setIsDeleting(true);
     const config = DELETE_CONFIG[deleteType];
 
     if (!config) {
       console.error("Invalid delete type:", deleteType);
       toast.error("Invalid delete type.");
+      setIsDeleting(false);
       return;
     }
 
     if (!id) {
       console.error(`${config.idKey} is missing.`);
       toast.error(`${config.idKey} is required.`);
+      setIsDeleting(false);
       return;
     }
 
@@ -529,10 +534,12 @@ function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
       } else {
         console.error(config.errorMessage, response.message);
         toast.error(`${config.errorMessage}: ${response.message}`);
+        setIsDeleting(false);
       }
     } catch (error) {
       console.error(`Error while deleting ${deleteType}:`, error);
       toast.error(`An error occurred while deleting the ${deleteType}.`);
+      setIsDeleting(false);
     }
   };
 
@@ -652,11 +659,10 @@ function ConfirmationDialog({ onClose, deleteType, id, onDeleted }) {
                 className="swal2-confirm btn btn-success"
                 aria-label=""
                 style={{ display: "inline-block" }}
-                onClick={() => {
-                  handleDelete();
-                }}
+                disabled={isDeleting}
+                onClick={handleDelete}
               >
-                Yes
+                {isDeleting ? "Deleting..." : "Yes"}
               </button>
               <div className="swal2-loader" />
             </div>

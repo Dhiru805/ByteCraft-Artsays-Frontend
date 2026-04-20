@@ -459,6 +459,8 @@ import CertificationSetting from "../Component/Dashboard/Super-AdminDashboard/Se
 import WebsiteModeSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/WebsiteMode/WebsiteModeSetting";
 import SystemLogs from "../Component/Dashboard/Super-AdminDashboard/Settings/Logs/SystemLogs";
 import CustomCommissionSetting from "../Component/Dashboard/Super-AdminDashboard/Settings/CustomCommission/CustomCommissionSetting";
+import NotificationTemplates from "../Component/Dashboard/Super-AdminDashboard/Settings/NotificationTemplates/NotificationTemplates";
+import NotificationTemplateEditor from "../Component/Dashboard/Super-AdminDashboard/Settings/NotificationTemplates/NotificationTemplateEditor";
 
 //----------------------------------------Artist Components----------------------------------//
 import ArtistDashboard from "../Component/Dashboard/ArtistDashbooard/Dashboard/MainContent";
@@ -1178,6 +1180,8 @@ const AppRoutes = () => {
           <Route path="settings/website-mode" element={<WebsiteModeSetting />} />
           <Route path="settings/logs" element={<SystemLogs />} />
           <Route path="settings/custom-commission" element={<CustomCommissionSetting />} />
+          <Route path="settings/notification-templates" element={<NotificationTemplates />} />
+          <Route path="settings/notification-templates/:key" element={<NotificationTemplateEditor />} />
         {/* Advertise Routes */}
         <Route path="advertise" element={<SuperAdminArtistAdvertise />} />
         <Route path="advertise/sponser" element={<SuperAdminArtistSponsor />} />

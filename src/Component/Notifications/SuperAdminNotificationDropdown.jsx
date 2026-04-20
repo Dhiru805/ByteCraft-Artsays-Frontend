@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import getAPI from "../../api/getAPI";
 import putAPI from "../../api/putAPI";
+import { getState, SESSION_STATE } from "../../auth/SessionOrchestrator";
 
 // ─── SuperAdmin Notification Types ──────────────────────────────────────────
 const TYPE_META = {
@@ -68,6 +69,14 @@ const SuperAdminNotificationDropdown = () => {
   const navigate = useNavigate();
 
   const fetchNotifications = useCallback(async () => {
+    const sessionState = getState();
+    if (
+      sessionState === SESSION_STATE.REAUTH_REQUIRED ||
+      sessionState === SESSION_STATE.LOGGED_OUT
+    ) return;
+
+    if (!localStorage.getItem("token")) return;
+
     setLoading(true);
     try {
       const res = await getAPI(

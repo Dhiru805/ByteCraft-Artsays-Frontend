@@ -21,7 +21,7 @@ function ProductMaterialTable({ productMaterials, setProductMaterials, refreshPr
       const formData = new FormData();
       formData.append("file", selectedFile);
       try {
-        const res = await fetch("/api/import-productmaterial", { method: "POST", body: formData });
+        const res = await fetch("/api/import-productmaterial", { method: "POST", body: formData, headers: { "X-Requested-With": "XMLHttpRequest" } });
         if (!res.ok) throw new Error();
         const data = await res.json();
         toast.success(data.message || "Imported successfully!");
