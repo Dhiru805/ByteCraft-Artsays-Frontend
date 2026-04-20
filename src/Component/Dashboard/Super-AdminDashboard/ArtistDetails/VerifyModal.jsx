@@ -4,17 +4,21 @@
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import putAPI from "../../../../api/putAPI";
+import getAPI from "../../../../api/getAPI";
 import { useConfirm } from '../../StatusConfirm';
 import { getImageUrl } from "../../../../utils/getImageUrl";
 
 const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
     const [filePreview, setFilePreview] = useState(null);
     const [fileType, setFileType] = useState("");
+    const [freshVerification, setFreshVerification] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
     const [rejectComment, setRejectComment] = useState("");
     const confirm = useConfirm();
     const [loading, setLoading] = useState(false);
+
+    const verification = freshVerification ?? artist?.verification;
 
     // Check if all required data is present
     const isDataComplete = () => {
@@ -23,9 +27,9 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
             artist?.lastName?.trim() &&
             artist?.email?.trim() &&
             artist?.phone?.trim() &&
-            artist?.verification?.documentType?.trim() &&
-            artist?.verification?.documentNumber?.trim() &&
-            artist?.verification?.documentFile
+            verification?.documentType?.trim() &&
+            verification?.documentNumber?.trim() &&
+            verification?.documentFile
         );
     };
 
@@ -71,11 +75,27 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
     };
 
     useEffect(() => {
-        if (artist?.verification?.documentFile) {
-            setFilePreview(getImageUrl(artist.verification.documentFile));
-            setFileType(artist.verification.documentFile.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
-        }
-    }, [artist]);
+        const fetchFreshVerification = async () => {
+            try {
+                const response = await getAPI(`/auth/verificationdetails/${artist._id}`);
+                const data = response.data.verification;
+                if (data) {
+                    setFreshVerification(data);
+                    if (data.documentFile) {
+                        setFilePreview(getImageUrl(data.documentFile));
+                        setFileType(data.documentFile.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
+                    }
+                }
+            } catch (_) {
+                // fall back to prop data
+                if (artist?.verification?.documentFile) {
+                    setFilePreview(getImageUrl(artist.verification.documentFile));
+                    setFileType(artist.verification.documentFile.endsWith(".pdf") ? "application/pdf" : "image/jpeg");
+                }
+            }
+        };
+        fetchFreshVerification();
+    }, [artist._id]);
 
     const handleImageClick = () => {
         setIsModalOpen(true);
@@ -135,7 +155,7 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
                                 <div className="col-lg-6 col-md-12">
                                     <div className="form-group">
                                         <label htmlFor="documentType">Document Type</label>
-                                        <input type="text" className="form-control" id="documentType" value={artist.verification.documentType} readOnly />
+                                        <input type="text" className="form-control" id="documentType" value={verification?.documentType || ''} readOnly />
                                         {filePreview && (
                                             <div className="mt-3">
                                                 {fileType === "application/pdf" ? (
@@ -161,7 +181,7 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
                                 <div className="col-lg-6 col-md-12">
                                     <div className="form-group">
                                         <label>Document Number</label>
-                                        <input type="text" className="form-control" id="documentType" value={artist.verification.documentNumber} readOnly />
+                                        <input type="text" className="form-control" id="documentType" value={verification?.documentNumber || ''} readOnly />
                                     </div>
                                 </div>
                             </div>
