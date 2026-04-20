@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import getAPI from '../../../../../api/getAPI';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../api/putAPI';
 
-const BusinessProfile = ({ userId }) => {
+const BusinessProfile = React.forwardRef(({ userId, onProfileSaved }, ref) => {
     const [formData, setFormData] = useState({
         businessName: '',
         businessDescription: '',
@@ -41,6 +41,7 @@ const BusinessProfile = ({ userId }) => {
 
             if (result) {
                 toast.success('Business details updated successfully');
+                if (onProfileSaved) onProfileSaved();
             } else {
                 toast.error('Failed to update business details');
             }
@@ -72,11 +73,27 @@ const BusinessProfile = ({ userId }) => {
     return true;
 };
 
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredFields()) return false;
+            setLoading(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+    }));
+
     return (
         <div className="body">
             <h5 className="mb-2">Business Profile</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-6">
                         <div className="form-group">
@@ -121,23 +138,9 @@ const BusinessProfile = ({ userId }) => {
                         </div>
                     </div>
                 </div>
-        <button type="button"
-          className="btn btn-primary mx-2"
-          disabled={loading}
-          onClick={(e) => {
-            if (!validateRequiredFields()) return;
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );
-};
+});
 
 export default BusinessProfile;

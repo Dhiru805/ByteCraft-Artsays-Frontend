@@ -14,7 +14,13 @@ import postAPI from '../../../../../api/postAPI';
 import AddressModal from './AddressModal'
 
 
-const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange,fetchProfile }) => {
+const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange, fetchProfile, onProfileSaved }) => {
+  const businessProfileRef = useRef(null);
+  const taxRef = useRef(null);
+  const artworkRef = useRef(null);
+  const bankRef = useRef(null);
+  const socialRef = useRef(null);
+  const agreementRef = useRef(null);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -794,47 +800,63 @@ const handleDeleteImage = async () => {
             rows={3}
           />
         </div>
+      </div>
+      <BusinessProfile ref={businessProfileRef} userId={userId} onProfileSaved={onProfileSaved} />
+
+      {/* < Verification userId={userId} /> */}
+
+      <TaxCompliance ref={taxRef} userId={userId} />
+
+      <ArtworkDetails ref={artworkRef} userId={userId} />
+
+      <BankDetails ref={bankRef} userId={userId} />
+
+      <SocialMedia ref={socialRef} userId={userId} profileData={profileData} />
+
+      <Agreement ref={agreementRef} userId={userId} />
+
+      <div className="body">
         <button type="button"
           className="btn btn-primary mx-2"
           disabled={loading || usernameAvailable === false}
           onClick={async (e) => {
             if (!validateRequired()) return;
 
+            const currentUsername = (profileData.username || '').trim().toLowerCase();
+            if (currentUsername && currentUsername !== originalUsername) {
+              try {
+                const checkRes = await getAPI(`/auth/check-username?username=${encodeURIComponent(currentUsername)}&currentUserId=${userId}`);
+                if (!checkRes.data?.available) {
+                  toast.error(checkRes.data?.message || 'Username is already taken. Please choose another.');
+                  return;
+                }
+              } catch {
+                toast.error('Could not verify username availability. Please try again.');
+                return;
+              }
+            }
+
             setLoading(true);
             try {
-              await handleSubmit(e); 
-              window.location.reload(); 
+              await handleSubmit(e);
+              await Promise.allSettled([
+                businessProfileRef.current?.save(),
+                taxRef.current?.save(),
+                artworkRef.current?.save(),
+                bankRef.current?.save(),
+                socialRef.current?.save(),
+                agreementRef.current?.save(),
+              ]);
+              window.location.reload();
             } catch (err) {
               console.error("Update failed:", err);
-
-             
-              const backendMsg = err?.response?.data?.message || "Failed to update profile";
-              toast.error(backendMsg);
+              toast.error(err?.response?.data?.message || "Failed to update profile");
             } finally {
               setLoading(false);
             }
           }}
         >{loading ? "Updating..." : "Update"}</button>
       </div>
-      <BusinessProfile userId={userId} />
-
-      {/* < Verification userId={userId} /> */}
-
-        < TaxCompliance userId={userId} />
-  
-
-      <ArtworkDetails
-        userId={userId} />
-
-      <BankDetails
-        userId={userId} />
-
-      <SocialMedia
-        userId={userId}
-        profileData={profileData} />
-
-      <Agreement
-        userId={userId} />
 
         <AddressModal
           isOpen={isShippingModalOpen}

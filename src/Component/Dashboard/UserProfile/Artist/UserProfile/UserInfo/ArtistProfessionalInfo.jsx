@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import getAPI from '../../../../../../api/getAPI';
 import { toast } from 'react-toastify';
 import CreatableSelect from 'react-select/creatable';
@@ -26,7 +26,7 @@ const predefinedAchievements = [
     { value: 'Awards', label: 'Awards' },
 ];
 
-const ArtistInfo = ({ userId, loading }) => {
+const ArtistInfo = React.forwardRef(({ userId, loading, onProfileSaved }, ref) => {
     const [formData, setFormData] = useState({
         artCategories: [],
         mediumUsed: [],
@@ -88,6 +88,22 @@ const ArtistInfo = ({ userId, loading }) => {
 
     const [load, setLoad] = useState(false);
 
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredFields()) return false;
+            setLoad(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoad(false);
+            }
+        }
+    }));
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("Form data to be submitted:", formData);
@@ -114,6 +130,9 @@ const ArtistInfo = ({ userId, loading }) => {
                 } else {
                     toast.error("Failed to update artist categories");
                 }
+
+                // Trigger profile completion check in parent
+                if (onProfileSaved) onProfileSaved();
             } else {
                 toast.error('Failed to update artist details');
             }
@@ -151,7 +170,7 @@ const ArtistInfo = ({ userId, loading }) => {
         <div className="body">
             <h5 className="mb-2">Artist Professional Info</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
@@ -242,23 +261,9 @@ const ArtistInfo = ({ userId, loading }) => {
                         </div>
                     </div>
                 </div>
-                <button type="button"
-                    className="btn btn-primary mx-2"
-                    disabled={load}
-                    onClick={(e) => {
-                        if (!validateRequiredFields()) return;
-                        setLoad(true);
-                        Promise.resolve(handleSubmit(e))
-                            .then(() => {
-                                window.location.reload();
-                            })
-                            .catch(console.error)
-                            .finally(() => setLoad(false));
-                    }}
-                >{load ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );
-};
+});
 
 export default ArtistInfo;

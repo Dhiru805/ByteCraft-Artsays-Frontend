@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
-const ArtworkPricingDetails = ({ userId,loading }) => {
+const ArtworkPricingDetails = React.forwardRef(({ userId, loading }, ref) => {
     const [formData, setFormData] = useState({
         minArtworkPrice: '',
         customOrders: false,
@@ -15,6 +15,22 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [load, setLoad] = useState(false);
+
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredFields()) return false;
+            setLoad(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoad(false);
+            }
+        }
+    }));
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -161,7 +177,7 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
         <div className="body">
             <h5 className="mb-2">Artwork Listing And Details</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <form onSubmit={(e) => e.preventDefault()} encType="multipart/form-data">
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
@@ -274,20 +290,6 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
                         )}
                     </div>
                 </div>
-                <button type="button"
-                    className="btn btn-primary mx-2"
-                    disabled={load}
-                    onClick={(e) => {
-                        if (!validateRequiredFields()) return;
-                        setLoad(true);
-                        Promise.resolve(handleSubmit(e))
-                            .then(() => {
-                                window.location.reload();
-                            })
-                            .catch(console.error)
-                            .finally(() => setLoad(false));
-                    }}
-                >{load ? "Updating..." : "Update"}</button>
             </form>
 
 
@@ -325,7 +327,6 @@ const ArtworkPricingDetails = ({ userId,loading }) => {
             )}
         </div>
     );
-};
-
+});
 
 export default ArtworkPricingDetails;

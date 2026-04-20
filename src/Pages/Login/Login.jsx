@@ -74,9 +74,14 @@ const Login = () => {
     if (token && storedUserType) {
       if (
         (storedUserType === "Artist" || storedUserType === "Seller") &&
-        (storedStatus === "Unverified" || storedStatus === "Rejected")
+        storedStatus === "Rejected"
       ) {
         setShowPopup(true);
+      } else if (
+        (storedUserType === "Artist" || storedUserType === "Seller") &&
+        storedStatus === "Unverified"
+      ) {
+        navigate(`/${storedUserType.toLowerCase()}/profile`);
       } else if (storedUserType === "Buyer") {
         navigate("/");
       } else {
@@ -86,10 +91,11 @@ const Login = () => {
   }, [sessionState, navigate]);
 
   useEffect(() => {
-    console.log("AuthContext updated:", { userType, userStatus });
+    // Only show the VerificationPopup for Rejected accounts (to display rejection reason).
+    // Unverified users are redirected directly to their profile page.
     if (
       (userType === "Artist" || userType === "Seller") &&
-      (userStatus === "Unverified" || userStatus === "Rejected")
+      userStatus === "Rejected"
     ) {
       setShowPopup(true);
     } else {
@@ -98,11 +104,9 @@ const Login = () => {
   }, [userType, userStatus]);
 
   const handleGoogleSuccess = async (codeResponse) => {
-    console.log("Google login response", codeResponse);
     try {
       const { code } = codeResponse;
       const res = await postAPI("/auth/googlelogin", { code }, true);
-      console.log("google login api response", res);
       const {
         token, refreshToken, userType, email, userId,
         status, userrole, username, firstName, lastName,
@@ -128,9 +132,14 @@ const Login = () => {
         navigate("/");
       } else if (
         (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
-        (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
+        normalizedStatus === "Rejected"
       ) {
         setShowPopup(true);
+      } else if (
+        (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
+        normalizedStatus === "Unverified"
+      ) {
+        navigate(`/${normalizedUserType.toLowerCase()}/profile`);
       } else {
         navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
       }
@@ -165,15 +174,6 @@ const Login = () => {
           firstName,
           lastName,
         } = res.data;
-        console.log("Login API response:", {
-          token,
-          userType,
-          email,
-          userId,
-          status,
-          username,
-        });
-
         if (!token || !userType) {
           throw new Error("Invalid response from server");
         }
@@ -187,12 +187,6 @@ const Login = () => {
 
       localStorage.setItem("email", email);
       
-      console.log("localStorage after login:", {
-        token: localStorage.getItem("token"),
-        userType: localStorage.getItem("userType"),
-        status: localStorage.getItem("status"),
-      });
-
       if (rememberMe) {
         localStorage.setItem("rememberedEmailOrPhone", input);
         localStorage.setItem("rememberedPassword", password);
@@ -209,9 +203,16 @@ const Login = () => {
         navigate("/");
       } else if (
         (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
-        (normalizedStatus === "Unverified" || normalizedStatus === "Rejected")
+        normalizedStatus === "Rejected"
       ) {
+        // Show rejection reason popup, then navigate to profile when user clicks
         setShowPopup(true);
+      } else if (
+        (normalizedUserType === "Artist" || normalizedUserType === "Seller") &&
+        normalizedStatus === "Unverified"
+      ) {
+        // Direct redirect to profile page — profile page shows the complete-profile popup
+        navigate(`/${normalizedUserType.toLowerCase()}/profile`);
       } else {
         navigate(`/${normalizedUserType.toLowerCase()}/dashboard`);
       }

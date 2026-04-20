@@ -13,7 +13,6 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
     const [rejectComment, setRejectComment] = useState("");
-    const [setUsers] = useState([]);
     const confirm = useConfirm();
     const [loading, setLoading] = useState(false);
 
@@ -38,12 +37,6 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
                 { status, Rejcectcomment: comment },
                 {},
                 true
-            );
-
-            setUsers((prevUsers) =>
-                prevUsers.map((user) =>
-                    user._id === userId ? { ...user, status, Rejcectcomment: comment } : user
-                )
             );
 
             if (status === 'Verified') {

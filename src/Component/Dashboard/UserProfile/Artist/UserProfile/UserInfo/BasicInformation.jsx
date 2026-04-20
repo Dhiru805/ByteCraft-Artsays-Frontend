@@ -14,7 +14,13 @@ import postAPI from '../../../../../../api/postAPI';
 import AddressModal from './AddressModal'
 
 
-const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange,fetchProfile }) => {
+const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange, fetchProfile, onProfileSaved }) => {
+  const artistInfoRef = useRef(null);
+  const verificationRef = useRef(null);
+  const artworkRef = useRef(null);
+  const bankRef = useRef(null);
+  const socialRef = useRef(null);
+  const agreementRef = useRef(null);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -787,13 +793,26 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             rows={3}
           />
         </div>
+      </div>
+      <ArtistInfo ref={artistInfoRef} userId={userId} onProfileSaved={onProfileSaved} />
+
+      <Verification ref={verificationRef} userId={userId} />
+
+      <ArtworkDetails ref={artworkRef} userId={userId} />
+
+      <BankDetails ref={bankRef} userId={userId} />
+
+      <SocialMedia ref={socialRef} userId={userId} profileData={profileData} />
+
+      <Agreement ref={agreementRef} userId={userId} />
+
+      <div className="body">
         <button type="button"
           className="btn btn-primary mx-2"
           disabled={loading || usernameAvailable === false}
           onClick={async (e) => {
             if (!validateRequired()) return;
 
-            // Final race-condition check: re-verify username is still available
             const currentUsername = (profileData.username || '').trim().toLowerCase();
             if (currentUsername && currentUsername !== originalUsername) {
               try {
@@ -811,34 +830,24 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             setLoading(true);
             try {
               await handleSubmit(e);
+              await Promise.allSettled([
+                artistInfoRef.current?.save(),
+                verificationRef.current?.save(),
+                artworkRef.current?.save(),
+                bankRef.current?.save(),
+                socialRef.current?.save(),
+                agreementRef.current?.save(),
+              ]);
               window.location.reload();
             } catch (err) {
               console.error("Update failed:", err);
-
-              const backendMsg = err?.response?.data?.message || "Failed to update profile";
-              toast.error(backendMsg);
+              toast.error(err?.response?.data?.message || "Failed to update profile");
             } finally {
               setLoading(false);
             }
           }}
         >{loading ? "Updating..." : "Update"}</button>
       </div>
-      <ArtistInfo userId={userId} />
-
-      < Verification userId={userId} />
-
-      <ArtworkDetails
-        userId={userId} />
-
-      <BankDetails
-        userId={userId} />
-
-      <SocialMedia
-        userId={userId}
-        profileData={profileData} />
-
-      <Agreement
-        userId={userId} />
 
         <AddressModal
           isOpen={isShippingModalOpen}

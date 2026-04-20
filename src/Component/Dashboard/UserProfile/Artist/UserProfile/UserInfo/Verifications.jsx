@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { toast } from 'react-toastify';
 import getAPI from '../../../../../../api/getAPI';
 import putAPI from '../../../../../../api/putAPI';
 import { getImageUrl } from "../../../../../../utils/getImageUrl";
 
-const AccountVerification = ({ userId }) => {
+const AccountVerification = React.forwardRef(({ userId }, ref) => {
     const [verificationType, setVerificationType] = useState('');
     const [docNumber, setDocNumber] = useState('');
     const [file, setFile] = useState(null);
@@ -155,11 +155,29 @@ const validateRequiredFields = () => {
     return true;
 };
 
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            // If no verification type selected, skip silently
+            if (!verificationType) return true;
+            if (!validateRequiredFields()) return false;
+            setLoading(true);
+            try {
+                await handleSubmit({ preventDefault: () => {} });
+                return true;
+            } catch (err) {
+                console.error(err);
+                return false;
+            } finally {
+                setLoading(false);
+            }
+        }
+    }));
+
     return (
         <div className="body">
             <h5 className="mb-2">Account Verification</h5>
             <hr className="mt-1" />
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="form-group">
                     <label>Select Document Type <span style={{ color: 'red' }}>*</span></label>
                     <select
@@ -218,20 +236,6 @@ const validateRequiredFields = () => {
                         )}
                     </>
                 )}
-        <button type="button"
-          className="btn btn-primary mx-2 mt-3"
-          disabled={loading}
-          onClick={(e) => {
-           if (!validateRequiredFields()) return;
-            setLoading(true);
-            Promise.resolve(handleSubmit(e))
-              .then(() => {
-                 window.location.reload();
-              })
-              .catch(console.error)
-              .finally(() => setLoading(false));
-          }}
-        >{loading ? "Updating..." : "Update"}</button>
             </form>
             {isModalOpen && (
                 <div className="modal fade show d-block" style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }} tabIndex="-1">
@@ -263,6 +267,6 @@ const validateRequiredFields = () => {
             )}
         </div>
     );
-};
+});
 
 export default AccountVerification;

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { toast } from 'react-toastify';
 import putAPI from '../../../../../../api/putAPI';
 import getAPI from '../../../../../../api/getAPI';
 
-const BankPaymentDetails = ({ userId }) => {
+const BankPaymentDetails = React.forwardRef(({ userId }, ref) => {
     const [formData, setFormData] = useState({
         accountHolderName: '',
         bankName: '',
@@ -42,6 +42,16 @@ const BankPaymentDetails = ({ userId }) => {
     }, [userId]);
     
     const [loading, setLoading] = useState(false);
+
+    useImperativeHandle(ref, () => ({
+        save: async () => {
+            if (!validateRequiredFields()) return false;
+            setLoading(true);
+            const success = await handleSubmit({ preventDefault: () => {} });
+            setLoading(false);
+            return success;
+        }
+    }));
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -103,16 +113,7 @@ const BankPaymentDetails = ({ userId }) => {
         <div className="body">
             <h5 className="mb-2">Bank/Payment Details (For Payments & Withdrawals)</h5>
             <hr className="mt-1" />
-            <form onSubmit={async (e) => {
-                e.preventDefault();
-                if (!validateRequiredFields()) return;
-                setLoading(true);
-                const success = await handleSubmit(e);
-                if (success) {
-                    window.location.reload();
-                }
-                setLoading(false);
-            }}>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="row clearfix">
                     <div className="col-lg-6 col-md-12">
                         <div className="form-group">
@@ -173,13 +174,9 @@ const BankPaymentDetails = ({ userId }) => {
                         </div>
                     </div>
                 </div>
-                <button type="submit"
-                    className="btn btn-primary mx-2"
-                    disabled={loading}
-                >{loading ? "Updating..." : "Update"}</button>
             </form>
         </div>
     );
-};
+});
 
 export default BankPaymentDetails;
