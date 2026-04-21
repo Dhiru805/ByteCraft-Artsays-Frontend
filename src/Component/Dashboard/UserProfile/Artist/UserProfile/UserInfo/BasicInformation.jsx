@@ -248,7 +248,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       'Country': profileData.address?.country,
       'Username': profileData.username,
       'Email': profileData.email,
-      'Phone Number': profileData.phone,
+
       'Bio': profileData.bio,
     };
 
@@ -675,7 +675,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 </div>
               </div>
               <div className="form-group">
-                <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
+                <label htmlFor="phone">Phone Number</label>
                 <div className="d-flex gap-2 align-items-center">
                   <div className="position-relative flex-grow-1">
                     <input
