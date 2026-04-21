@@ -17,11 +17,11 @@ const ImagesMedia = ({
 
     <div className="form-group">
       <label>Upload Images (3-8 images) <span style={{ color: 'red' }}>*</span></label>
-      <div className="d-flex flex-wrap">
+      <div className="flex-wrap d-flex" style={{ columnGap: "20px", rowGap: "40px" }}>
         {images.map((image, index) => (
           <div
             key={index}
-            className="position-relative m-2"
+            className="m-2 position-relative"
             style={{ width: '150px', height: '150px' }}
           >
             <img
@@ -34,12 +34,12 @@ const ImagesMedia = ({
               }}
             />
 
-            <div className="position-absolute top-0 end-0 p-1">
+            <div className="top-0 p-1 position-absolute end-0">
             </div>
-            <div className="position-absolute bottom-0 start-0 w-100 d-flex justify-content-center p-1">
+            <div className="bottom-0 p-1 position-absolute start-0 w-100 d-flex justify-content-center">
               <button
                 type="button"
-                className="btn btn-outline-danger px-2 py-1 mx-1"
+                className="px-2 py-1 mx-1 btn btn-outline-danger"
                 onClick={() => handleRemoveImage(index)}
                 disabled={isSubmitting}
                 title="Delete image"
@@ -48,7 +48,7 @@ const ImagesMedia = ({
               </button>
               <button
                 type="button"
-                className="btn btn-sm btn-outline-secondary text-xs px-2 py-1"
+                className="px-2 py-1 text-xs btn btn-sm btn-outline-secondary"
                 onClick={() => handleMoveImage(index, 'left')}
                 disabled={isSubmitting || index === 0}
                 title="Move left"
@@ -57,7 +57,7 @@ const ImagesMedia = ({
               </button>
               <button
                 type="button"
-                className="btn btn-sm btn-outline-secondary px-2 py-1 mx-1"
+                className="px-2 py-1 mx-1 btn btn-sm btn-outline-secondary"
                 onClick={() => handleMoveImage(index, 'right')}
                 disabled={isSubmitting || index === images.length - 1}
                 title="Move right"
@@ -66,7 +66,7 @@ const ImagesMedia = ({
               </button>
               <button
                 type="button"
-                className="btn btn-sm btn-outline-warning px-2 py-1 mx-1"
+                className="px-2 py-1 mx-1 btn btn-sm btn-outline-warning"
                 onClick={() => handleReplaceImage(index)}
                
                 title="Replace image"
@@ -79,7 +79,7 @@ const ImagesMedia = ({
 
         {images.length < 8 && (
           <div
-            className="d-flex flex-column align-items-center justify-content-center border rounded m-2"
+            className="m-2 border rounded d-flex flex-column align-items-center justify-content-center"
             style={{ width: '150px', height: '150px', cursor: 'pointer' }}
             onClick={() => fileInputRef.current.click()}
           >
@@ -96,11 +96,11 @@ const ImagesMedia = ({
         accept="image/*"
         style={{ display: 'none' }}
       />
-      <small className="text-muted d-block mt-5">
+      <small className="mt-5 text-muted d-block">
         First image is the main display image. Minimum 3 images required, maximum 8.
       </small>
     </div>
-    <div className="form-group mt-4">
+    <div className="mt-4 form-group">
       <label htmlFor="iframeLink">360° View or Video Embed (Optional)</label>
       <input
         type="url"

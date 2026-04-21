@@ -175,6 +175,7 @@ function ProductRequestView() {
             handleInstallmentDurationChange={handleInstallmentDurationChange}
             offerOptions={offerOptions}
             mainCategoryId={formData.mainCategory?.value}
+            subCategoryId={formData.subCategory?.value}
             readOnly={true}
           />
         );

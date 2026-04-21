@@ -8,6 +8,7 @@ import {
   onLogout,
   initSession,
 } from "./auth/SessionOrchestrator";
+import { API_URL } from "./Constants/index";
 
 const AuthContext = createContext();
 
@@ -85,6 +86,27 @@ export const AuthProvider = ({ children }) => {
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
+
+  // ── Re-fetch latest status from server on every authenticated load ──────────
+  // This ensures that if an admin approves/rejects the artist/seller,
+  // the UI reflects the updated status on the next page refresh.
+  useEffect(() => {
+    if (!isAuthenticated || !userId) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch(`${API_URL}/auth/userid/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const latestStatus = data?.user?.status;
+        if (latestStatus && latestStatus !== localStorage.getItem("status")) {
+          localStorage.setItem("status", latestStatus);
+          setStatus(latestStatus);
+        }
+      })
+      .catch(() => {/* silent — stale status stays until next load */});
+  }, [isAuthenticated, userId]);
 
   return (
     <AuthContext.Provider

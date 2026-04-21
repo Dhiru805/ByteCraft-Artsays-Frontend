@@ -17,7 +17,7 @@ const ImagesMedia = ({
 
     <div className="form-group">
       <label>Upload Images (3-8 images) *</label>
-      <div className="d-flex flex-wrap">
+      <div className="d-flex flex-wrap" style={{ columnGap: "20px", rowGap: "40px" }}>
         {images.map((image, index) => (
           <div
             key={index}

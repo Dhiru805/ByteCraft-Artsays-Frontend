@@ -15,9 +15,42 @@ const PricingOffers = ({
     setFormData,
     handleInputChange,
     readOnly,
+    mainCategoryId,
+    subCategoryId,
 }) => {
-    const [gstPercentage] = useState(pricingData.gstPercentage || 0);
+    const [gstPercentage, setGstPercentage] = useState(pricingData.gstPercentage || 0);
     const [insuranceSettings] = useState(null);
+    const [subcategory, setSubcategory] = useState(null);
+
+    useEffect(() => {
+        if (!mainCategoryId) return;
+        const fetchGST = async () => {
+            try {
+                const response = await getAPI(`/api/get-gst-setting?mainCategoryId=${mainCategoryId}`, {}, true);
+                if (!response.hasError && Array.isArray(response.data?.data)) {
+                    const gstData = response.data.data.find(item => item.mainCategoryId._id === mainCategoryId);
+                    if (gstData?.percentage && !pricingData.includeGst) {
+                        setGstPercentage(gstData.percentage);
+                    }
+                }
+            } catch {}
+        };
+        fetchGST();
+    }, [mainCategoryId]);
+
+    useEffect(() => {
+        if (!subCategoryId) return;
+        const fetchSubcategory = async () => {
+            try {
+                const response = await getAPI("/api/sub-category", {}, true);
+                if (!response.hasError && Array.isArray(response.data?.data)) {
+                    const setting = response.data.data.find(s => s.subCategoryId === subCategoryId);
+                    setSubcategory(setting || null);
+                }
+            } catch {}
+        };
+        fetchSubcategory();
+    }, [subCategoryId]);
 
     const gstAmount = useMemo(() => {
         if (pricingData.includeGst || !gstPercentage) return 0;
@@ -60,6 +93,11 @@ const PricingOffers = ({
 
     const finalPriceWithEverything = priceWithGst + (insuranceInfo?.total || 0);
 
+    const commissionAmount = useMemo(() => {
+        if (!subcategory?.commissionTerm || !finalPriceWithEverything) return 0;
+        return (finalPriceWithEverything * Number(subcategory.commissionTerm)) / 100;
+    }, [finalPriceWithEverything, subcategory?.commissionTerm]);
+
     return (
         <>
             <h4 className="mb-3">Pricing & Offers</h4>
@@ -94,6 +132,14 @@ const PricingOffers = ({
                     </div>
                 </div>
             </div>
+
+            {subcategory?.commissionTerm != null && (
+                <div className="alert alert-info mt-2">
+                    <strong>Commission Term Note:</strong> The Commission amount is ₹
+                    <strong>{commissionAmount.toFixed(2)}</strong> (
+                    {subcategory.commissionTerm}% of ₹{finalPriceWithEverything.toFixed(2)} base price)
+                </div>
+            )}
 
             {!pricingData.includeGst && gstPercentage > 0 && (
                 <div className="alert alert-info mt-2">
