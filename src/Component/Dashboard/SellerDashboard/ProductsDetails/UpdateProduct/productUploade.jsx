@@ -48,6 +48,8 @@
       handleRemoveImage,
       handleReplaceImage,
       handleMoveImage,
+      handleSetAsMain,
+      deletedImages,
       setIsSubmitting,
       deliveryOptions,
       packagingOptions,
@@ -175,15 +177,19 @@
 
       // Images
       if (formData.iframeLink) fd.append("iframeLink", formData.iframeLink);
-      images.forEach((img) => {
+      // Position 0 = main image
+      const mainImg = images[0];
+      if (mainImg) {
+        if (mainImg.file) fd.append("images", mainImg.file);
+        else if (mainImg.isExisting) fd.append("mainImageUrl", mainImg.preview);
+      }
+      // Positions 1+ = other images
+      images.slice(1).forEach((img) => {
         if (img.file) fd.append("images", img.file);
         else if (img.isExisting) fd.append("existingImages", img.preview);
       });
-
-//       images.forEach((img) => {
-//   if (img.file) formData.append("images", img.file);
-//   else if (img.isExisting) formData.append("existingImages[]", img.preview);
-// });
+      // Explicitly deleted existing images
+      deletedImages.forEach((url) => fd.append("deletedImages", url));
 
 
       // Pricing
@@ -443,6 +449,7 @@
               handleRemoveImage={handleRemoveImage}
               handleReplaceImage={handleReplaceImage}
               handleMoveImage={handleMoveImage}
+              handleSetAsMain={handleSetAsMain}
               handleInputChange={handleInputChange}
             />
           );

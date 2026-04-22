@@ -13,8 +13,7 @@ const Sidebarprofile = ({ user, userId, isOpen, handleToggleSidebar, Handletoggl
   const navigate = useNavigate();
   const userType = useUserType();
   // getImageUrl handles both S3 full URLs and local relative paths
-  const { logout } = useAuth();
-  const status = localStorage.getItem("status");
+  const { logout, status } = useAuth();
 
   useEffect(() => {
     const handleOutsideClick = (event) => {

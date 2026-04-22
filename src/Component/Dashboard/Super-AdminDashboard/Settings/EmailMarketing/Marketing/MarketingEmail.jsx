@@ -23,6 +23,7 @@ const MarketingEmail = () => {
 
   const [sending, setSending] = useState(false);
   const [emailOptions, setEmailOptions] = useState([]);
+  const [templates, setTemplates] = useState([]);
   const [editorMode, setEditorMode] = useState("wysiwyg");
   const [showHtmlPreview, setShowHtmlPreview] = useState(false);
   const quillRef = useRef(null);
@@ -82,6 +83,11 @@ const MarketingEmail = () => {
         if (savedDraft) {
           setFormData(JSON.parse(savedDraft));
         }
+
+        try {
+          const tmplRes = await getAPI("/api/newsletter/templates");
+          if (tmplRes.data?.success) setTemplates(tmplRes.data.data || []);
+        } catch (_) {}
       } catch (err) {
         toast.error("Initialization error: " + err.message);
       }
@@ -498,8 +504,38 @@ const MarketingEmail = () => {
               </div>
             </div>
 
+            {/* Load from Template */}
+            {templates.length > 0 && (
+              <div className="form-group mt-3">
+                <label><strong>Load from Template</strong></label>
+                <select
+                  className="form-control"
+                  defaultValue=""
+                  onChange={(e) => {
+                    const tmpl = templates.find((t) => t._id === e.target.value);
+                    if (tmpl) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        subject: tmpl.subject || prev.subject,
+                        content: tmpl.htmlContent || prev.content,
+                      }));
+                      if (editorMode === "wysiwyg" && quillRef.current) {
+                        quillRef.current.getEditor().clipboard.dangerouslyPasteHTML(tmpl.htmlContent || "");
+                      }
+                      e.target.value = "";
+                    }
+                  }}
+                >
+                  <option value="">-- Select a template --</option>
+                  {templates.map((t) => (
+                    <option key={t._id} value={t._id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Subject */}
-            <div className="form-group mt-5">
+            <div className="form-group mt-3">
               <label>
                 Subject <span className="text-danger">*</span>
               </label>

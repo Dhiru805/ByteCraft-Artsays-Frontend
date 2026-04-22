@@ -44,6 +44,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [originalEmail, setOriginalEmail] = useState('');
   const [originalPhone, setOriginalPhone] = useState('');
+  const [smsActive, setSmsActive] = useState(false);
 
   const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
   const [showPhoneOtpModal, setShowPhoneOtpModal] = useState(false);
@@ -62,6 +63,12 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       setOriginalPhone(profileData.phone || '');
     }
   }, [profileData]);
+
+  useEffect(() => {
+    getAPI('/api/get-sms-settings/signup-sms', {}, false, false)
+      .then(res => setSmsActive(res?.data?.data?.isActive === true))
+      .catch(() => setSmsActive(false));
+  }, []);
 
   const handleEmailChangeLocal = (e) => {
     const newEmail = e.target.value;
@@ -701,7 +708,7 @@ const handleDeleteImage = async () => {
                       </span>
                     )}
                   </div>
-                  {(!phoneVerified || profileData.phone !== originalPhone) && (
+                  {smsActive && (!phoneVerified || profileData.phone !== originalPhone) && (
                     <button
                       type="button"
                       onClick={handleSendPhoneOtp}

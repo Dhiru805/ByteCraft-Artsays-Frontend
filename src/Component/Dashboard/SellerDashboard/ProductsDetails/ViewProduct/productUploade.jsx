@@ -176,6 +176,7 @@ function ProductViewSeller() {
               handleInstallmentDurationChange={handleInstallmentDurationChange}
               offerOptions={offerOptions}
               mainCategoryId={formData.mainCategory?.value}
+              subCategoryId={formData.subCategory?.value}
               formData={formData}
               setFormData={setFormData}
               handleInputChange={handleInputChange}

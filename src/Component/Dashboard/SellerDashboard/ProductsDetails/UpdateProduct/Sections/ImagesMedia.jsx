@@ -10,6 +10,7 @@ const ImagesMedia = ({
   handleRemoveImage,
   handleReplaceImage,
   handleMoveImage,
+  handleSetAsMain,
   handleInputChange
 }) => (
   <>
@@ -33,7 +34,11 @@ const ImagesMedia = ({
                 opacity: index === 0 ? 1 : 0.7
               }}
             />
-
+            {index === 0 && (
+              <div className="position-absolute top-0 start-0 p-1">
+                <span className="badge bg-primary" style={{ fontSize: '10px' }}>Main</span>
+              </div>
+            )}
             <div className="position-absolute top-0 end-0 p-1">
             </div>
             <div className="position-absolute bottom-0 start-0 w-100 d-flex justify-content-center p-1">
@@ -68,11 +73,21 @@ const ImagesMedia = ({
                 type="button"
                 className="btn btn-sm btn-outline-warning px-2 py-1 mx-1"
                 onClick={() => handleReplaceImage(index)}
-               
                 title="Replace image"
               >
                 <i className="fa fa-exchange"></i>
               </button>
+              {index !== 0 && (
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-success px-2 py-1 mx-1"
+                  onClick={() => handleSetAsMain(index)}
+                  disabled={isSubmitting}
+                  title="Set as main image"
+                >
+                  <i className="fa fa-star"></i>
+                </button>
+              )}
             </div>
           </div>
         ))}

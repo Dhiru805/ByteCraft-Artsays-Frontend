@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import getAPI from "../../../../../../api/getAPI";
+import { getImageUrl } from "../../../../../../utils/getImageUrl";
 
 const mapDbToSelectOption = (val) => {
   if (!val) return null;
@@ -135,6 +136,7 @@ export default function useProductForm(product = null) {
 
   const [userId, setUserId] = useState("");
   const [images, setImages] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]);
   const [profileData, setProfileData] = useState({ address: {} });
 
 
@@ -356,8 +358,21 @@ const handleImageUpload = (e) => {
       return;
     }
     const img = images[idx];
-    if (img.preview && !img.file) URL.revokeObjectURL(img.preview);
+    if (img.isExisting && img.preview) {
+      setDeletedImages((prev) => [...prev, img.preview]);
+    } else if (img.preview && img.file) {
+      URL.revokeObjectURL(img.preview);
+    }
     setImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleSetAsMain = (idx) => {
+    if (idx === 0) return;
+    setImages((prev) => {
+      const newImgs = [...prev];
+      [newImgs[0], newImgs[idx]] = [newImgs[idx], newImgs[0]];
+      return newImgs;
+    });
   };
 
   const handleReplaceImage = (idx) => {
@@ -432,21 +447,20 @@ const handleImageUpload = (e) => {
     if (!product || !categoryData.mainCategories.length) return;
 
     const p = product;
-    const API_URL = process.env.REACT_APP_API_URL ;
 
 
     setFormData((prev) => ({
       ...prev,
       productName: p.productName || "",
       description: p.description || "",
-      mainCategory: categoryData.mainCategories.find(m => m.value === p.mainCategory) || null,
-      category: categoryData.categories.find(c => c.value === p.category) || null,
+      mainCategory: categoryData.mainCategories.find(m => m.value === p.mainCategory || m.label === p.mainCategory) || null,
+      category: categoryData.categories.find(c => c.value === p.category || c.label === p.category) || null,
       subCategory: (() => {
         if (!p.subCategory) return null;
-        const found = categoryData.subCategories.find(s => s.value === p.subCategory);
+        const found = categoryData.subCategories.find(s => s.value === p.subCategory || s.label === p.subCategory);
         return found || { value: p.subCategory, label: p.subCategory };
       })(),
-      productType: mapDbToSelectOption(p.productType?.[0] || p.productType) || null,
+      productType: (() => { const pt = p.productType; const val = Array.isArray(pt) ? pt[0] : pt; return val ? mapDbToSelectOption(val) : null; })(),
       editionNumber: p.editionNumber?.toString() || "",
       targetedAudience: p.targetedAudience || "",
       inspirationSource: p.inspirationSource || "",
@@ -554,78 +568,30 @@ const handleImageUpload = (e) => {
 
     const existingImages = [];
 
-
-    // if (p.mainImage) {
-    //   const mainImageUrl = `${API_URL}${p.mainImage.startsWith('/') ? '' : '/'}${p.mainImage}`.replace(
-    //     /([^:]\/)\/+/g,
-    //     '$1'
-    //   );
-    //   existingImages.push({
-    //     file: null,
-    //     preview: mainImageUrl,
-    //     isExisting: true,
-    //   });
-    // }
-
-
-    // if (p.otherImages?.length) {
-    //   p.otherImages.forEach((url) => {
-    //     const fullUrl = `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`.replace(
-    //       /([^:]\/)\/+/g,
-    //       '$1'
-    //     );
-    //     existingImages.push({
-    //       file: null,
-    //       preview: fullUrl,
-    //       isExisting: true,
-    //     });
-    //   });
-    // }
-
     if (p.mainImage) {
-    const mainImageUrl = `${API_URL}${p.mainImage.startsWith("/") ? "" : "/"}${p.mainImage}`.replace(
-      /([^:]\/)\/+/g,
-      "$1"
-    );
-    existingImages.push({
-      file: null,
-      preview: mainImageUrl,
-      isExisting: true,
-      isMain: true, 
-    });
-  }
+      existingImages.push({
+        file: null,
+        preview: getImageUrl(p.mainImage),
+        isExisting: true,
+        isMain: true,
+      });
+    }
 
-  
-if (p.otherImages?.length) {
-  const seen = new Set(); // to avoid duplicates
-
-  p.otherImages.forEach((url) => {
-    if (!url) return;
-
-    let cleanUrl = url.replace(/^http:\/\/localhost:3001\/http:\/\/localhost:3001\//, "/");
-
-   
-    cleanUrl = cleanUrl.replace(/^http:\/\/localhost:3001\//, "/");
-
-
-    cleanUrl = cleanUrl.replace(/([^:]\/)\/+/g, "$1");
-
-    const fullUrl = `${API_URL}${cleanUrl.startsWith("/") ? "" : "/"}${cleanUrl}`;
-
-
-    if (seen.has(fullUrl)) return;
-    seen.add(fullUrl);
-
-    existingImages.push({
-      file: null,
-      preview: fullUrl,
-      isExisting: true,
-      isMain: false,
-    });
-  });
-}
-
-  setImages(existingImages);
+    if (p.otherImages?.length) {
+      const seen = new Set();
+      p.otherImages.forEach((url) => {
+        if (!url) return;
+        const fullUrl = getImageUrl(url);
+        if (seen.has(fullUrl)) return;
+        seen.add(fullUrl);
+        existingImages.push({
+          file: null,
+          preview: fullUrl,
+          isExisting: true,
+          isMain: false,
+        });
+      });
+    }
 
     setImages(existingImages);
 
@@ -686,5 +652,7 @@ if (p.otherImages?.length) {
     handleRemoveImage,
     handleReplaceImage,
     handleMoveImage,
+    handleSetAsMain,
+    deletedImages,
   };
 }

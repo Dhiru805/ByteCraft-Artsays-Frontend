@@ -90,6 +90,16 @@ const AboutUs = () => {
         <meta name="twitter:title" content={seoData.metaTitle} />
         <meta name="twitter:description" content={seoData.metaDescription} />
         <meta name="twitter:image" content={seoData.metaImage} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" },
+              { "@type": "ListItem", "position": 2, "name": "About Us", "item": "https://artsays.in/about-us" }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <HeroImgAboutUs />

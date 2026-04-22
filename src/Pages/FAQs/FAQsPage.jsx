@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Plus, Minus, Search, Tag, ChevronRight, Info, HelpCircle } from "lucide-react";
 import axiosInstance from "../../api/axiosConfig";
@@ -56,6 +57,12 @@ const FAQsPage = () => {
 
   return (
     <div className="w-full font-[poppins]">
+      <Helmet>
+        <title>FAQs | Artsays</title>
+        <script type="application/ld+json">
+          {JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" }, { "@type": "ListItem", "position": 2, "name": "FAQs", "item": "https://artsays.in/faqs" }] })}
+        </script>
+      </Helmet>
       {/* Hero Section */}
       <div className="relative w-full h-[300px] sm:h-[250px] md:h-[300px] overflow-hidden flex items-center justify-center">
         <img
@@ -79,6 +86,11 @@ const FAQsPage = () => {
           </div>
         </div>
       </div>
+      <nav aria-label="breadcrumb" className="max-w-[1440px] mx-auto px-4 md:px-8 flex items-center gap-2 text-sm text-gray-500 py-3">
+        <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+        <ChevronRight size={14} />
+        <span className="text-[#6F4D34] font-semibold" aria-current="page">FAQs</span>
+      </nav>
 
       {/* Content */}
       <div className="w-full bg-gray-50 min-h-screen font-[poppins] py-8">

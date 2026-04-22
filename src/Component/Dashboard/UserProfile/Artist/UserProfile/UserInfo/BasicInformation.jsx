@@ -47,6 +47,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [originalEmail, setOriginalEmail] = useState('');
   const [originalPhone, setOriginalPhone] = useState('');
+  const [smsActive, setSmsActive] = useState(false);
 
   const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
   const [showPhoneOtpModal, setShowPhoneOtpModal] = useState(false);
@@ -65,6 +66,12 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
       setOriginalPhone(profileData.phone || '');
     }
   }, [profileData]);
+
+  useEffect(() => {
+    getAPI('/api/get-sms-settings/signup-sms', {}, false, false)
+      .then(res => setSmsActive(res?.data?.data?.isActive === true))
+      .catch(() => setSmsActive(false));
+  }, []);
 
   const handleEmailChangeLocal = (e) => {
     const newEmail = e.target.value;
@@ -412,7 +419,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
         <h5 className="mb-2">Basic Information</h5>
         <hr className="mt-1" />
         {profileData.artsaysId && (
-          <div className="form-group mb-3">
+          <div className="mb-3 form-group">
             <label>Artist ID</label>
             <input
               type="text"
@@ -423,7 +430,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             />
           </div>
         )}
-        <div className="row clearfix">
+        <div className="clearfix row">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
               <label htmlFor="firstName">First Name <span style={{ color: 'red' }}>*</span></label>
@@ -439,7 +446,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
             <div className="form-group">
               <label>Gender <span style={{ color: 'red' }}>*</span></label>
-              <label className="fancy-radio mx-2">
+              <label className="mx-2 fancy-radio">
                 <input
                   name="gender"
                   value="male"
@@ -605,7 +612,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
           </div>
         </div>
-        <div className="row clearfix">
+        <div className="clearfix row">
           <div className="col-lg-6 col-md-12">
             <div className="form-group">
               <label htmlFor="username">Username <span style={{ color: 'red' }}>*</span></label>
@@ -642,7 +649,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
             </div>
               <div className="form-group">
                 <label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></label>
-                <div className="d-flex gap-2 align-items-center">
+                <div className="gap-2 d-flex align-items-center">
                   <div className="position-relative flex-grow-1">
                     <input
                       type="email"
@@ -675,8 +682,8 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 </div>
               </div>
               <div className="form-group">
-                <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
-                <div className="d-flex gap-2 align-items-center">
+              <label htmlFor="phone">Phone Number <span style={{ color: 'red' }}>*</span></label>
+                <div className="gap-2 d-flex align-items-center">
                   <div className="position-relative flex-grow-1">
                     <input
                       type="text"
@@ -694,7 +701,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                       </span>
                     )}
                   </div>
-                  {(!phoneVerified || profileData.phone !== originalPhone) && (
+                  {smsActive && (!phoneVerified || profileData.phone !== originalPhone) && (
                     <button
                       type="button"
                       onClick={handleSendPhoneOtp}
@@ -808,7 +815,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
 
       <div className="body">
         <button type="button"
-          className="btn btn-primary mx-2"
+          className="mx-2 btn btn-primary"
           disabled={loading || usernameAvailable === false}
           onClick={async (e) => {
             if (!validateRequired()) return;
@@ -857,20 +864,20 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
         />
 
         {showEmailOtpModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }} onClick={() => setShowEmailOtpModal(false)}>
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4" style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', width: '100%', maxWidth: '400px', margin: '0 1rem' }} onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-xl font-bold text-gray-900 mb-4" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Verify Email</h3>
-              <p className="text-gray-600 mb-4" style={{ color: '#666', marginBottom: '1rem' }}>Enter the 6-digit OTP sent to {profileData.email}</p>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }} onClick={() => setShowEmailOtpModal(false)}>
+            <div className="w-full max-w-md p-6 mx-4 bg-white rounded-2xl" style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', width: '100%', maxWidth: '400px', margin: '0 1rem' }} onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-4 text-xl font-bold text-gray-900" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Verify Email</h3>
+              <p className="mb-4 text-gray-600" style={{ color: '#666', marginBottom: '1rem' }}>Enter the 6-digit OTP sent to {profileData.email}</p>
               <input
                 type="text"
                 value={emailOtp}
                 onChange={(e) => setEmailOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="Enter OTP"
-                className="form-control mb-4 text-center text-2xl tracking-widest"
+                className="mb-4 text-2xl tracking-widest text-center form-control"
                 style={{ fontSize: '1.5rem', letterSpacing: '0.5rem', textAlign: 'center', marginBottom: '1rem' }}
                 maxLength={6}
               />
-              <div className="d-flex gap-3">
+              <div className="gap-3 d-flex">
                 <button
                   type="button"
                   onClick={() => { setShowEmailOtpModal(false); setEmailOtp(''); }}
@@ -893,7 +900,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 type="button"
                 onClick={handleSendEmailOtp}
                 disabled={sendingEmailOtp}
-                className="btn btn-link w-100 mt-3"
+                className="mt-3 btn btn-link w-100"
                 style={{ color: '#5C4033', textDecoration: 'underline', marginTop: '1rem', width: '100%' }}
               >
                 {sendingEmailOtp ? 'Sending...' : 'Resend OTP'}
@@ -903,20 +910,20 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
         )}
 
         {showPhoneOtpModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }} onClick={() => setShowPhoneOtpModal(false)}>
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4" style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', width: '100%', maxWidth: '400px', margin: '0 1rem' }} onClick={(e) => e.stopPropagation()}>
-              <h3 className="text-xl font-bold text-gray-900 mb-4" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Verify Phone</h3>
-              <p className="text-gray-600 mb-4" style={{ color: '#666', marginBottom: '1rem' }}>Enter the 6-digit OTP sent to {profileData.phone}</p>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }} onClick={() => setShowPhoneOtpModal(false)}>
+            <div className="w-full max-w-md p-6 mx-4 bg-white rounded-2xl" style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', width: '100%', maxWidth: '400px', margin: '0 1rem' }} onClick={(e) => e.stopPropagation()}>
+              <h3 className="mb-4 text-xl font-bold text-gray-900" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem' }}>Verify Phone</h3>
+              <p className="mb-4 text-gray-600" style={{ color: '#666', marginBottom: '1rem' }}>Enter the 6-digit OTP sent to {profileData.phone}</p>
               <input
                 type="text"
                 value={phoneOtp}
                 onChange={(e) => setPhoneOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="Enter OTP"
-                className="form-control mb-4 text-center text-2xl tracking-widest"
+                className="mb-4 text-2xl tracking-widest text-center form-control"
                 style={{ fontSize: '1.5rem', letterSpacing: '0.5rem', textAlign: 'center', marginBottom: '1rem' }}
                 maxLength={6}
               />
-              <div className="d-flex gap-3">
+              <div className="gap-3 d-flex">
                 <button
                   type="button"
                   onClick={() => { setShowPhoneOtpModal(false); setPhoneOtp(''); }}
@@ -939,7 +946,7 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
                 type="button"
                 onClick={handleSendPhoneOtp}
                 disabled={sendingPhoneOtp}
-                className="btn btn-link w-100 mt-3"
+                className="mt-3 btn btn-link w-100"
                 style={{ color: '#5C4033', textDecoration: 'underline', marginTop: '1rem', width: '100%' }}
               >
                 {sendingPhoneOtp ? 'Sending...' : 'Resend OTP'}

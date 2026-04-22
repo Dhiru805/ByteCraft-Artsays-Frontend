@@ -1,9 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import getAPI from "../../../../api/getAPI";
 import axiosInstance from "../../../../api/axiosConfig";
 import ConfirmationDialog from "../../ConfirmationDialog";
 import ProductRequestSkeleton from "../../../Skeleton/artist/ProductRequestSkeleton";
+
+const TEMPLATE_VARS = [
+  { tag: "{{name}}", desc: "First name" },
+  { tag: "{{lastName}}", desc: "Last name" },
+  { tag: "{{fullName}}", desc: "Full name" },
+  { tag: "{{email}}", desc: "Email address" },
+  { tag: "{{phone}}", desc: "Phone number" },
+  { tag: "{{username}}", desc: "Username" },
+  { tag: "{{userType}}", desc: "User type (Artist / Seller / Buyer)" },
+  { tag: "{{status}}", desc: "Account status (Verified / Unverified / Rejected)" },
+  { tag: "{{artsaysId}}", desc: "Artsays ID (e.g. AAID123456)" },
+  { tag: "{{city}}", desc: "City from address" },
+  { tag: "{{state}}", desc: "State from address" },
+  { tag: "{{country}}", desc: "Country from address" },
+];
+
+const VariableBadges = ({ onInsert }) => (
+  <div className="alert alert-info py-2 mb-3" style={{ fontSize: "13px" }}>
+    <div className="mb-1"><strong><i className="fa fa-code mr-1"></i>Available Variables</strong> <span className="text-muted">— click any tag to insert into body (blank if recipient has no value)</span></div>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+      {TEMPLATE_VARS.map(({ tag, desc }) => (
+        <span
+          key={tag}
+          className="badge badge-light border"
+          style={{ fontFamily: "monospace", cursor: "pointer", padding: "4px 7px" }}
+          title={desc}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => onInsert(tag)}
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+);
 
 const NewsletterTable = () => {
   const [activeTab, setActiveTab] = useState("subscribers");
@@ -23,7 +58,24 @@ const NewsletterTable = () => {
   const [sending, setSending] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const [recipientType, setRecipientType] = useState("newsletter");
-  const [recipientCounts, setRecipientCounts] = useState({ newsletter: 0, artist: 0, seller: 0, buyer: 0 });
+  const [recipientCounts, setRecipientCounts] = useState({ newsletter: 0, all: 0, artist: 0, artist_approved: 0, artist_unapproved: 0, seller: 0, seller_approved: 0, seller_unapproved: 0, buyer: 0, buyer_approved: 0, buyer_unapproved: 0 });
+  const [customEmails, setCustomEmails] = useState([]);
+  const [customEmailInput, setCustomEmailInput] = useState("");
+  const composeHtmlRef = useRef(null);
+  const templateHtmlRef = useRef(null);
+
+  const insertAtCursor = (ref, setter, tag) => {
+    const el = ref.current;
+    if (!el) { setter((prev) => prev + tag); return; }
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    setter((prev) => prev.substring(0, start) + tag + prev.substring(end));
+    requestAnimationFrame(() => {
+      el.selectionStart = start + tag.length;
+      el.selectionEnd = start + tag.length;
+      el.focus();
+    });
+  };
 
   // Templates state
   const [templates, setTemplates] = useState([]);
@@ -69,7 +121,9 @@ const NewsletterTable = () => {
     try {
       const response = await getAPI("/api/newsletter/recipient-counts");
       if (response.data?.data) {
-        setRecipientCounts(response.data.data);
+        const d = response.data.data;
+        // "all" = newsletter subscribers + all users (deduplication handled on backend)
+        setRecipientCounts({ ...d, all: d.newsletter + d.artist + d.seller + d.buyer });
       }
     } catch (error) {
       console.error("Error fetching recipient counts:", error);
@@ -114,15 +168,33 @@ const NewsletterTable = () => {
     }
   };
 
+  // ─── Custom email helpers ───
+  const addCustomEmail = () => {
+    const email = customEmailInput.trim().toLowerCase();
+    if (!email) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast.error("Invalid email address."); return; }
+    if (customEmails.includes(email)) { toast.warning("Email already added."); return; }
+    setCustomEmails((prev) => [...prev, email]);
+    setCustomEmailInput("");
+  };
+
+  const removeCustomEmail = (email) => setCustomEmails((prev) => prev.filter((e) => e !== email));
+
   // ─── Send bulk email ───
   const handleSendBulk = async () => {
     if (!composeSubject.trim() || !composeHtml.trim()) {
       toast.error("Subject and HTML content are required.");
       return;
     }
+    if (recipientType === "custom" && customEmails.length === 0) {
+      toast.error("Add at least one custom email address.");
+      return;
+    }
     setSending(true);
     try {
-      const res = await axiosInstance.post("/api/newsletter/send-bulk", { subject: composeSubject, htmlContent: composeHtml, recipientType }, authHeaders);
+      const payload = { subject: composeSubject, htmlContent: composeHtml, recipientType };
+      if (recipientType === "custom") payload.customEmails = customEmails;
+      const res = await axiosInstance.post("/api/newsletter/send-bulk", payload, authHeaders);
       toast.success(res.data.message || "Emails sent successfully!");
       setComposeSubject("");
       setComposeHtml("");
@@ -312,12 +384,67 @@ const NewsletterTable = () => {
                       value={recipientType}
                       onChange={(e) => setRecipientType(e.target.value)}
                     >
+                      <option value="all">All ({recipientCounts.all})</option>
                       <option value="newsletter">Newsletter Subscribers ({recipientCounts.newsletter})</option>
-                      <option value="artist">Artists ({recipientCounts.artist})</option>
-                      <option value="seller">Sellers ({recipientCounts.seller})</option>
-                      <option value="buyer">Buyers ({recipientCounts.buyer})</option>
+                      <optgroup label="Artists">
+                        <option value="artist">All Artists ({recipientCounts.artist})</option>
+                        <option value="artist_approved">Approved Artists ({recipientCounts.artist_approved})</option>
+                        <option value="artist_unapproved">Unapproved Artists ({recipientCounts.artist_unapproved})</option>
+                      </optgroup>
+                      <optgroup label="Sellers">
+                        <option value="seller">All Sellers ({recipientCounts.seller})</option>
+                        <option value="seller_approved">Approved Sellers ({recipientCounts.seller_approved})</option>
+                        <option value="seller_unapproved">Unapproved Sellers ({recipientCounts.seller_unapproved})</option>
+                      </optgroup>
+                      <optgroup label="Buyers">
+                        <option value="buyer">All Buyers ({recipientCounts.buyer})</option>
+                        <option value="buyer_approved">Approved Buyers ({recipientCounts.buyer_approved})</option>
+                        <option value="buyer_unapproved">Unapproved Buyers ({recipientCounts.buyer_unapproved})</option>
+                      </optgroup>
+                      <option value="custom">Custom Email Address(es)</option>
                     </select>
                   </div>
+
+                  {/* Custom email input */}
+                  {recipientType === "custom" && (
+                    <div className="form-group">
+                      <label><strong>Custom Email Addresses</strong></label>
+                      <div className="input-group mb-2">
+                        <input
+                          type="email"
+                          className="form-control"
+                          placeholder="Enter email address and press Add"
+                          value={customEmailInput}
+                          onChange={(e) => setCustomEmailInput(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomEmail(); } }}
+                        />
+                        <div className="input-group-append">
+                          <button className="btn btn-outline-primary" type="button" onClick={addCustomEmail}>
+                            <i className="fa fa-plus mr-1"></i> Add
+                          </button>
+                        </div>
+                      </div>
+                      {customEmails.length === 0 ? (
+                        <small className="text-muted">No email addresses added yet.</small>
+                      ) : (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                          {customEmails.map((email) => (
+                            <span key={email} className="badge badge-primary" style={{ fontSize: "13px", padding: "6px 10px" }}>
+                              {email}
+                              <button
+                                type="button"
+                                className="close ml-2"
+                                style={{ fontSize: "14px", color: "#fff", lineHeight: 1 }}
+                                onClick={() => removeCustomEmail(email)}
+                              >
+                                &times;
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Quick template select */}
                   {templates.length > 0 && (
@@ -343,6 +470,9 @@ const NewsletterTable = () => {
                     </div>
                   )}
 
+                  {/* Available variables */}
+                  <VariableBadges onInsert={(tag) => insertAtCursor(composeHtmlRef, setComposeHtml, tag)} />
+
                   <div className="form-group">
                     <label><strong>Subject</strong></label>
                     <input type="text" className="form-control" placeholder="Enter email subject" value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} />
@@ -353,6 +483,7 @@ const NewsletterTable = () => {
                     <div className="row">
                       <div className="col-md-6">
                         <textarea
+                          ref={composeHtmlRef}
                           className="form-control"
                           placeholder="Paste or write your HTML email content here..."
                           value={composeHtml}
@@ -372,13 +503,13 @@ const NewsletterTable = () => {
                   <div className="d-flex justify-content-between align-items-center mt-3">
                     <span className="text-muted">
                       <i className="fa fa-info-circle mr-1"></i>
-                      Sending to <strong>{recipientCounts[recipientType] || 0}</strong> {recipientType === "newsletter" ? "subscriber" : recipientType}(s)
+                      Sending to <strong>{recipientType === "custom" ? customEmails.length : (recipientCounts[recipientType] || 0)}</strong> recipient(s)
                     </span>
-                    <button className="btn btn-primary" onClick={handleSendBulk} disabled={sending || !composeSubject.trim() || !composeHtml.trim()}>
+                    <button className="btn btn-primary" onClick={handleSendBulk} disabled={sending || !composeSubject.trim() || !composeHtml.trim() || (recipientType === "custom" && customEmails.length === 0)}>
                       {sending ? (
                         <><i className="fa fa-spinner fa-spin mr-1"></i> Sending...</>
                       ) : (
-                        <><i className="fa fa-paper-plane mr-1"></i> Send to {recipientType === "newsletter" ? "All Subscribers" : recipientType === "artist" ? "All Artists" : recipientType === "seller" ? "All Sellers" : "All Buyers"}</>
+                        <><i className="fa fa-paper-plane mr-1"></i> Send ({recipientType === "custom" ? customEmails.length : (recipientCounts[recipientType] || 0)} recipients)</>
                       )}
                     </button>
                   </div>
@@ -413,11 +544,15 @@ const NewsletterTable = () => {
                   </div>
                 </div>
 
+                {/* Available variables */}
+                <VariableBadges onInsert={(tag) => insertAtCursor(templateHtmlRef, setTemplateHtml, tag)} />
+
                 <div className="form-group">
                   <label><strong>HTML Content</strong></label>
                   <div className="row">
                     <div className="col-md-6">
                       <textarea
+                        ref={templateHtmlRef}
                         className="form-control"
                         rows={14}
                         placeholder="Write your HTML template content here..."

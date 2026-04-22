@@ -43,7 +43,7 @@ function ArtistProductFetchView() {
 const { product, seller, buyers } = data;
 
     //const mainCategoryName = mainCategoryDetails?.mainCategoryName || product?.mainCategory || "N/A";
-const mainCategoryName = product?.mainCategory || "N/A";
+const mainCategoryName = product?.mainCategoryName || product?.mainCategory || "N/A";
 
     // const sellerLabel =
     //     seller?.role === "artist"
@@ -134,14 +134,14 @@ const mainCategoryName = product?.mainCategory || "N/A";
                             <h5 className="text-info">
                                 Main Category: {mainCategoryName}
                             </h5>
-                            {product?.category && (
+                            {(product?.categoryName || product?.category) && (
                                 <h5 className="text-secondary">
-                                    Category: {product.category}
+                                    Category: {product.categoryName || product.category}
                                 </h5>
                             )}
-                            {product?.subCategory && (
+                            {(product?.subCategoryName || product?.subCategory) && (
                                 <h5 className="text-secondary">
-                                    Sub Category: {product.subCategory}
+                                    Sub Category: {product.subCategoryName || product.subCategory}
                                 </h5>
                             )}
 
