@@ -669,8 +669,8 @@ const OrderView = () => {
           <ArrowLeft className="w-5 h-5" />
           <span>Back to Orders</span>
         </button>
-        {orderStatus === "Delivered" && (
-           <button 
+        {(orderStatus === "Delivered" || orderStatus === "Completed") && (
+           <button
              onClick={handleDownloadInvoice}
              className="flex items-center gap-2 text-sm bg-white border border-[#6F4D34] text-[#6F4D34] px-4 py-2 rounded-xl hover:bg-gray-50 transition shadow-sm"
            >
@@ -991,8 +991,8 @@ const OrderView = () => {
         </motion.div>
         </div>
 
-        {/* REVIEW SECTION - Only show when order is Delivered */}
-          {orderStatus === "Delivered" && (
+        {/* REVIEW SECTION - Show when order is Delivered or Completed */}
+          {(orderStatus === "Delivered" || orderStatus === "Completed") && (
           <motion.div 
             id="review-section"
             initial={{ y: 20, opacity: 0 }}
