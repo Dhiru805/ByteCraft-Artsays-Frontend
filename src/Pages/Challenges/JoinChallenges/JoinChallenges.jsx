@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
@@ -155,7 +156,27 @@ const JoinChallenges = () => {
 
   return (
     <div className="w-full bg-gray-50 min-h-screen font-[poppins] py-8 px-4 md:px-6">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" },
+              { "@type": "ListItem", "position": 2, "name": "Challenges", "item": "https://artsays.in/challenges" },
+              { "@type": "ListItem", "position": 3, "name": challengeDetails?.title || "Join Challenge", "item": window.location.href }
+            ]
+          })}
+        </script>
+      </Helmet>
       <div className="max-w-[1440px] mx-auto">
+        <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+          <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+          <ChevronRight size={14} />
+          <a href="/challenges" className="hover:text-[#6F4D34] transition-colors">Challenges</a>
+          <ChevronRight size={14} />
+          <span className="text-[#6F4D34] font-semibold" aria-current="page">{challengeDetails?.title || "Join Challenge"}</span>
+        </nav>
         <div className="flex flex-col lg:flex-row gap-8">
 
           {/* Main Content */}

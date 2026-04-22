@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet-async';
 import './TermsofServices.css';
 const sections = [
     {
@@ -306,6 +307,18 @@ const sections = [
  
 const TermsofServices = () => {
   return (
+    <>
+      <Helmet>
+        <title>Terms of Services | Artsays</title>
+        <script type="application/ld+json">
+          {JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" }, { "@type": "ListItem", "position": 2, "name": "Terms of Services", "item": "https://artsays.in/terms-services" }] })}
+        </script>
+      </Helmet>
+      <nav aria-label="breadcrumb" className="max-w-[1440px] mx-auto px-4 md:px-8 flex items-center gap-2 text-sm text-gray-500 py-3">
+        <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+        <span className="mx-1">›</span>
+        <span className="text-[#6F4D34] font-semibold" aria-current="page">Terms of Services</span>
+      </nav>
     <div className="TermsOfservices-container">
     <div className="TermsOfservices-sidebar">
       <ul>
@@ -326,7 +339,8 @@ const TermsofServices = () => {
       ))}
     </div>
   </div>
+    </>
   )
 }
- 
+
 export default TermsofServices

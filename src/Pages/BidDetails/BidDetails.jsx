@@ -400,15 +400,26 @@ const BidDetails = () => {
             }
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" },
+              { "@type": "ListItem", "position": 2, "name": "Bidding Arena", "item": "https://artsays.in/bid" },
+              { "@type": "ListItem", "position": 3, "name": finalData?.bid?.artworkName || "Bid", "item": window.location.href }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
-          <button onClick={() => navigate("/")} className="hover:text-[#6F4D34] transition-colors">Home</button>
+        <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-gray-500 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
+          <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
           <ChevronRight size={14} />
-          <span className="hover:text-[#6F4D34] cursor-pointer">{mainCategoryName}</span>
+          <a href="/bid" className="hover:text-[#6F4D34] transition-colors">Bidding Arena</a>
           <ChevronRight size={14} />
-          <span className="text-[#6F4D34] font-semibold">{finalData.bid.artworkName}</span>
+          <span className="text-[#6F4D34] font-semibold" aria-current="page">{finalData.bid.artworkName}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">

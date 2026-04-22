@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import "./PrivacyPolicy.css";
 
 const sections = [
@@ -254,6 +255,18 @@ function scrollToSection(id) {
 
 function PrivacyPolicy() {
   return (
+    <>
+      <Helmet>
+        <title>Privacy Policy | Artsays</title>
+        <script type="application/ld+json">
+          {JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" }, { "@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "https://artsays.in/privacy-policy" }] })}
+        </script>
+      </Helmet>
+      <nav aria-label="breadcrumb" className="max-w-[1440px] mx-auto px-4 md:px-8 flex items-center gap-2 text-sm text-gray-500 py-3">
+        <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+        <span className="mx-1">›</span>
+        <span className="text-[#6F4D34] font-semibold" aria-current="page">Privacy Policy</span>
+      </nav>
     <div className="privacy-container">
       <div className="privacy-sidebar">
         <ul>
@@ -273,6 +286,7 @@ function PrivacyPolicy() {
         ))}
       </div>
     </div>
+    </>
   );
 }
 

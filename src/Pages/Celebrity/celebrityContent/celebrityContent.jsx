@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Heart,
@@ -695,6 +696,19 @@ const CelebrityContent = () => {
 
   return (
     <div className="w-full bg-gray-50 min-h-screen font-[poppins]">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" },
+              { "@type": "ListItem", "position": 2, "name": "Celebrities", "item": "https://artsays.in/celebrity" },
+              { "@type": "ListItem", "position": 3, "name": celebrity?.artistName || "Celebrity", "item": window.location.href }
+            ]
+          })}
+        </script>
+      </Helmet>
       {/* ---------------- CELEBRITY HERO SECTION ---------------- */}
       <div className="relative w-full min-h-[400px] md:h-[500px] overflow-hidden flex items-center bg-[#1a1a1a]">
         {/* Background Overlay / Image */}
@@ -789,24 +803,12 @@ const CelebrityContent = () => {
 
       <div className="w-full max-w-[1440px] mx-auto p-6">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 p-4 mb-8 text-sm text-gray-500 bg-white border border-gray-100 shadow-sm rounded-2xl">
-          <span
-            className="hover:text-[#6F4D34] cursor-pointer font-medium"
-            onClick={() => navigate("/")}
-          >
-            Home
-          </span>
+        <nav aria-label="breadcrumb" className="flex items-center gap-2 p-4 mb-8 text-sm text-gray-500 bg-white border border-gray-100 shadow-sm rounded-2xl">
+          <a href="/" className="hover:text-[#6F4D34] transition-colors font-medium">Home</a>
           <ChevronRight size={14} />
-          <span
-            className="hover:text-[#6F4D34] cursor-pointer font-medium"
-            onClick={() => navigate("/celebrity")}
-          >
-            Celebrities
-          </span>
+          <a href="/celebrity" className="hover:text-[#6F4D34] transition-colors font-medium">Celebrities</a>
           <ChevronRight size={14} />
-          <span className="font-bold text-gray-900">
-            {celebrity?.artistName}
-          </span>
+          <span className="font-bold text-gray-900" aria-current="page">{celebrity?.artistName}</span>
         </nav>
 
         {/* Highlights Section */}

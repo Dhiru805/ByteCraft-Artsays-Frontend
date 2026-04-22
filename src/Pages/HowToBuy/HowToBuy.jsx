@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import HeroImgHowToBuy from "./hero-img/hero-img";
 import HowToBuyContent from "./HowToBuyContent/HowToBuyContent";
 import { Helmet } from "react-helmet-async";
+import { ChevronRight } from "lucide-react";
 import axiosInstance from "../../api/axiosConfig";
 import SponsoredProducts from "../../Component/Common/SponsoredProducts";
 import Testimonials from "../AboutUs/Testimonials/Testimonials";
@@ -70,8 +71,15 @@ const HowToBuy = () => {
         <meta name="twitter:title" content={seoData.metaTitle} />
         <meta name="twitter:description" content={seoData.metaDescription} />
         <meta name="twitter:image" content={seoData.metaImage} />
+        <script type="application/ld+json">
+          {JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://artsays.in/" }, { "@type": "ListItem", "position": 2, "name": "How to Buy", "item": "https://artsays.in/how-to-buy" }] })}
+        </script>
       </Helmet>
-
+      <nav aria-label="breadcrumb" className="max-w-[1440px] mx-auto px-4 md:px-8 flex items-center gap-2 text-sm text-gray-500 py-3">
+        <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
+        <ChevronRight size={14} />
+        <span className="text-[#6F4D34] font-semibold" aria-current="page">How to Buy</span>
+      </nav>
       <HeroImgHowToBuy />
       <HowToBuyContent />
       <Testimonials />

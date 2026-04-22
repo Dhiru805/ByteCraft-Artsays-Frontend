@@ -325,16 +325,42 @@ const ProductDetails = () => {
             }
           })}
         </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": window.location.origin + "/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": mainCategoryName !== "N/A" ? mainCategoryName : "Art Gallery",
+                "item": window.location.origin + "/art-gallery"
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": product.productName,
+                "item": window.location.href
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       <div className="max-w-[1440px] mx-auto px-4 md:px-8 py-6">
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
-          <button onClick={() => navigate("/")} className="hover:text-[#6F4D34] transition-colors">Home</button>
+        <nav aria-label="breadcrumb" className="flex items-center gap-2 text-sm text-gray-500 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
+          <a href="/" className="hover:text-[#6F4D34] transition-colors">Home</a>
           <ChevronRight size={14} />
-          <span className="hover:text-[#6F4D34] cursor-pointer">{mainCategoryName}</span>
+          <a href="/art-gallery" className="hover:text-[#6F4D34] transition-colors">{mainCategoryName !== "N/A" ? mainCategoryName : "Art Gallery"}</a>
           <ChevronRight size={14} />
-          <span className="text-[#6F4D34] font-semibold">{product.productName}</span>
+          <span className="text-[#6F4D34] font-semibold" aria-current="page">{product.productName}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
