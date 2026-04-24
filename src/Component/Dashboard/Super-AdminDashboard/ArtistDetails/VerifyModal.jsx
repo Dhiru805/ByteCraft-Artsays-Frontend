@@ -123,7 +123,7 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
                         </div>
 
                         <div className="modal-body">
-                            <div className="row clearfix">
+                            <div className="clearfix row">
                                 <div className="col-lg-6 col-md-12">
                                     <div className="form-group">
                                         <label htmlFor="firstName">First Name</label>
@@ -195,7 +195,7 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
                                     onClick={() => updateUserStatus(artist._id, 'Verified')}
                                     disabled={loading}
                                 >
-                                    {loading ? 'Verified....' : 'Verified'}
+                                    {loading ? 'Verifying....' : 'Verify'}
                                 </button>
                             )}
                             {artist.status !== 'Rejected' && (
@@ -205,7 +205,7 @@ const VerifyModal = ({ artist, onClose, refreshArtists, onStatusUpdate }) => {
                                     onClick={() => handleReject(artist._id)}
                                     disabled={loading}
                                 >
-                                    {loading ? 'Rejected....' : 'Rejected'}
+                                    {loading ? 'Rejecting....' : 'Reject'}
                                 </button>
                             )}
                         </div>

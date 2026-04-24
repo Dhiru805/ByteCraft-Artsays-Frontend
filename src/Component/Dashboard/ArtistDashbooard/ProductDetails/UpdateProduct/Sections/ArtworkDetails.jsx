@@ -185,7 +185,7 @@ const ArtworkDetails = ({
                 name="quantity"
                 className="form-control"
                 placeholder="Enter quantity"
-                min="1"
+                min="0"
                 value={formData.quantity}
                 onChange={handleInputChange}
              
