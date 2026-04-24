@@ -146,7 +146,7 @@ function Blogs() {
     }, [currentPage]);
 
     return (
-        <div className="w-full bg-gray-50 min-h-screen">
+        <div className="w-full min-h-screen bg-gray-50">
           <Helmet>
             <script type="application/ld+json">
               {JSON.stringify({
@@ -164,7 +164,7 @@ function Blogs() {
                 <img
                     src={mainImage}
                     alt="Blog Hero"
-                    className="absolute inset-0 w-full h-full object-cover scale-105"
+                    className="absolute inset-0 object-cover w-full h-full scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/90 to-transparent flex items-center">
                     <div className="container mx-auto px-6 md:px-12 max-w-[1440px]">
@@ -172,10 +172,10 @@ function Blogs() {
                             <span className="inline-block px-3 py-1 bg-white text-[#000000] backdrop-blur-md rounded-full text-[10px] md:text-sm font-bold tracking-widest uppercase mb-4 animate-fade-in">
                                 Explore Our Stories
                             </span>
-                            <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 md:mb-6 text-white leading-tight drop-shadow-lg">
+                            <h1 className="mb-4 text-3xl font-extrabold leading-tight text-white sm:text-4xl md:text-6xl md:mb-6 drop-shadow-lg">
                                 {cmsData?.heading || "ArtSays Blog"}
                             </h1>
-                            <p className="text-sm sm:text-lg md:text-xl font-medium text-white leading-relaxed opacity-90 line-clamp-3 md:line-clamp-none">
+                            <p className="text-sm font-medium leading-relaxed text-white sm:text-lg md:text-xl opacity-90 line-clamp-3 md:line-clamp-none">
                                 {cmsData?.description || "Dive into the world of creativity, techniques, and the stories behind the masterpieces."}
                             </p>
                         </div>
@@ -190,7 +190,7 @@ function Blogs() {
             </nav>
 
             <div className="w-full max-w-[1440px] mx-auto p-4">
-                <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex flex-col gap-4 lg:flex-row">
 
                     {/* ---------------- MODERN SIDEBAR ---------------- */}
                     <aside className="w-full lg:w-[280px] shrink-0">
@@ -211,8 +211,8 @@ function Blogs() {
 
                         <div className={`${showFilters ? "block" : "hidden"} lg:block sticky top-10 space-y-4 animate-slide-up`}>
                             {/* Sort By Section */}
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
+                                <h3 className="flex items-center gap-2 mb-3 text-lg font-bold text-gray-900">
                                     <SortAsc size={18} className="text-[#6F4D34]" />
                                     Sort Results
                                 </h3>
@@ -223,7 +223,7 @@ function Blogs() {
                                         { id: "trending", label: "Trending" },
                                         { id: "mostLiked", label: "Most Liked" }
                                     ].map((option) => (
-                                        <label key={option.id} className="flex items-center group cursor-pointer">
+                                        <label key={option.id} className="flex items-center cursor-pointer group">
                                             <div className="relative flex items-center">
                                                 <input
                                                     type="radio"
@@ -248,14 +248,14 @@ function Blogs() {
                             </div>
 
                             {/* Categories Section */}
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
+                                <h3 className="flex items-center gap-2 mb-3 text-lg font-bold text-gray-900">
                                     <Tag size={18} className="text-[#6F4D34]" />
                                     Categories
                                 </h3>
                                 <div className="space-y-4">
                                     {categories.map((cat) => (
-                                        <label key={cat._id} className="flex items-center group cursor-pointer">
+                                        <label key={cat._id} className="flex items-center cursor-pointer group">
                                             <div className="relative flex items-center">
                                                 <input
                                                     type="checkbox"
@@ -282,8 +282,8 @@ function Blogs() {
                             </div>
 
                             {/* Reading Time Section */}
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <div className="p-6 bg-white border border-gray-100 shadow-sm rounded-2xl">
+                                <h3 className="flex items-center gap-2 mb-3 text-lg font-bold text-gray-900">
                                     <Clock size={18} className="text-[#6F4D34]" />
                                     Reading Time
                                 </h3>
@@ -293,7 +293,7 @@ function Blogs() {
                                         { id: "5-10", label: "5 - 10 mins" },
                                         { id: "10-0", label: "10+ mins" }
                                     ].map((range) => (
-                                        <label key={range.id} className="flex items-center group cursor-pointer">
+                                        <label key={range.id} className="flex items-center cursor-pointer group">
                                             <div className="relative flex items-center">
                                                 <input
                                                     type="checkbox"
@@ -339,7 +339,7 @@ function Blogs() {
                             {loading ? (
                                 <BlogGridSkeleton />
                             ) : currentBlogs.length > 0 ? (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                                     {currentBlogs.map((blog, index) => (
                                         <div key={blog._id || index} className="animate-fade-in-up" style={{ animationDelay: `${index * 50}ms` }}>
                                             <BlogCard blog={blog} />
@@ -348,11 +348,11 @@ function Blogs() {
                                 </div>
                             ) : (
                                 <div className="py-20 text-center">
-                                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6 text-gray-400">
+                                    <div className="inline-flex items-center justify-center w-20 h-20 mb-6 text-gray-400 bg-gray-100 rounded-full">
                                         <Search size={32} />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-gray-900 mb-2">No blogs found</h3>
-                                    <p className="text-gray-500 max-w-sm mx-auto">
+                                    <h3 className="mb-2 text-2xl font-bold text-gray-900">No blogs found</h3>
+                                    <p className="max-w-sm mx-auto text-gray-500">
                                         We couldn't find any articles matching your current filters. Try adjusting your search or category selection.
                                     </p>
                                     <button
@@ -372,13 +372,13 @@ function Blogs() {
 
                         {/* ---------------- STYLISH PAGINATION ---------------- */}
                         {totalPages > 1 && (
-                            <div className="mt-4 flex justify-center">
-                                <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                            <div className="flex justify-center mt-4">
+                                <nav className="flex items-center gap-2 p-1 bg-white border border-gray-200 shadow-sm rounded-2xl">
                                     <button
                                         type="button"
                                         disabled={currentPage === 1}
                                         onClick={handleToPreviousPage}
-                                        className="p-2 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                                        className="p-2 text-gray-500 transition-colors rounded-xl hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent"
                                     >
                                         <ChevronLeft size={24} />
                                     </button>
@@ -413,7 +413,7 @@ function Blogs() {
                                         type="button"
                                         disabled={currentPage === totalPages}
                                         onClick={handleToNextPage}
-                                        className="p-2 rounded-xl text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                                        className="p-2 text-gray-500 transition-colors rounded-xl hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-transparent"
                                     >
                                         <ChevronRight size={24} />
                                     </button>
