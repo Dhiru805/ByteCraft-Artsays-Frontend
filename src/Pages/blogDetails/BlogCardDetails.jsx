@@ -155,12 +155,7 @@ function BlogCardDetails() {
     };
 
     const getAuthorImageUrl = () => {
-        if (userDetails?.profilePhoto) {
-            const photoPath = userDetails.profilePhoto.replace(/\\/g, "/");
-            const baseUrl = process.env.REACT_APP_API_URL || "";
-            return `${baseUrl}${photoPath.startsWith("/") ? "" : "/"}${photoPath}`;
-        }
-        return artist;
+        return getImageUrl(userDetails?.profilePhoto) || artist;
     };
 
     useEffect(() => {
@@ -242,7 +237,7 @@ function BlogCardDetails() {
     }
 
     return (
-        <div className="w-full blog-details-container min-h-screen bg-white">
+        <div className="w-full min-h-screen bg-white blog-details-container">
             <div className="reading-progress-bar" style={{ width: `${scrollProgress}%` }} />
 
             {blogDetails && (
@@ -271,21 +266,21 @@ function BlogCardDetails() {
             )}
 
             {/* Hero Section */}
-            <div className="blog-hero py-12 lg:py-20">
+            <div className="py-12 blog-hero lg:py-20">
                 <div className="hero-overlay" />
                 <div className="max-w-[1440px] mx-auto px-6 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="grid items-center grid-cols-1 gap-12 lg:grid-cols-2">
                         <div className="animate-fade-in">
                             <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white/90 text-sm font-medium mb-6 backdrop-blur-sm border border-white/10">
                                 {blogDetails?.category || 'Inspiration'}
                             </span>
-                            <h1 className="text-4xl lg:text-6xl font-extrabold mb-8 leading-tight text-white tracking-tight">
+                            <h1 className="mb-8 text-4xl font-extrabold leading-tight tracking-tight text-white lg:text-5xl">
                                 {blogDetails ? blogDetails.blogName : 'Loading...'}
                             </h1>
-                            <p className="text-lg lg:text-xl text-white/80 mb-10 leading-relaxed font-light">
+                            <p className="mb-10 text-lg font-light leading-relaxed text-white/80">
                                 {blogDetails?.summary}
                             </p>
-                            <div className="flex flex-wrap gap-6 items-center text-white/70">
+                            <div className="flex flex-wrap items-center gap-6 text-white/70">
                                 <div className="flex items-center gap-2.5">
                                     <FaRegClock className="text-primary-color" />
                                     <span>{blogDetails ? formatTime(readingTime) : '0s'} read</span>
@@ -294,8 +289,8 @@ function BlogCardDetails() {
                                     <FaRegEye className="text-primary-color" />
                                     <span>{blogDetails ? formatBlogViews(blogDetails.views) : 0} views</span>
                                 </div>
-                                <div className="h-4 w-px bg-white/20 hidden md:block" />
-                                <div className="text-white font-medium">
+                                <div className="hidden w-px h-4 bg-white/20 md:block" />
+                                <div className="font-medium text-white">
                                     {blogDetails && moment(blogDetails.createdAt).format("MMMM D, YYYY")}
                                 </div>
                             </div>
@@ -304,9 +299,9 @@ function BlogCardDetails() {
                             <div className="absolute -inset-4 bg-white/5 rounded-[2.5rem] backdrop-blur-sm transform group-hover:scale-105 transition-transform duration-500" />
                             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
                                 <img
-                                    src={blogDetails ? `${process.env.REACT_APP_API_URL}/${blogDetails.blogImage}` : blog1}
+                                    src={getImageUrl(blogDetails?.blogImage) || blog1}
                                     alt="Blog Hero"
-                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                    className="object-cover w-full h-full transition-transform duration-700 transform group-hover:scale-110"
                                     onError={(e) => e.currentTarget.src = blog1}
                                 />
                             </div>
@@ -317,9 +312,9 @@ function BlogCardDetails() {
 
             {/* Mobile Table of Contents - Sticky after Hero */}
             <div className="lg:hidden sticky top-3 mx-3 z-40 bg-white rounded-[1.25rem] border-b border-gray-100 shadow-lg transition-all duration-300">
-                <div className="max-w-7xl mx-auto p-4">
+                <div className="p-4 mx-auto max-w-7xl">
                     <div
-                        className="flex justify-between items-center cursor-pointer"
+                        className="flex items-center justify-between cursor-pointer"
                         onClick={() => setMobileOpen(!mobileOpen)}
                     >
                         <div className="flex items-center gap-3">
@@ -348,7 +343,7 @@ function BlogCardDetails() {
                                             }`}
                                     >
                                         <div className={`w-1.5 h-1.5 rounded-full ${activeHeading === item.id ? 'bg-white' : 'bg-[#6F4D34]/30'}`} />
-                                        <span className="truncate text-sm font-medium">{item.text}</span>
+                                        <span className="text-sm font-medium truncate">{item.text}</span>
                                     </button>
                                 ))}
                             </nav>
@@ -359,19 +354,19 @@ function BlogCardDetails() {
 
             {/* Main Content Area */}
             <div className="max-w-[1440px] mx-auto p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+                <div className="grid grid-cols-1 gap-16 lg:grid-cols-12">
                     {/* Blog Content */}
                     <article className="lg:col-span-8">
                         {blogDetails && (
                             <div
                                 dangerouslySetInnerHTML={{ __html: addIdsToHeadings(blogDetails.blogDescription) }}
-                                className="rich-text mb-16"
+                                className="mb-16 rich-text"
                             />
                         )}
 
                         {/* Tags */}
                         <div className="pt-12 border-t border-gray-100">
-                            <h4 className="text-xl font-bold mb-6 text-gray-900">Explore Topics</h4>
+                            <h4 className="mb-6 text-xl font-bold text-gray-900">Explore Topics</h4>
                             <div className="flex flex-wrap gap-3">
                                 {blogDetails?.tags?.map((tag, index) => (
                                     <span
@@ -386,12 +381,12 @@ function BlogCardDetails() {
                     </article>
 
                     {/* Sidebar */}
-                    <aside className="lg:col-span-4 space-y-10">
+                    <aside className="space-y-10 lg:col-span-4">
                         {/* Author Profile */}
-                        <div className="sidebar-card-dark p-8 text-center relative group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
+                        <div className="relative p-8 text-center sidebar-card-dark group">
+                            <div className="absolute top-0 right-0 w-32 h-32 -mt-16 -mr-16 transition-transform duration-700 rounded-full bg-white/5 group-hover:scale-150" />
                             <div className="relative z-10">
-                                <div className="mb-6 inline-block">
+                                <div className="inline-block mb-6">
                                     <img
                                         src={getAuthorImageUrl()}
                                         alt="Author"
@@ -400,14 +395,14 @@ function BlogCardDetails() {
                                         onError={(e) => e.currentTarget.src = artist}
                                     />
                                 </div>
-                                <h5 className="text-2xl font-bold mb-2 text-white">
+                                <h5 className="mb-2 text-2xl font-bold text-white">
                                     {blogDetails ? blogDetails.blogAuthor : 'Author Name'}
                                 </h5>
-                                <p className="text-white/60 mb-8 font-medium tracking-wide">
+                                <p className="mb-8 font-medium tracking-wide text-white/60">
                                     {userDetails?.role?.toUpperCase() || 'CONTRIBUTOR'}
                                 </p>
 
-                                <div className="flex items-center justify-center gap-8 py-4 px-6 rounded-2xl bg-white/5 border border-white/10">
+                                <div className="flex items-center justify-center gap-8 px-6 py-4 border rounded-2xl bg-white/5 border-white/10">
                                     <button
                                         onClick={handleBlogLikes}
                                         className="flex flex-col items-center gap-1.5 hover:text-white transition-colors"
@@ -425,9 +420,9 @@ function BlogCardDetails() {
                         </div>
 
                         {/* Table of Contents */}
-                        <div className="sidebar-card p-8 sticky top-10 hidden lg:block">
+                        <div className="sticky hidden p-8 sidebar-card top-10 lg:block">
                             <div
-                                className="flex justify-between items-center cursor-pointer mb-6"
+                                className="flex items-center justify-between mb-6 cursor-pointer"
                                 onClick={() => setOpen(!open)}
                             >
                                 <h5 className="text-xl font-bold text-gray-900">In this article</h5>
@@ -450,8 +445,8 @@ function BlogCardDetails() {
                             )}
 
                             {/* Share Section */}
-                            <div className="mt-12 pt-8 border-t border-gray-100">
-                                <p className="text-sm font-bold text-gray-900 mb-6 uppercase tracking-widest">Share this story</p>
+                            <div className="pt-8 mt-12 border-t border-gray-100">
+                                <p className="mb-6 text-sm font-bold tracking-widest text-gray-900 uppercase">Share this story</p>
                                 <div className="flex gap-4">
                                     <button onClick={handleFacebookShare} className="share-btn" aria-label="Facebook">
                                         <FaFacebookF size={18} />

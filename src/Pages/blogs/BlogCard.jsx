@@ -2,6 +2,7 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { ThumbsUp } from "lucide-react";
 import blog1 from "../../assets/blog/blog-1.jpg";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 function BlogCard({ blog }) {
     let navigate = useNavigate();
@@ -17,11 +18,11 @@ function BlogCard({ blog }) {
         >
             {/* Image Container */}
             <div className="relative aspect-[16/10] overflow-hidden bg-gray-100">
-                <img 
-                    src={blog ? `${process.env.REACT_APP_API_URL}/${blog.blogImage.replace(/\\/g, "/")}` : blog1} 
+                <img
+                    src={getImageUrl(blog?.blogImage) || blog1}
                     alt={blog.blogName}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => e.currentTarget.src = blog1} 
+                    onError={(e) => e.currentTarget.src = blog1}
                 />
                 
                 {/* Category Badge - if available in blog object */}

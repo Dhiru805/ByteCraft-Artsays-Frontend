@@ -154,7 +154,7 @@
       fd.append("year", formData.year?.value || "");
       fd.append("editionType", formData.editionType?.value || "");
       fd.append("framing", formData.framing?.value || "");
-      fd.append("quantity", parseInt(formData.quantity) || 1);
+      fd.append("quantity", parseInt(formData.quantity));
       if (formData.hsnCode) fd.append("hsnCode", formData.hsnCode);
       if (formData.surfaceType) fd.append("surfaceType", formData.surfaceType?.value || "");
       if (formData.culturalRegion) fd.append("culturalRegion", formData.culturalRegion?.value || "");
@@ -613,8 +613,8 @@
         return false;
       }
 
-      if (!quantity || quantity < 1) {
-        toast.error("Quantity must be at least 1.");
+      if (quantity === '' || quantity === null || quantity === undefined || parseInt(quantity) < 0) {
+        toast.error("Quantity must be 0 or more.");
         return false;
       }
 

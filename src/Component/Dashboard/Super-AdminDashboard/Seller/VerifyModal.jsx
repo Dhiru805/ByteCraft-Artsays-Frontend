@@ -131,7 +131,7 @@ const VerifyModal = ({ seller, onClose, refreshSellers }) => {
                         </div>
 
                         <div className="modal-body">
-                            <div className="row clearfix">
+                            <div className="clearfix row">
                                 <div className="col-lg-6 col-md-12">
                                     <div className="form-group">
                                         <label>First Name</label>
@@ -160,7 +160,7 @@ const VerifyModal = ({ seller, onClose, refreshSellers }) => {
 
                             <form>
                                 {['gst', 'pan'].map((field, index) => (
-                                    <div key={index} className="row clearfix mb-3">
+                                    <div key={index} className="clearfix mb-3 row">
                                         <div className="col-lg-6 col-md-6">
                                             <div className="form-group">
                                                 <label>
@@ -193,7 +193,7 @@ const VerifyModal = ({ seller, onClose, refreshSellers }) => {
                                     onClick={() => updateUserStatus(seller._id, 'Verified')}
                                     disabled={loading}
                                 >
-                                    {loading ? 'Verifying...' : 'Verified'}
+                                    {loading ? 'Verifying...' : 'Verify'}
                                 </button>
                             )}
                             {seller.status !== 'Rejected' && (
@@ -203,7 +203,7 @@ const VerifyModal = ({ seller, onClose, refreshSellers }) => {
                                     onClick={() => handleReject(seller._id)}
                                     disabled={loading}
                                 >
-                                    {loading ? 'Rejecting...' : 'Rejected'}
+                                    {loading ? 'Rejecting...' : 'Reject'}
                                 </button>
                             )}
                         </div>

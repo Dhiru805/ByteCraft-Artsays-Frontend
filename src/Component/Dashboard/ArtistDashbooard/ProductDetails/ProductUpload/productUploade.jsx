@@ -140,7 +140,7 @@ function ProductUpload() {
     formDataToSend.append('year', formData.year?.value || '');
     formDataToSend.append('editionType', formData.editionType?.value || '');
     formDataToSend.append('framing', formData.framing?.value || '');
-    formDataToSend.append('quantity', parseInt(formData.quantity) || 1);
+    formDataToSend.append('quantity', parseInt(formData.quantity));
     if (formData.hsnCode) {
       formDataToSend.append('hsnCode', formData.hsnCode);
     }
@@ -664,8 +664,8 @@ function ProductUpload() {
         return false;
       }
 
-      if (!quantity || quantity < 1) {
-        toast.error("Quantity must be at least 1.");
+      if (quantity === '' || quantity === null || quantity === undefined || parseInt(quantity) < 0) {
+        toast.error("Quantity must be 0 or more.");
         return false;
       }
 

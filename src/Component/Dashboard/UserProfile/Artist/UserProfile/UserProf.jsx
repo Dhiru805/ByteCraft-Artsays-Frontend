@@ -334,6 +334,22 @@ const UserProfileForm = () => {
         />
       )}
 
+      <div className="block-header">
+        <div className="row">
+          <div className="col-lg-6 col-md-6 col-sm-12">
+            <h2>Profile</h2>
+            <ul className="breadcrumb">
+              <li className="breadcrumb-item">
+                <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
+                  <i className="fa fa-dashboard"></i>
+                </span>
+              </li>
+              <li className="breadcrumb-item">Profile</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* Profile incomplete banner */}
       {!profileCompleted && missingFields.length > 0 && (
         <div
@@ -378,23 +394,7 @@ const UserProfileForm = () => {
         </div>
       )}
 
-      <div className="block-header">
-        <div className="row">
-          <div className="col-lg-6 col-md-6 col-sm-12">
-            <h2>Profile</h2>
-            <ul className="breadcrumb">
-              <li className="breadcrumb-item">
-                <span onClick={() => navigate('/artist/dashboard')} style={{ cursor: 'pointer' }}>
-                  <i className="fa fa-dashboard"></i>
-                </span>
-              </li>
-              <li className="breadcrumb-item">Profile</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="row clearfix">
+      <div className="clearfix row">
         <div className="col-lg-12">
           <div className="card">
             <div className="body">
