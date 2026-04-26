@@ -330,7 +330,7 @@
         const fd = prepareFormData("Drafted");
         await putAPI(`/api/update-products/${product._id}`, fd, {}, true);
         toast.success("Saved as draft");
-        navigate("/seller/product");
+        navigate("/seller/product-details");
       } catch (err) {
         toast.error(err.response?.data?.message || "Save failed");
       } finally {
@@ -375,7 +375,7 @@
         const fd = prepareFormData("Pending");
         await putAPI(`/api/update-products/${product._id}`, fd, {}, true);
         toast.success("Product updated!");
-        navigate("/seller/product");
+        navigate("/seller/product-details");
       } catch (err) {
         toast.error(err.response?.data?.message || "Update failed");
       } finally {

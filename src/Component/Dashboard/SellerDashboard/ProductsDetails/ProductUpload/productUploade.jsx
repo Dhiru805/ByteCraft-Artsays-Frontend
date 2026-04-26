@@ -346,7 +346,7 @@ function ProductUpload() {
 
       const response = await postAPI('/api/cropImage', formDataToSend, {}, true);
       toast.success('Product saved as draft successfully!');
-      navigate(`/seller/product`);
+      navigate(`/seller/product-details`);
     } catch (error) {
       console.error('Error saving draft:', error);
       const errorMessage = error.response?.data?.message || 'Failed to save draft';
@@ -947,7 +947,7 @@ function ProductUpload() {
     const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
     setCreatedProductId(null);
-    navigate(`/seller/product`);
+    navigate(`/seller/product-details`);
   };
 
   const handleSetShippingAddress = () => {
@@ -958,14 +958,14 @@ function ProductUpload() {
   const handleAddressModalClose = () => {
     setShowAddressModal(false);
     setCreatedProductId(null);
-    navigate(`/seller/product`);
+    navigate(`/seller/product-details`);
   };
 
   const handleAddressSaved = () => {
     setShowAddressModal(false);
     setCreatedProductId(null);
     toast.success("Shipping address set successfully! Your product is now eligible for approval.");
-    navigate(`/seller/product`);
+    navigate(`/seller/product-details`);
   };
 
   return (
