@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Navbar from "../Navbar/Navbar";
 import Sidebar from "../Sidebar/LeftSide";
 import RightIconBar from "../RightIconBar/RightIconBar";
@@ -8,23 +8,7 @@ import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import FloatingHelp from "../Support/FloatingHelp";
 
 const Dashboard = () => {
-//  useEffect(() => {
-//     if (!sessionStorage.getItem("reloaded")) {
-//       sessionStorage.setItem("reloaded", "true");
-//       window.location.reload();
-//     }
-//   }, []);
-useEffect(() => {
-  const path = window.location.pathname;
-  const shouldReload =
-    path === "/artist" ||
-    path === "/artist/dashboard";
-
-  if (shouldReload && !sessionStorage.getItem("artist_page_reloaded")) {
-    sessionStorage.setItem("artist_page_reloaded", "true");
-    window.location.reload();
-  }
-}, []);
+  const initColor = window.__DASHBOARD_COLOR__ || localStorage.getItem('selectedColor') || 'cyan';
 
   const closeSidebar = () => {
     const sidebar = document.getElementById('left-sidebar');
@@ -33,7 +17,7 @@ useEffect(() => {
   };
 
   return (
-    <div id="wrapper">
+    <div id="wrapper" className={`theme-${initColor}`}>
       <ScrollToTop />
       <Navbar />
       <Sidebar />

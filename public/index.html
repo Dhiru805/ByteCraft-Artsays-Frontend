@@ -88,79 +88,23 @@
   <link rel="stylesheet" href="%PUBLIC_URL%/css/border-bottom.css">
 
   <!-- ================================================
-       NON-CRITICAL CSS (loaded asynchronously)
+       DASHBOARD CSS (synchronous — same-origin, fast)
        ================================================ -->
 
   <!-- Dashboard main & page-specific styles -->
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css">
-  </noscript>
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css">
 
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css">
-  </noscript>
-
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css">
-  </noscript>
-
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css">
-  </noscript>
-
-  <!-- Vendor CSS (dashboard-only, non-critical) -->
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css">
-  </noscript>
-
-  <link rel="preload" as="style"
-    href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css">
-  </noscript>
-
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css">
-  </noscript>
-
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css">
-  </noscript>
-
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css">
-  </noscript>
-
-  <link rel="preload" as="style" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css">
-  </noscript>
-
-  <link rel="preload" as="style"
-    href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"
-    onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet"
-      href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
-  </noscript>
+  <!-- Vendor CSS (dashboard-only) -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
 
   <!-- Icon fonts (CDN, non-critical) -->
   <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css"
@@ -224,6 +168,24 @@
 </head>
 
 <body>
+  <!-- Initialize dashboard theme & font from localStorage BEFORE React mounts
+       to prevent flash of unstyled/unthemed content on first load -->
+  <script>
+    (function () {
+      try {
+        var color = localStorage.getItem('selectedColor') || 'cyan';
+        var font = localStorage.getItem('selectedFont') || 'poppins';
+        var theme = localStorage.getItem('theme') || 'light';
+        // Set font class on body immediately
+        document.body.className = font;
+        // Set theme attribute immediately
+        document.documentElement.setAttribute('data-theme', theme);
+        document.body.setAttribute('data-theme', theme);
+        // Store color so React can read it without a layout effect delay
+        window.__DASHBOARD_COLOR__ = color;
+      } catch (e) { /* localStorage unavailable in private mode */ }
+    })();
+  </script>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
 

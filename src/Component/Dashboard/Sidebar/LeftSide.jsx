@@ -105,9 +105,9 @@ const UserAccount = () => {
 
   useEffect(() => {
     if (selectedColor) {
-
-      document.getElementById("wrapper").className = `theme-${selectedColor}`;
-
+      const wrapper = document.getElementById("wrapper");
+      if (wrapper) wrapper.className = `theme-${selectedColor}`;
+      window.__DASHBOARD_COLOR__ = selectedColor;
       localStorage.setItem('selectedColor', selectedColor);
     }
   }, [selectedColor]);

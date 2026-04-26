@@ -57,7 +57,7 @@ const ArtworkDetails = ({
                         id="width"
                         name="width"
                         className="form-control"
-                        placeholder="Width (e.g., 24 inches/cm)"
+                        placeholder="Width (e.g., 24 cm)"
                         step="0.01"
                         value={formData.width}
                         onChange={handleInputChange}
@@ -70,7 +70,7 @@ const ArtworkDetails = ({
                         id="height"
                         name="height"
                         className="form-control"
-                        placeholder="Height (e.g., 36 inches/cm)"
+                        placeholder="Height (e.g., 36 cm)"
                         step="0.01"
                         value={formData.height}
                         onChange={handleInputChange}
@@ -83,7 +83,7 @@ const ArtworkDetails = ({
                         id="depth"
                         name="depth"
                         className="form-control"
-                        placeholder="Depth (e.g., 2 inches/cm)"
+                        placeholder="Depth (e.g., 2 cm)"
                         step="0.01"
                         value={formData.depth}
                         onChange={handleInputChange}
@@ -91,7 +91,7 @@ const ArtworkDetails = ({
                     />
                 </div>
             </div>
-            <small className="text-muted">Mention in inches/cm (e.g., 24 x 36 x 2 inches)</small>
+            <small className="text-muted">Mention in cm (e.g., 24 x 36 x 2 cm)</small>
         </div>
 
         <div className="form-group">
@@ -190,7 +190,7 @@ const ArtworkDetails = ({
                     rel="noopener noreferrer"
                 >
                     <i
-                        className="fa fa-info-circle ml-2"
+                        className="ml-2 fa fa-info-circle"
                         data-tooltip-id="hsn-tooltip"
                     />
                 </a>

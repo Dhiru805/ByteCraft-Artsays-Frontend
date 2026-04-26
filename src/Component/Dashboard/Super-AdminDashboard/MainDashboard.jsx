@@ -7,6 +7,8 @@ import { Outlet } from 'react-router-dom';
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
 
 const Dashboard = () => {
+  const initColor = window.__DASHBOARD_COLOR__ || localStorage.getItem('selectedColor') || 'cyan';
+
   const closeSidebar = () => {
     const sidebar = document.getElementById('left-sidebar');
     if (sidebar) sidebar.classList.remove('open');
@@ -14,7 +16,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div id="wrapper">
+    <div id="wrapper" className={`theme-${initColor}`}>
       <ScrollToTop/>
       <Navbar />
       <Sidebar />
