@@ -64,7 +64,7 @@
        CRITICAL CSS (render-blocking — small / above-fold)
        ================================================ -->
   <!-- Bootstrap layout — needed on every page -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap/css/bootstrap.min.css?v=%REACT_APP_BUILD_TIME%" />
 
   <!-- Primary Google Fonts (Playfair + Roboto) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,29 +82,29 @@
     rel="stylesheet">
 
   <!-- Core site styles -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/css/fontawesome.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/css/plugins.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/css/responsive.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/css/border-bottom.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/fontawesome.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/plugins.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/responsive.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/css/border-bottom.css?v=%REACT_APP_BUILD_TIME%">
 
   <!-- ================================================
        DASHBOARD CSS (synchronous — same-origin, fast)
        ================================================ -->
 
   <!-- Dashboard main & page-specific styles -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/main.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/blog.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/inbox.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/css/chatapp.css?v=%REACT_APP_BUILD_TIME%">
 
   <!-- Vendor CSS (dashboard-only) -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css">
-  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/font-awesome/css/font-awesome.min.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/jvectormap/jquery-jvectormap-2.0.3.min.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/morrisjs/morris.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/css/lightgallery.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.css?v=%REACT_APP_BUILD_TIME%">
+  <link rel="stylesheet" href="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css?v=%REACT_APP_BUILD_TIME%">
 
   <!-- Icon fonts (CDN, non-critical) -->
   <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@tabler/icons@latest/iconfont/tabler-icons.min.css"
@@ -194,20 +194,20 @@
   <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
   <!-- Dashboard bundle scripts (all deferred) -->
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/libscripts.bundle.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/vendorscripts.bundle.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/apexcharts.bundle.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/jvectormap.bundle.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/knob.bundle.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/js/pages/blog.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/js/lightgallery-all.min.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.min.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/js/pages/ui/dialogs.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper-init.js"></script>
-  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/packagingcropper-init.js"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/libscripts.bundle.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/vendorscripts.bundle.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/apexcharts.bundle.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/jvectormap.bundle.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/bundles/knob.bundle.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/js/pages/blog.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/light-gallery/js/lightgallery-all.min.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/sweetalert/sweetalert.min.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/js/pages/ui/dialogs.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper.min.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/cropper-init.js?v=%REACT_APP_BUILD_TIME%"></script>
+  <script defer src="%PUBLIC_URL%/DashboardAssets/assets/vendor/cropper/packagingcropper-init.js?v=%REACT_APP_BUILD_TIME%"></script>
   <script defer
-    src="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    src="%PUBLIC_URL%/DashboardAssets/assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js?v=%REACT_APP_BUILD_TIME%"></script>
 
   <!-- Toastify JS (deferred) -->
   <script defer src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
