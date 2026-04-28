@@ -1,0 +1,88 @@
+import React, { useState, useEffect } from "react";
+import HeroImgAgreement from "./hero-img/hero-img";
+import AgreementSidebar from "./AgreementSidebar/AgreementSidebar";
+import AgreementContent from "./AgreementContent/AgreementContent";
+import { Helmet } from "react-helmet-async";
+import axiosInstance from "../../api/axiosConfig";
+import { toast } from "react-toastify";
+import SponsoredProducts from "../../Component/Common/SponsoredProducts";
+
+const ArtistSellerAgreementPage = () => {
+  const [selectedAgreementId, setSelectedAgreementId] = useState(null);
+  const [seoData, setSeoData] = useState({
+    metaTitle: "Artist/Seller Agreement | Artsays",
+    metaDescription: "",
+    metaKeywords: "",
+    metaAuthor: "",
+    metaImage: null,
+  });
+
+  const fetchSEOMetadata = async () => {
+    try {
+      const response = await axiosInstance.get("/api/getSEO");
+      const meta = response.data?.data || {};
+      setSeoData({
+        metaTitle: meta.metaTitle || "Artist/Seller Agreement | Artsays",
+        metaDescription: meta.metaDescription || "",
+        metaKeywords: (meta.metaKeywords || []).join(", "),
+        metaAuthor: meta.metaAuthor || "",
+        metaImage: meta.metaImage || null,
+      });
+    } catch (error) {
+      console.error("Error fetching SEO metadata:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSEOMetadata();
+  }, []);
+
+  return (
+    <div className="w-full bg-gray-50 min-h-screen font-[poppins]">
+      <Helmet>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="index, follow" />
+        <meta name="title" content={seoData.metaTitle} />
+        <title>{seoData.metaTitle}</title>
+        <meta name="description" content={seoData.metaDescription} />
+        <meta name="keywords" content={seoData.metaKeywords} />
+        <meta name="author" content={seoData.metaAuthor} />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={seoData.metaTitle} />
+        <meta property="og:description" content={seoData.metaDescription} />
+        {seoData.metaImage && <meta property="og:image" content={seoData.metaImage} />}
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoData.metaTitle} />
+        <meta name="twitter:description" content={seoData.metaDescription} />
+        {seoData.metaImage && <meta name="twitter:image" content={seoData.metaImage} />}
+      </Helmet>
+
+      <div className="no-print">
+        <HeroImgAgreement />
+      </div>
+      <div className="w-full max-w-[1440px] mx-auto p-3">
+        <div className="flex flex-col lg:flex-row gap-3 mt-6">
+          <aside className="w-full lg:w-[300px] shrink-0 no-print">
+            <AgreementSidebar
+              selectedAgreementId={selectedAgreementId}
+              onSelect={setSelectedAgreementId}
+            />
+          </aside>
+          <main className="flex-grow">
+            <AgreementContent selectedAgreementId={selectedAgreementId} />
+          </main>
+        </div>
+      </div>
+      <div className="max-w-[1440px] mx-auto px-4 md:!px-0 py-8">
+        <SponsoredProducts placement="otherPublicPages" title="Promoted Products" layout="row" />
+      </div>
+    </div>
+  );
+};
+
+export default ArtistSellerAgreementPage;

@@ -158,7 +158,17 @@ const AccountSecurityAgreement = React.forwardRef(({ userId }, ref) => {
                         checked={!!formData.agreeNoFakeArtwork}
                         onChange={handleChange}
                     />
-                    <label className="mx-2">{checkboxLabels.agreeNoFakeArtwork} <span style={{ color: 'red' }}>*</span></label>
+                    <label className="mx-2">
+                        Agree to&nbsp;
+                        <a href="/policy" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
+                            No Fake Artwork Policy
+                        </a>
+                        &nbsp;and&nbsp;
+                        <a href="/artist-seller-agreement" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
+                            Seller Agreement
+                        </a>
+                        <span style={{ color: 'red' }}> *</span>
+                    </label>
                 </div>
             </form>
         </div>

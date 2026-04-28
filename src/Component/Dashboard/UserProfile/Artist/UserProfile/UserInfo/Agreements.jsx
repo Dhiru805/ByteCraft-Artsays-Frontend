@@ -172,6 +172,10 @@ const AccountSecurityAgreement = React.forwardRef(({ userId, loading }, ref) => 
                         <a href="/policy" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
                             No Fake Artwork Policy
                         </a>
+                        &nbsp;and&nbsp;
+                        <a href="/artist-seller-agreement" target="_blank" rel="noopener noreferrer" style={{ color: '#6b4f36', textDecoration: 'underline' }}>
+                            Artist Agreement
+                        </a>
                         <span style={{ color: 'red' }}> *</span>
                     </label>
                 </div>

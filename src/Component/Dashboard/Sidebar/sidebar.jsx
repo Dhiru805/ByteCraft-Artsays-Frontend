@@ -477,6 +477,11 @@ const Sidebar = () => {
             path: `/super-admin/policy`,
           },
           {
+            label: "Artist/Seller Agreement",
+            subtabId: "wcms22",
+            path: `/super-admin/artist-seller-agreement`,
+          },
+          {
             label: "Commissions",
             subtabId: "wcms19",
             path: `/super-admin/commission`,

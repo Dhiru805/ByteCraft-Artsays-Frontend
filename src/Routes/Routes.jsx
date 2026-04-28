@@ -164,6 +164,10 @@ import CreatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/cr
 import UpdatePolicy from "../Component/Dashboard/Super-AdminDashboard/Policys/editPolicy";
 //import ViewPolicy from '../Component/Dashboard/Super-AdminDashboard/Policys/PolicyView';
 
+import AgreementTable from "../Component/Dashboard/Super-AdminDashboard/ArtistSellerAgreement/AgreementTable";
+import CreateAgreement from "../Component/Dashboard/Super-AdminDashboard/ArtistSellerAgreement/CreateAgreement";
+import EditAgreement from "../Component/Dashboard/Super-AdminDashboard/ArtistSellerAgreement/EditAgreement";
+
 import HowToBuyTable from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/buyTable";
 import CreateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/create";
 import UpdateHowToBuy from "../Component/Dashboard/Super-AdminDashboard/HowToBuy/edit";
@@ -539,6 +543,7 @@ import Artist from "../Pages/Artist/artist";
 import Celebrity from "../Pages/Celebrity/celebrity";
 //import CelebrityCollections from "../Pages/Celebrity/celebrityCollections";
 import TermsPolicy from "../Pages/Terms&Policy/Terms&Policy";
+import ArtistSellerAgreementPage from "../Pages/ArtistSellerAgreement/ArtistSellerAgreement";
 import Commission from "../Pages/CommissionWork/CommissionWork";
 import HowToBid from "../Pages/HowToBid/HowToBidWork";
 import LicensingPartner from "../Pages/LicensingPartner/LicensingPartner";
@@ -1274,6 +1279,10 @@ const AppRoutes = () => {
         <Route path="policy/create-policy" element={<CreatePolicy />} />
         <Route path="policy/update-policy" element={<UpdatePolicy />} />
         {/* <Route path="policy/view-policy" element={<ViewPolicy />} /> */}
+        {/* Artist/Seller Agreement Routes */}
+        <Route path="artist-seller-agreement" element={<AgreementTable />} />
+        <Route path="artist-seller-agreement/create" element={<CreateAgreement />} />
+        <Route path="artist-seller-agreement/update" element={<EditAgreement />} />
         {/*How_To_Buy*/}
         <Route path="how-to-buy" element={<HowToBuyTable />} />
         <Route path="how-to-buy/create" element={<CreateHowToBuy />} />
@@ -1779,6 +1788,7 @@ const AppRoutes = () => {
          /> */}
         <Route path="/celebrity/:slug" element={<CelebrityContent />} />
         <Route path="/policy" element={<TermsPolicy />} />
+        <Route path="/artist-seller-agreement" element={<ArtistSellerAgreementPage />} />
         <Route path="/commission" element={<Commission />} />
         <Route path="/how-to-bid" element={<HowToBid />} />
         <Route path="/licensing-partner" element={<LicensingPartner />} />
