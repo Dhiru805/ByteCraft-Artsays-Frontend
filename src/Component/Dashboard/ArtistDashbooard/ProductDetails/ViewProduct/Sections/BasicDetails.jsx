@@ -70,13 +70,13 @@ const BasicDetails = ({
       <h4 className="mb-3">Basic Product Details</h4>
 
       <div className="form-group">
-        <label htmlFor="productName">Product Name <span style={{ color: 'red' }}>*</span></label>
+        <label htmlFor="productName">Product Title <span style={{ color: 'red' }}>*</span></label>
         <input
           type="text"
           id="productName"
           name="productName"
           className="form-control"
-          placeholder="Enter Product Name"
+          placeholder="Enter Product Title"
           value={formData.productName}
           onChange={handleInputChange}
          readOnly

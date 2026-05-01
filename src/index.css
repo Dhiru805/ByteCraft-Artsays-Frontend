@@ -11,3 +11,43 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Product create/update nav buttons — mobile layout */
+@media (max-width: 767.98px) {
+  .product-nav-btns {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  /* Previous button: full width */
+  .product-nav-btns > .btn-secondary {
+    width: 100%;
+  }
+  /* Save as Draft + Next/Submit wrapper: full width, buttons split 50/50 */
+  .product-nav-btns > .ms-auto {
+    width: 100%;
+    margin-left: 0 !important;
+    display: flex;
+    gap: 8px;
+  }
+  .product-nav-btns > .ms-auto > .btn {
+    flex: 1;
+  }
+}
+
+/* Horizontal scroll for nav tabs on mobile */
+@media (max-width: 767.98px) {
+  .nav-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-tabs .nav-link {
+    white-space: nowrap;
+  }
+}

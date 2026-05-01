@@ -4,6 +4,7 @@ import Sidebar from './sidebar';
 import SettingsPanel from './seetingpanel'
 import getAPI from "../../../api/getAPI"
 import SidebarSkeleton from "../../Skeleton/Home/SidebarSkeleton";
+import useSidebarToggle from './Handletooglesidebar';
 const UserAccount = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,15 +23,7 @@ const UserAccount = () => {
   const [highContrastMode, setHighContrastMode] = useState(false);
   const [rtlMode, setRtlMode] = useState(false);
 
-  const handleToggleSidebar = () => {
-    const sidebar = document.getElementById('left-sidebar');
-
-    if (sidebar.classList.contains('open')) {
-      sidebar.classList.remove('open');
-    } else {
-      sidebar.classList.add('open');
-    }
-  };
+  const { handleToggleSidebar } = useSidebarToggle();
 
 
 

@@ -531,7 +531,7 @@
     basic: () => {
       const missingFields = [];
 
-      if (!formData.productName) missingFields.push("Product Name");
+      if (!formData.productName) missingFields.push("Product Title");
       if (!formData.mainCategory) missingFields.push("Main Category");
       if (!formData.category) missingFields.push("Category");
       if (!formData.subCategory) missingFields.push("Subcategory");
@@ -1020,7 +1020,7 @@
                 {/* Navigation Buttons */}
         
 
-                    <div className="d-flex justify-content-between mt-4">
+                    <div className="d-flex justify-content-between mt-4 product-nav-btns">
                   {activeTab !== 'basic' && (
                     <button
                       type="button"
