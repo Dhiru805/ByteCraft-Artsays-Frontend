@@ -14,6 +14,7 @@ const AccountSecurityAgreement = React.forwardRef(({ userId, loading }, ref) => 
     const [load, setLoad] = useState(false);
 
     useImperativeHandle(ref, () => ({
+        validate: () => validateRequiredAgreements(),
         save: async () => {
             if (!validateRequiredAgreements()) return false;
             setLoad(true);

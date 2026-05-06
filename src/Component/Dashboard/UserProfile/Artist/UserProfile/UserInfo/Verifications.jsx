@@ -156,6 +156,7 @@ const validateRequiredFields = () => {
 };
 
     useImperativeHandle(ref, () => ({
+        validate: () => true, // verification is optional
         save: async () => {
             // If no verification type selected, skip silently
             if (!verificationType) return true;

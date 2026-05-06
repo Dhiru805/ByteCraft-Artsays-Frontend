@@ -74,6 +74,7 @@ const BusinessProfile = React.forwardRef(({ userId, onProfileSaved }, ref) => {
 };
 
     useImperativeHandle(ref, () => ({
+        validate: () => validateRequiredFields(),
         save: async () => {
             if (!validateRequiredFields()) return false;
             setLoading(true);

@@ -89,6 +89,7 @@ const ArtistInfo = React.forwardRef(({ userId, loading, onProfileSaved }, ref) =
     const [load, setLoad] = useState(false);
 
     useImperativeHandle(ref, () => ({
+        validate: () => validateRequiredFields(),
         save: async () => {
             if (!validateRequiredFields()) return false;
             setLoad(true);

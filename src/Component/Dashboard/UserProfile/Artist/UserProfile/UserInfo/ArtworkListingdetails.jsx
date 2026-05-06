@@ -17,6 +17,7 @@ const ArtworkPricingDetails = React.forwardRef(({ userId, loading }, ref) => {
     const [load, setLoad] = useState(false);
 
     useImperativeHandle(ref, () => ({
+        validate: () => validateRequiredFields(),
         save: async () => {
             if (!validateRequiredFields()) return false;
             setLoad(true);

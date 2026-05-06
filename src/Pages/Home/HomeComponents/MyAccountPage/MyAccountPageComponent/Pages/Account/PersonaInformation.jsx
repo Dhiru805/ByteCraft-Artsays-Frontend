@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import putAPI from '../../../../../../../api/putAPI';
@@ -9,7 +10,101 @@ import PersonalInformationSkeleton from '../../../../../../../Component/Skeleton
 import { FaCheck } from 'react-icons/fa';
 import { getImageUrl } from '../../../../../../../utils/getImageUrl';
 
+// ─── Delete Account Popup ─────────────────────────────────────────────────────
+const DeleteAccountPopup = ({ onClose, onConfirm, loading }) => (
+  <div style={{
+    position: 'fixed', inset: 0, zIndex: 10000,
+    background: 'rgba(0,0,0,0.6)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+  }}>
+    <div style={{
+      background: '#fff', borderRadius: '16px', padding: '36px 32px',
+      maxWidth: '520px', width: '92%', boxShadow: '0 8px 40px rgba(0,0,0,0.22)',
+      position: 'relative',
+    }}>
+      <div style={{
+        width: 64, height: 64, borderRadius: '50%',
+        background: 'linear-gradient(135deg,#e53e3e,#c53030)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        margin: '0 auto 20px',
+      }}>
+        <i className="fa fa-trash" style={{ fontSize: 26, color: '#fff' }} />
+      </div>
+      <h3 style={{ textAlign: 'center', marginBottom: 8, color: '#2d3748', fontWeight: 700, fontSize: 20 }}>
+        Delete Account
+      </h3>
+      <p style={{ textAlign: 'center', color: '#718096', marginBottom: 20, lineHeight: 1.6, fontSize: 14 }}>
+        Are you sure you want to delete your account? Please read the following carefully before confirming.
+      </p>
+
+      <div style={{
+        background: '#FFF3E0', borderLeft: '4px solid #FF6B35',
+        borderRadius: 8, padding: '14px 16px', marginBottom: 16,
+      }}>
+        <p style={{ margin: '0 0 6px', fontWeight: 700, color: '#E65100', fontSize: 14 }}>
+          ⏳ 3-Day Grace Period
+        </p>
+        <p style={{ margin: 0, color: '#bf360c', fontSize: 13, lineHeight: 1.6 }}>
+          Your account will be scheduled for deletion after <strong>3 days</strong>.
+          If you <strong>log in again within 3 days</strong>, your account deletion will be
+          <strong> automatically cancelled</strong> — no extra steps needed.
+        </p>
+      </div>
+
+      <div style={{
+        background: '#FFEBEE', border: '1px solid #EF9A9A',
+        borderRadius: 8, padding: '12px 16px', marginBottom: 16,
+      }}>
+        <p style={{ margin: '0 0 4px', fontWeight: 700, color: '#C62828', fontSize: 13 }}>
+          ⚠️ After 3 days, the following will be permanently deleted:
+        </p>
+        <ul style={{ margin: '6px 0 0', paddingLeft: 18, color: '#b71c1c', fontSize: 12, lineHeight: 1.8 }}>
+          <li>Your profile and all personal information</li>
+          <li>Orders, transactions, and wallet data</li>
+          <li>Community posts, followers, and connections</li>
+        </ul>
+      </div>
+
+      <div style={{
+        background: '#E8F5E9', border: '1px solid #A5D6A7',
+        borderRadius: 8, padding: '12px 16px', marginBottom: 24,
+      }}>
+        <p style={{ margin: 0, color: '#2E7D32', fontSize: 13, lineHeight: 1.6 }}>
+          ✅ A <strong>confirmation email</strong> will be sent to your registered email address
+          with instructions on how to cancel the deletion by logging in.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+        <button
+          onClick={onClose}
+          disabled={loading}
+          style={{
+            background: '#f4f4f4', color: '#555', border: 'none',
+            borderRadius: 8, padding: '10px 28px', fontWeight: 600,
+            cursor: 'pointer', fontSize: 14,
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onConfirm}
+          disabled={loading}
+          style={{
+            background: loading ? '#ccc' : 'linear-gradient(135deg,#e53e3e,#c53030)',
+            color: '#fff', border: 'none', borderRadius: 8,
+            padding: '10px 28px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', fontSize: 14,
+          }}
+        >
+          {loading ? 'Processing...' : 'Yes, Delete My Account'}
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 export const AccountForm = () => {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
   const [profileImage, setProfileImage] = useState(null);
@@ -35,6 +130,9 @@ export const AccountForm = () => {
   const [usernameError, setUsernameError] = useState('');
   const usernameTimerRef = useRef(null);
   const usernameRegex = /^[a-z0-9._]*$/;
+
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
   const [showPhoneOtpModal, setShowPhoneOtpModal] = useState(false);
@@ -327,6 +425,22 @@ export const AccountForm = () => {
     }
   };
 
+  const handleRequestDeletion = async () => {
+    setDeleteLoading(true);
+    try {
+      const userId = localStorage.getItem('userId');
+      const res = await postAPI(`/auth/request-deletion/${userId}`, {});
+      toast.success(res.message || 'Account deletion scheduled. Check your email for details.');
+      setShowDeletePopup(false);
+      navigate('/login');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to schedule account deletion.';
+      toast.error(msg);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted');
@@ -391,6 +505,14 @@ export const AccountForm = () => {
 
   return (
     <div className="max-w-[1440px] mx-auto">
+      {showDeletePopup && (
+        <DeleteAccountPopup
+          onClose={() => setShowDeletePopup(false)}
+          onConfirm={handleRequestDeletion}
+          loading={deleteLoading}
+        />
+      )}
+
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
           Personal Information
@@ -642,6 +764,31 @@ export const AccountForm = () => {
           {loading ? 'Updating...' : 'Update Changes'}
         </button>
       </form>
+
+      {/* Danger Zone */}
+      <div style={{
+        marginTop: 24, padding: '20px 24px',
+        border: '1px solid #FFCDD2', borderRadius: 8, background: '#FFF5F5',
+      }}>
+        <h4 style={{ color: '#C62828', fontWeight: 700, marginBottom: 6, fontSize: 15 }}>
+          Danger Zone
+        </h4>
+        <p style={{ color: '#b71c1c', fontSize: 13, marginBottom: 12 }}>
+          Once you request account deletion, you have <strong>3 days</strong> to cancel by logging in.
+          After that, all your data will be permanently removed.
+        </p>
+        <button
+          onClick={() => setShowDeletePopup(true)}
+          style={{
+            background: 'linear-gradient(135deg,#e53e3e,#c53030)',
+            color: '#fff', border: 'none', borderRadius: 8,
+            padding: '10px 24px', fontWeight: 600, cursor: 'pointer', fontSize: 14,
+          }}
+        >
+          <i className="fa fa-trash" style={{ marginRight: 8 }} />
+          Delete Account
+        </button>
+      </div>
 
       {showEmailOtpModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} onClick={() => setShowEmailOtpModal(false)}>

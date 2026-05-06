@@ -44,6 +44,7 @@ const BankPaymentDetails = React.forwardRef(({ userId }, ref) => {
     const [loading, setLoading] = useState(false);
 
     useImperativeHandle(ref, () => ({
+        validate: () => validateRequiredFields(),
         save: async () => {
             if (!validateRequiredFields()) return false;
             setLoading(true);

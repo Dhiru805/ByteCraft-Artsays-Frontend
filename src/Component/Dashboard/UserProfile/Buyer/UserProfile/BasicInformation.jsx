@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { DEFAULT_PROFILE_IMAGE } from "../../../../../Constants/ConstantsVariables";
 
 
-const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange }) => {
+const Settings = ({ userId, profileData, previewImage, handleImageUpload, handleChange, handleAddressChange, handleSubmit, passwordData, handlePasswordChange, fetchProfile }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

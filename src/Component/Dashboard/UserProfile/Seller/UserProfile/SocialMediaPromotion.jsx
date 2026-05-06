@@ -48,6 +48,7 @@ const SocialLink = React.forwardRef(({ userId, profileData }, ref) => {
     };
 
     useImperativeHandle(ref, () => ({
+        validate: () => true, // social media is optional
         save: async () => {
             setLoading(true);
             try {

@@ -77,6 +77,39 @@ const Register = () => {
   const normalizePhone = (phone) => {
     return `+91${phone.replace(/^\+91/, "")}`;
   };
+
+  const validateName = (name, fieldLabel) => {
+    if (name.trim().length < 2) {
+      toast.error(`${fieldLabel} must be at least 2 characters`);
+      return false;
+    }
+    if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+      toast.error(`${fieldLabel} can only contain letters`);
+      return false;
+    }
+    return true;
+  };
+
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return false;
+    }
+    if (!/[A-Z]/.test(password)) {
+      toast.error("Password must contain at least one uppercase letter");
+      return false;
+    }
+    if (!/[0-9]/.test(password)) {
+      toast.error("Password must contain at least one number");
+      return false;
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>_\-]/.test(password)) {
+      toast.error("Password must contain at least one special character (!@#$%^&*...)");
+      return false;
+    }
+    return true;
+  };
+
   const handleSendOTP = async () => {
     const input = formData.emailOrPhone.trim();
     const isEmail = isValidEmail(input);
@@ -152,6 +185,10 @@ const Register = () => {
         return;
       }
     }
+
+    if (!validateName(formData.firstName, "First name")) { setLoadingSubmit(false); return; }
+    if (!validateName(formData.lastName, "Last name")) { setLoadingSubmit(false); return; }
+    if (!validatePassword(formData.password)) { setLoadingSubmit(false); return; }
 
     const isEmail = isValidEmail(formData.emailOrPhone);
     const isPhone = isValidPhone(formData.emailOrPhone);

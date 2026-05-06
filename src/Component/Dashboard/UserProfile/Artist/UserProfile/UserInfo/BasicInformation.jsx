@@ -834,6 +834,18 @@ const Settings = ({ userId, profileData, previewImage, handleImageUpload, handle
               }
             }
 
+            // Step 1: validate all sections BEFORE saving anything
+            const validations = [
+              artistInfoRef.current?.validate?.() ?? true,
+              verificationRef.current?.validate?.() ?? true,
+              artworkRef.current?.validate?.() ?? true,
+              bankRef.current?.validate?.() ?? true,
+              socialRef.current?.validate?.() ?? true,
+              agreementRef.current?.validate?.() ?? true,
+            ];
+            if (validations.some(v => v === false)) return; // toasts already shown
+
+            // Step 2: all valid — now save everything
             setLoading(true);
             try {
               await handleSubmit(e);

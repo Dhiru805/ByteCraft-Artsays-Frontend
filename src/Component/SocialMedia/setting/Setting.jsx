@@ -216,6 +216,7 @@ const Setting = () => {
   const [showSuggestion, setShowSuggestion] = useState();
   const [toggleEnable, setToggleEnable] = useState(false);
   const [deleteAccount, setDeleteAccount] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [copyMsg, setCopyMsg] = useState("");
 
     const [originalUsername, setOriginalUsername] = useState('');
@@ -311,17 +312,18 @@ const Setting = () => {
 
   const handleDelete = async () => {
     const userId = localStorage.getItem("userId");
-    const del = await deleteAPI(
-      `/api/social-media/delete-account/${userId}`,
-      true,
-      true
-    );
-    if (del && !del.hasError) {
-      toast.success("Account deleted successfully");
+    setDeleteLoading(true);
+    try {
+      const res = await postAPI(`/auth/request-deletion/${userId}`, {});
+      toast.success(res?.message || "Account deletion scheduled. Check your email for details.");
+      setDeleteAccount(false);
       localStorage.clear();
-      navigate("/");
-    } else {
-      toast.error("Failed to delete account");
+      navigate("/login");
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Failed to schedule account deletion.";
+      toast.error(msg);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -924,37 +926,69 @@ const Setting = () => {
               {deleteAccount && (
                 <div
                   className="fixed inset-0 bg-[#000000]/40 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-[9999]"
-                  onClick={() => setDeleteAccount(false)}
+                  onClick={() => !deleteLoading && setDeleteAccount(false)}
                 >
                   <div
-                    className="bg-white p-6 rounded-lg shadow-lg flex flex-col justify-between items-center gap-4"
+                    className="bg-white rounded-2xl shadow-2xl flex flex-col gap-4 w-[92%] max-w-[500px] p-8"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div className="flex flex-col items-center gap-3 text-center">
-                      <h1 className="text-[22px] font-bold text-[#000000]">
-                        Delete Account
-                      </h1>
+                    {/* Icon */}
+                    <div className="flex justify-center">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center">
+                        <i className="fa fa-trash text-white text-2xl" />
+                      </div>
+                    </div>
 
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        Are you sure you want to permanently delete your account?
-                        <br />
-                        This action cannot be undone.
+                    <div className="text-center">
+                      <h1 className="text-[22px] font-bold text-[#1a1a1a]">Delete Account</h1>
+                      <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                        Are you sure you want to delete your account? Please read the following carefully before confirming.
                       </p>
                     </div>
 
+                    {/* Grace Period */}
+                    <div className="bg-orange-50 border-l-4 border-orange-400 rounded-lg px-4 py-3">
+                      <p className="font-bold text-orange-700 text-sm mb-1">⏳ 3-Day Grace Period</p>
+                      <p className="text-orange-800 text-xs leading-relaxed">
+                        Your account will be scheduled for deletion after <strong>3 days</strong>.
+                        If you <strong>log in again within 3 days</strong>, your deletion will be{" "}
+                        <strong>automatically cancelled</strong> — no extra steps needed.
+                      </p>
+                    </div>
 
-                    <div className="flex items-center justify-content-center w-full px-6 py-3 gap-6">
+                    {/* What gets deleted */}
+                    <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                      <p className="font-bold text-red-700 text-xs mb-2">⚠️ After 3 days, permanently deleted:</p>
+                      <ul className="list-disc pl-4 text-red-800 text-xs leading-7">
+                        <li>Your profile and all personal information</li>
+                        <li>All posts, artworks, and media</li>
+                        <li>Followers, following, and connections</li>
+                      </ul>
+                    </div>
+
+                    {/* Email notice */}
+                    <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+                      <p className="text-green-800 text-xs leading-relaxed">
+                        ✅ A <strong>confirmation email</strong> will be sent to your registered email address
+                        with instructions on how to cancel by logging in.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-4 pt-1">
                       <button
-                        className="bg-gray-100 text-[#000000] text-lg px-4 py-2 rounded-lg focus:outline-none"
+                        className="bg-gray-100 text-[#000000] text-sm font-semibold px-6 py-2.5 rounded-lg focus:outline-none disabled:opacity-60"
                         onClick={() => setDeleteAccount(false)}
+                        disabled={deleteLoading}
                       >
                         Cancel
                       </button>
                       <button
-                        className="bg-red-600 text-white text-lg px-4 py-2 rounded-lg"
+                        className="text-white text-sm font-semibold px-6 py-2.5 rounded-lg disabled:opacity-60"
+                        style={{ background: deleteLoading ? '#ccc' : 'linear-gradient(135deg,#e53e3e,#c53030)', cursor: deleteLoading ? 'not-allowed' : 'pointer' }}
                         onClick={() => handleDelete()}
+                        disabled={deleteLoading}
                       >
-                        Delete
+                        {deleteLoading ? "Processing..." : "Yes, Delete My Account"}
                       </button>
                     </div>
                   </div>
